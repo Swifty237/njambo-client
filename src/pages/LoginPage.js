@@ -82,7 +82,7 @@ const LoginPage = () => {
               {getLocalizedString('login_page-cta_btn_txt')}
             </Button>
             {/* <Link to="/">I foI do not have an account yet!rgot my password!</Link> */}
-            <Link to="/register">
+            <Link to={`${process.env.REACT_APP_SERVER_URI}/register`}>
               {getLocalizedString('login_page-no_account_txt')}
             </Link>
           </ButtonGroup>

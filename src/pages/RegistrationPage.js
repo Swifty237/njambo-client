@@ -103,7 +103,7 @@ const RegistrationPage = () => {
             <Button primary type="submit" fullWidth>
               {getLocalizedString('registration_page-cta_btn_txt')}
             </Button>
-            <Link to="/login">
+            <Link to={`${process.env.REACT_APP_SERVER_URI}/login`}>
               {getLocalizedString('registration_page-already_account_txt')}
             </Link>
           </ButtonGroup>
