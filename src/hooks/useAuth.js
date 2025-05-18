@@ -29,7 +29,7 @@ const useAuth = () => {
   const register = async (name, email, password) => {
     setIsLoading(true);
     try {
-      const res = await Axios.post('/api/users', {
+      const res = await Axios.post('https://njambo-server.onrender.com/api/users', {
         name,
         email,
         password,
@@ -52,7 +52,7 @@ const useAuth = () => {
     setIsLoading(true);
 
     try {
-      const res = await Axios.post('/api/auth', {
+      const res = await Axios.post('https://njambo-server.onrender.com/api/auth', {
         email: emailAddress,
         password: password,
       });
@@ -73,7 +73,7 @@ const useAuth = () => {
 
   const loadUser = async (token) => {
     try {
-      const res = await Axios.get('/api/auth', {
+      const res = await Axios.get('https://njambo-server.onrender.com/api/auth', {
         headers: {
           'x-auth-token': token,
         },
