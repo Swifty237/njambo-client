@@ -50,10 +50,11 @@ const useAuth = () => {
 
   const login = async (emailAddress, password) => {
     setIsLoading(true);
+
     try {
       const res = await Axios.post('/api/auth', {
         email: emailAddress,
-        password,
+        password: password,
       });
 
       const token = res.data.token;
@@ -65,6 +66,7 @@ const useAuth = () => {
       }
     } catch (error) {
       alert(error);
+      console.error(error.response?.data);
     }
     setIsLoading(false);
   };

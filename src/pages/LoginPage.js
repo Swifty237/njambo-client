@@ -42,6 +42,8 @@ const LoginPage = () => {
             const email = emailRef.current.value;
             const password = passwordRef.current.value;
 
+            console.log('Tentative de connexion avec :', email, password);
+
             email &&
               password &&
               email.length > 0 &&
@@ -82,7 +84,7 @@ const LoginPage = () => {
               {getLocalizedString('login_page-cta_btn_txt')}
             </Button>
             {/* <Link to="/">I foI do not have an account yet!rgot my password!</Link> */}
-            <Link to={`${process.env.REACT_APP_SERVER_URI}/register`}>
+            <Link to="/register">
               {getLocalizedString('login_page-no_account_txt')}
             </Link>
           </ButtonGroup>
