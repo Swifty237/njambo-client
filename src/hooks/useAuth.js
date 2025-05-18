@@ -6,6 +6,8 @@ import globalContext from '../context/global/globalContext';
 const useAuth = () => {
   localStorage.token && setAuthToken(localStorage.token);
 
+  const SERVER_URI = process.env.REACT_APP_SERVER_URI;
+
   const {
     setId,
     setIsLoading,
@@ -29,7 +31,7 @@ const useAuth = () => {
   const register = async (name, email, password) => {
     setIsLoading(true);
     try {
-      const res = await Axios.post('https://njambo-server.onrender.com/api/users', {
+      const res = await Axios.post(`${SERVER_URI}/api/users`, {
         name,
         email,
         password,
@@ -52,7 +54,7 @@ const useAuth = () => {
     setIsLoading(true);
 
     try {
-      const res = await Axios.post('https://njambo-server.onrender.com/api/auth', {
+      const res = await Axios.post(`${SERVER_URI}/api/auth`, {
         email: emailAddress,
         password: password,
       });
@@ -73,7 +75,7 @@ const useAuth = () => {
 
   const loadUser = async (token) => {
     try {
-      const res = await Axios.get('https://njambo-server.onrender.com/api/auth', {
+      const res = await Axios.get(`${SERVER_URI}/api/auth`, {
         headers: {
           'x-auth-token': token,
         },
