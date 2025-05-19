@@ -2,6 +2,12 @@ import { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import config from '../../clientConfig';
 
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+
 const GoogleAnalytics = ({ location, history }) => {
   useEffect(() => {
     const gtag = window.gtag;

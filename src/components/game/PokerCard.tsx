@@ -2,6 +2,16 @@ import React from 'react';
 import styled from 'styled-components';
 import cards from './cards';
 
+interface StyledPokerCardWrapperProps {
+  card: {
+    suit: string,
+    rank: string
+  }
+  width: string;
+  maxWidth: string;
+  minWidth: string;
+}
+
 const StyledPokerCardWrapper = styled.div`
   display: inline-block;
   margin: 1rem 0.5rem;
@@ -41,14 +51,14 @@ const StyledPokerCardWrapper = styled.div`
   }
 
   img {
-    width: ${({ width }) => width || '7vw'};
-    max-width: ${({ maxWidth }) => maxWidth || '80px'};
-    min-width: ${({ minWidth }) => minWidth || '50px'};
+    width: ${({ width }: StyledPokerCardWrapperProps) => width || '7vw'};
+    max-width: ${({ maxWidth }: StyledPokerCardWrapperProps) => maxWidth || '80px'};
+    min-width: ${({ minWidth }: StyledPokerCardWrapperProps) => minWidth || '50px'};
     box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1);
   }
 `;
 
-const PokerCard = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
+const PokerCard = ({ card: { suit, rank }, width, minWidth, maxWidth }: StyledPokerCardWrapperProps) => {
   const concat = suit + rank;
 
   return (
@@ -57,7 +67,9 @@ const PokerCard = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
       minWidth={minWidth}
       maxWidth={maxWidth}
     >
-      <img src={cards[concat]} alt={concat} />
+      {/* A revoir plus tard */}
+      <img src={(cards[concat as keyof typeof cards] as unknown as { default: string }).default ||
+        (cards[concat as keyof typeof cards] as unknown as string)} alt={concat} />
     </StyledPokerCardWrapper>
   );
 };

@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import LocaContext from './locaContext';
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom'; => Voir si le programme fonctionne sans ça
 
 const initialState = localStorage.getItem('lang') || 'en';
 
-const LocaProvider = ({ location, children }) => {
+interface LocaProviderProps {
+  location: { search: string };
+  children: React.ReactNode;
+}
+
+const LocaProvider: React.FC<LocaProviderProps> = ({ location, children }) => {
   const [lang, setLang] = useState(initialState);
 
   useEffect(() => {
     const lang = new URLSearchParams(location.search).get('lang');
+
+    console.log("langue : " + lang);
+
+
     lang && setLang(lang);
     // eslint-disable-next-line
   }, []);
@@ -26,4 +35,4 @@ const LocaProvider = ({ location, children }) => {
   );
 };
 
-export default withRouter(LocaProvider);
+export default LocaProvider;

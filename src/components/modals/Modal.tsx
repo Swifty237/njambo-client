@@ -7,6 +7,24 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Text from '../typography/Text';
 
+interface StyledModalProps {
+  theme: {
+    colors: { lightestBg: string },
+    other: {
+      stdBorderRadius: string,
+      cardDropShadow: string,
+    }
+  }
+};
+
+interface ModalProps {
+  children: React.ReactNode;
+  headingText: string;
+  btnText: string;
+  onClose: () => void;
+  onBtnClicked: () => void;
+};
+
 const ModalWrapper = styled.div`
   position: fixed;
   display: flex;
@@ -27,11 +45,11 @@ const StyledModal = styled.div`
   min-width: 264px;
   width: '100%';
   text-align: center;
-  background-color: ${(props) => props.theme.colors.lightestBg};
-  border-radius: ${(props) => props.theme.other.stdBorderRadius};
+  background-color: ${(props: StyledModalProps) => props.theme.colors.lightestBg};
+  border-radius: ${(props: StyledModalProps) => props.theme.other.stdBorderRadius};
   padding: 1.5rem;
   margin: 0 1rem;
-  box-shadow: ${(props) => props.theme.other.cardDropShadow};
+  box-shadow: ${(props: StyledModalProps) => props.theme.other.cardDropShadow};
   opacity: 0;
   animation: fade-in 0.75s ease-out forwards;
 
@@ -64,12 +82,15 @@ const IconWrapper = styled.div`
   right: 1.5rem;
 `;
 
-const Modal = ({ children, headingText, btnText, onClose, onBtnClicked }) => {
+const Modal: React.FC<ModalProps> = ({ children, headingText, btnText, onClose, onBtnClicked }) => {
+  const modalRoot = document.getElementById('modal');
+  if (!modalRoot) return null;
+
   return ReactDOM.createPortal(
     <ModalWrapper
       id="wrapper"
-      onClick={(e) => {
-        if (e.target.id === 'wrapper') {
+      onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        if ((e.target as HTMLDivElement).id === 'wrapper') {
           onClose();
         }
       }}
@@ -98,7 +119,7 @@ const Modal = ({ children, headingText, btnText, onClose, onBtnClicked }) => {
         </ModalContent>
       </StyledModal>
     </ModalWrapper>,
-    document.getElementById('modal'),
+    modalRoot,
   );
 };
 
@@ -109,10 +130,10 @@ Modal.propTypes = {
   onBtnClicked: PropTypes.func.isRequired,
 };
 
-Modal.defaultProps = {
-  headingText: 'Modal',
-  btnText: 'Call to Action',
-};
+// Modal.defaultProps = {
+//   headingText: 'Modal',
+//   btnText: 'Call to Action',
+// };
 
 const initialModalData = {
   children: () => (
@@ -127,6 +148,8 @@ const initialModalData = {
   ),
   headingText: 'Modal',
   btnText: 'Button',
+  btnCallBack: () => { },
+  onCloseCallBack: () => { },
 };
 
 export default Modal;

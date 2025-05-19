@@ -3,6 +3,14 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CloseIcon from '../icons/CloseIcon';
 
+interface StyledCloseIconProps {
+  theme: any; // Replace 'any' with your theme type if available
+}
+
+interface CloseButtonProps {
+  clickHandler: () => void;
+}
+
 const StyledCloseIcon = styled.div`
   display: inline-block;
   cursor: pointer;
@@ -11,16 +19,16 @@ const StyledCloseIcon = styled.div`
 
   &:focus {
     outline: none;
-    border: 2px solid ${(props) => props.theme.colors.primaryCtaDarker};
+    border: 2px solid ${(props: StyledCloseIconProps) => props.theme.colors.primaryCtaDarker};
     border-radius: 50%;
   }
 `;
 
-const CloseButton = ({ clickHandler }) => {
+const CloseButton = ({ clickHandler }: CloseButtonProps) => {
   return (
     <StyledCloseIcon
       onClick={clickHandler}
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent) => {
         if (e.keyCode === 13) clickHandler();
       }}
       tabIndex={0}

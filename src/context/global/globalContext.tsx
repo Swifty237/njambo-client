@@ -1,5 +1,7 @@
 import { createContext } from 'react';
 
-const globalContext = createContext();
+const globalContext = createContext({
+    chipsAmount: 0,
+});
 
 export default globalContext;

@@ -4,6 +4,10 @@ import rotateGif from '../../assets/game/rotate.gif';
 import styled from 'styled-components';
 import contentContext from '../../context/content/contentContext';
 
+interface WrapperProps {
+  theme: { colors: { fontColorLight: string } }
+}
+
 const Wrapper = styled.div`
   display: none;
   position: fixed;
@@ -14,7 +18,7 @@ const Wrapper = styled.div`
   height: 100%;
 
   & ${Text} {
-    color: ${(props) => props.theme.colors.fontColorLight};
+    color: ${(props: WrapperProps) => props.theme.colors.fontColorLight};
     word-break: break-all;
   }
 
@@ -31,7 +35,7 @@ export const RotateDevicePrompt = () => {
   return (
     <Wrapper>
       <img
-        src={rotateGif}
+        src={String(rotateGif)}
         width="140"
         style={{ width: '140px' }}
         alt="Rotate your device into landscape mode"

@@ -22,7 +22,21 @@ import Markdown from 'react-remarkable';
 import DealerButton from '../icons/DealerButton';
 import { StyledSeat } from './StyledSeat';
 
-export const Seat = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
+interface SeatProps {
+  currentTable: any; // Replace 'any' with the actual type if available
+  seatNumber: number;
+  isPlayerSeated: boolean;
+  sitDown: (tableId: string, seatNumber: number, amount: number) => void;
+}
+
+interface CardProps {
+  suit: string,
+  rank: string
+}
+
+
+
+export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
   const { standUp, seatId, rebuy } = useContext(gameContext);
@@ -47,10 +61,11 @@ export const Seat = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
         openModal(
           () => (
             <Form
-              onSubmit={(e) => {
+              onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
 
-                const amount = +document.getElementById('amount').value;
+                const amountInput = document.getElementById('amount') as HTMLInputElement | null;
+                const amount = amountInput ? + amountInput.value : 0;
 
                 if (
                   amount &&
@@ -58,7 +73,7 @@ export const Seat = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
                   amount <= chipsAmount &&
                   amount <= maxBuyin
                 ) {
-                  rebuy(currentTable.id, seatNumber, parseInt(amount));
+                  rebuy(currentTable.id, seatNumber, amount);
                   closeModal();
                 }
               }}
@@ -106,10 +121,11 @@ export const Seat = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
                 openModal(
                   () => (
                     <Form
-                      onSubmit={(e) => {
+                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
 
-                        const amount = +document.getElementById('amount').value;
+                        const amountInput = document.getElementById('amount') as HTMLInputElement | null;
+                        const amount = amountInput ? + amountInput.value : 0;
 
                         if (
                           amount &&
@@ -120,7 +136,7 @@ export const Seat = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
                           sitDown(
                             currentTable.id,
                             seatNumber,
-                            parseInt(amount),
+                            amount,
                           );
                           closeModal();
                         }
@@ -195,7 +211,7 @@ export const Seat = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
           >
             <Hand>
               {seat.hand &&
-                seat.hand.map((card, index) => (
+                seat.hand.map((card: CardProps, index: number) => (
                   <PokerCard
                     key={index}
                     card={card}

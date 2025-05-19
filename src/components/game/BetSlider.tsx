@@ -2,7 +2,23 @@ import React from 'react';
 import { BetSliderInput } from './BetSliderInput';
 import { BetSliderWrapper } from './BetSliderWrapper';
 
-export const BetSlider = ({ currentTable, seatId, bet, setBet }) => (
+interface BetSliderProps {
+  currentTable: {
+    minBet: number;
+    callAmount: number;
+    limit: number;
+    seats: {
+      [seatId: number]: {
+        stack: number;
+      };
+    };
+  };
+  seatId: number;
+  bet: number;
+  setBet: (bet: number) => void;
+};
+
+export const BetSlider: React.FC<BetSliderProps> = ({ currentTable, seatId, bet, setBet }) => (
   <BetSliderWrapper>
     <BetSliderInput
       type="range"
@@ -22,7 +38,7 @@ export const BetSlider = ({ currentTable, seatId, bet, setBet }) => (
           : currentTable.limit)
       }
       value={bet}
-      onChange={(e) => setBet(+e.target.value)}
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBet(+e.target.value)}
     />
   </BetSliderWrapper>
 );

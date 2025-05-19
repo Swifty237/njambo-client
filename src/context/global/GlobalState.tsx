@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import GlobalContext from './globalContext';
 
-const GlobalState = ({ children }) => {
+const GlobalState: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [id, setId] = useState(null);
   const [userName, setUserName] = useState(null);

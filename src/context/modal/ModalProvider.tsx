@@ -2,9 +2,21 @@ import React, { useState, useEffect } from 'react';
 import ModalContext from './modalContext';
 import Modal, { initialModalData } from '../../components/modals/Modal';
 
-const ModalProvider = ({ children }) => {
+interface ModalProviderProps {
+  children: React.ReactNode;
+}
+
+interface ModalProps {
+  children: () => React.ReactNode;
+  headingText: string;
+  btnText: string;
+  btnCallBack: () => void;
+  onCloseCallBack: () => void;
+}
+
+const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [showModal, setShowModal] = useState(false);
-  const [modalData, setModalData] = useState(initialModalData);
+  const [modalData, setModalData] = useState<ModalProps>(initialModalData);
 
   useEffect(() => {
     const layoutWrapper = document.getElementById('layout-wrapper');
@@ -15,7 +27,7 @@ const ModalProvider = ({ children }) => {
       if (layoutWrapper) {
         layoutWrapper.style.filter = 'blur(4px)';
         layoutWrapper.style.pointerEvents = 'none';
-        layoutWrapper.tabIndex = '-1';
+        layoutWrapper.tabIndex = -1;
       }
     } else {
       document.body.style.overflow = 'initial';
@@ -28,9 +40,9 @@ const ModalProvider = ({ children }) => {
   }, [showModal]);
 
   const openModal = (
-    children,
-    headingText,
-    btnText,
+    children: () => React.ReactNode,
+    headingText: string,
+    btnText: string,
     btnCallBack = closeModal,
     onCloseCallBack = closeModal,
   ) => {

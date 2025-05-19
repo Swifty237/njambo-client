@@ -3,7 +3,11 @@ import WatermarkLogo from './WatermarkLogo';
 import WatermarkText from './WatermarkText';
 import Hider from '../layout/Hider';
 
-const WatermarkWrapper = ({ className }) => (
+interface WatermarkWrapperProps {
+  className: string;
+}
+
+const WatermarkWrapper: React.FC<WatermarkWrapperProps> = ({ className }) => (
   <div className={className}>
     <WatermarkLogo />
     <Hider hideOnMobile>

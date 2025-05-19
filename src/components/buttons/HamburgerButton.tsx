@@ -3,6 +3,14 @@ import PropTypes from 'prop-types';
 import HamburgerIcon from '../icons/HamburgerIcon';
 import styled from 'styled-components';
 
+interface StyledHamburgerButtonProps {
+  theme: any; // Replace 'any' with your theme type if available
+}
+
+interface HamburgerButtonProps {
+  clickHandler: () => void;
+}
+
 const StyledHamburgerButton = styled.div`
   display: inline-block;
   cursor: pointer;
@@ -11,16 +19,16 @@ const StyledHamburgerButton = styled.div`
 
   &:focus {
     outline: none;
-    border: 2px solid ${(props) => props.theme.colors.primaryCtaDarker};
+    border: 2px solid ${(props: StyledHamburgerButtonProps) => props.theme.colors.primaryCtaDarker};
     border-radius: 50%;
   }
 `;
 
-const HamburgerButton = ({ clickHandler }) => {
+const HamburgerButton = ({ clickHandler }: HamburgerButtonProps) => {
   return (
     <StyledHamburgerButton
       onClick={clickHandler}
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent) => {
         if (e.keyCode === 13) clickHandler();
       }}
       tabIndex={0}

@@ -4,6 +4,10 @@ import { Input } from '../forms/Input';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
+interface ChipsAmountPillProps {
+  chipsAmount: number;
+}
+
 const Wrapper = styled.div`
   position: relative;
   display: inline-block;
@@ -26,7 +30,7 @@ const IconWrapper = styled.label`
   top: 5px;
 `;
 
-const ChipsAmountPill = ({ chipsAmount }) => {
+const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount }) => {
   return (
     <Wrapper>
       <IconWrapper htmlFor="chipsAmount">

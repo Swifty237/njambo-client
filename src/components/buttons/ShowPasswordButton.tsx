@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import EyeIcon from '../icons/EyeIcon';
 import styled from 'styled-components';
 
+interface ShowPasswordButtonProps {
+  passwordRef: React.RefObject<HTMLInputElement>;
+}
+
 const StyledShowPasswordButton = styled.div`
   position: absolute;
   z-index: 40;
@@ -15,7 +19,7 @@ const StyledShowPasswordButton = styled.div`
   }
 `;
 
-const clickHandler = (ref) => {
+const clickHandler = (ref: React.RefObject<HTMLInputElement>) => {
   if (ref.current.type === 'password') {
     ref.current.type = 'text';
   } else {
@@ -23,7 +27,7 @@ const clickHandler = (ref) => {
   }
 };
 
-const ShowPasswordButton = ({ passwordRef }) => {
+const ShowPasswordButton: React.FC<ShowPasswordButtonProps> = ({ passwordRef }) => {
   return (
     <StyledShowPasswordButton onClick={() => clickHandler(passwordRef)}>
       <EyeIcon />

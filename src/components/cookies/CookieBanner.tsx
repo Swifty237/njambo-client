@@ -6,6 +6,19 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import contentContext from '../../context/content/contentContext';
 
+interface StyledCookieBannerProps {
+  theme: any;
+}
+
+interface ContentProps {
+  theme: any;
+}
+
+interface CookieBannerProps {
+  clickHandler: () => void;
+  className?: string;
+}
+
 const Wrapper = styled.div`
   position: fixed;
   padding: 0 1.5rem;
@@ -18,8 +31,8 @@ const Wrapper = styled.div`
 `;
 
 const StyledCookieBanner = styled.div`
-  background-color: ${(props) => props.theme.colors.playingCardBg};
-  color: ${(props) => props.theme.colors.fontColorDark};
+  background-color: ${(props: StyledCookieBannerProps) => props.theme.colors.playingCardBg};
+  color: ${(props: StyledCookieBannerProps) => props.theme.colors.fontColorDark};
   padding: 0.5rem;
   font-size: 1rem;
   text-align: center;
@@ -27,8 +40,8 @@ const StyledCookieBanner = styled.div`
   max-width: 760px;
   margin: 1rem auto 1.5rem auto;
   display: flex;
-  border-radius: calc(${(props) => props.theme.other.stdBorderRadius} - 1rem);
-  box-shadow: ${(props) => props.theme.other.cardDropShadow};
+  border-radius: calc(${(props: StyledCookieBannerProps) => props.theme.other.stdBorderRadius} - 1rem);
+  box-shadow: ${(props: StyledCookieBannerProps) => props.theme.other.cardDropShadow};
   pointer-events: all;
 `;
 
@@ -44,7 +57,7 @@ const ContentWrapper = styled.div`
 
 const Content = styled.div`
   padding: 1em;
-  color: ${(props) => props.theme.colors.fontColorDark};
+  color: ${(props: ContentProps) => props.theme.colors.fontColorDark};
   font-size: 0.85rem;
   text-align: left;
   width: 70%;
@@ -73,8 +86,12 @@ const ButtonWrapper = styled.div`
   }
 `;
 
-const CookieBanner = ({ clickHandler, className }) => {
-  const { getLocalizedString } = useContext(contentContext);
+const CookieBanner = ({ clickHandler, className }: CookieBannerProps) => {
+
+  const { getLocalizedString }: any = useContext(contentContext); // => A typer proprement plus tard
+
+  const portalTarget = document.getElementById('cookie-banner');
+  if (!portalTarget) return null;
 
   return ReactDOM.createPortal(
     <Wrapper className={className}>
@@ -92,7 +109,7 @@ const CookieBanner = ({ clickHandler, className }) => {
         </ContentWrapper>
       </StyledCookieBanner>
     </Wrapper>,
-    document.getElementById('cookie-banner'),
+    portalTarget,
   );
 };
 
