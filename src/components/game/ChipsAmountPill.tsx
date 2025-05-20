@@ -2,7 +2,7 @@ import React from 'react';
 import PokerChip from '../icons/PokerChip';
 import { Input } from '../forms/Input';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 interface ChipsAmountPillProps {
   chipsAmount: number;
@@ -49,8 +49,8 @@ const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount }) => {
   );
 };
 
-ChipsAmountPill.propTypes = {
-  chipsAmount: PropTypes.number,
-};
+// ChipsAmountPill.propTypes = {
+//   chipsAmount: PropTypes.number,
+// };
 
 export default ChipsAmountPill;

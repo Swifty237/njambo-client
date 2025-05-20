@@ -1,13 +1,13 @@
 import styled, { css } from 'styled-components';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
 interface ButtonProps {
-  primary?: boolean;
-  secondary?: boolean;
-  large?: boolean;
-  small?: boolean;
-  fullWidth?: boolean;
-  fullWidthOnMobile?: boolean;
+  primary: boolean;
+  secondary: boolean;
+  large: boolean;
+  small: boolean;
+  fullWidth: boolean;
+  fullWidthOnMobile: boolean;
   theme: any; // Replace 'any' with your theme type if available
 }
 
@@ -160,13 +160,13 @@ const Button = styled.button`
   }
 `;
 
-Button.propTypes = {
-  primary: PropTypes.bool,
-  secondary: PropTypes.bool,
-  small: PropTypes.bool,
-  large: PropTypes.bool,
-  fullWidth: PropTypes.bool,
-  fullWidthOnMobile: PropTypes.bool,
-};
+// Button.propTypes = {
+//   primary: PropTypes.bool,
+//   secondary: PropTypes.bool,
+//   small: PropTypes.bool,
+//   large: PropTypes.bool,
+//   fullWidth: PropTypes.bool,
+//   fullWidthOnMobile: PropTypes.bool,
+// };
 
 export default Button;

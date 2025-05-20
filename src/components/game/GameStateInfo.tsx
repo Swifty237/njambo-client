@@ -14,7 +14,7 @@ const Wrapper = styled.div`
   width: 100%;
 `;
 
-export const GameStateInfo = ({ currentTable }) => {
+export const GameStateInfo = ({ currentTable }: any) => {
   const { getLocalizedString } = useContext(contentContext);
 
   return (
@@ -32,18 +32,16 @@ export const GameStateInfo = ({ currentTable }) => {
       )}
 
       {!!currentTable.mainPot && (
-        <ChipsAmountPill
-          chipsAmount={currentTable.mainPot}
-          style={{ minWidth: '150px' }}
-        />
+        <div style={{ minWidth: '150px' }}>
+          <ChipsAmountPill chipsAmount={currentTable.mainPot} />
+        </div>
       )}
 
       {currentTable.sidePots > 0 &&
-        currentTable.sidePots.map((sidePot) => (
-          <ChipsAmountPill
-            chipsAmount={sidePot.amount}
-            style={{ minWidth: '150px' }}
-          />
+        currentTable.sidePots.map((sidePot: { amount: number }, idx: number) => (
+          <div style={{ minWidth: '150px' }} key={idx}>
+            <ChipsAmountPill chipsAmount={sidePot.amount} />
+          </div>
         ))}
     </Wrapper>
   );

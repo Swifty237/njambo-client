@@ -1,6 +1,11 @@
+const socketIoClient = require('socket.io-client');
+type Socket = import('socket.io-client').Socket;
+
 //Modules
 declare module 'styled-components';
-declare module 'prop-types';
+declare module 'react-remarkable';
+declare module 'socket.io-client';
+// declare module 'prop-types';
 
 declare module './useContentful' {
     interface ContentfulClient {
@@ -9,7 +14,6 @@ declare module './useContentful' {
     export default function useContentful(): ContentfulClient;
 }
 
-declare module 'react-remarkable';
 
 declare module "*.jpg" {
     const value: string;

@@ -5,7 +5,11 @@ import modalContext from '../modal/modalContext';
 import Text from '../../components/typography/Text';
 import contentContext from '../content/contentContext';
 
-const OfflineProvider = ({ children }) => {
+interface OfflineProviderProps {
+  children: React.ReactNode;
+}
+
+const OfflineProvider: React.FC<OfflineProviderProps> = ({ children }) => {
   const { openModal } = useContext(modalContext);
   const { getLocalizedString } = useContext(contentContext);
 
@@ -22,7 +26,7 @@ const OfflineProvider = ({ children }) => {
     );
   };
 
-  return <OfflineContext.Provider>{children}</OfflineContext.Provider>;
+  return <OfflineContext.Provider value={{}}>{children}</OfflineContext.Provider>;
 };
 
 export default OfflineProvider;

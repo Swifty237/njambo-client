@@ -1,5 +1,15 @@
 import { createContext } from 'react';
 
-const locaContext = createContext({});
+// Define your context type like this:
+interface LocaContextType {
+    lang: string;
+    setLang: React.Dispatch<React.SetStateAction<string>>;
+}
+
+// When creating the context:
+const locaContext = createContext<LocaContextType>({
+    lang: 'en',
+    setLang: () => { },
+});
 
 export default locaContext;

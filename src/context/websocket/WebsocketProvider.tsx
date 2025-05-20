@@ -12,12 +12,25 @@ import {
 import globalContext from '../global/globalContext';
 import config from '../../clientConfig';
 
-const WebSocketProvider = ({ children }) => {
+// Extend the Window interface to include the socket property
+declare global {
+  interface Window {
+    socket?: Socket;
+  }
+}
+
+interface LobbyInfo {
+  tables: string;    // Replace 'any' with the actual type if known
+  players: string;   // Replace 'any' with the actual type if known
+  socketId: string;
+}
+
+const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isLoggedIn } = useContext(authContext);
   const { setTables, setPlayers } = useContext(globalContext);
 
-  const [socket, setSocket] = useState(null);
-  const [socketId, setSocketId] = useState(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socketId, setSocketId] = useState<string | null>(null);
 
   useEffect(() => {
     window.addEventListener('beforeunload', cleanUp);
@@ -44,8 +57,8 @@ const WebSocketProvider = ({ children }) => {
     window.socket && window.socket.close();
     setSocket(null);
     setSocketId(null);
-    setPlayers(null);
-    setTables(null);
+    setPlayers('');
+    setTables('');
   }
 
   function connect() {
@@ -59,20 +72,19 @@ const WebSocketProvider = ({ children }) => {
     return socket;
   }
 
-  function registerCallbacks(socket) {
-    socket.on(RECEIVE_LOBBY_INFO, ({ tables, players, socketId }) => {
-      console.log(RECEIVE_LOBBY_INFO, tables, players, socketId);
+  function registerCallbacks(socket: Socket) {
+    socket.on(RECEIVE_LOBBY_INFO, ({ tables, players, socketId }: LobbyInfo) => {
       setSocketId(socketId);
       setTables(tables);
       setPlayers(players);
     });
 
-    socket.on(PLAYERS_UPDATED, (players) => {
+    socket.on(PLAYERS_UPDATED, (players: string) => {
       console.log(PLAYERS_UPDATED, players);
       setPlayers(players);
     });
 
-    socket.on(TABLES_UPDATED, (tables) => {
+    socket.on(TABLES_UPDATED, (tables: string) => {
       console.log(TABLES_UPDATED, tables);
       setTables(tables);
     });

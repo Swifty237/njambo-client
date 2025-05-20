@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
 import {
   CALL,
   CHECK,
@@ -17,17 +17,40 @@ import {
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
 import GameContext from './gameContext';
+import { History } from 'history';
 
-const GameState = ({ history, children }) => {
+interface GameStateProps {
+  history: History;
+  children: React.ReactNode
+}
+
+interface Table {
+  id: string;
+  seats: { [seatId: string]: { turn: boolean } };
+  // ...other properties
+}
+
+interface TableUpdatedPayload {
+  table: Table;
+  message: string;
+  from: string;
+}
+
+interface TableEventPayload {
+  tables: Record<string, Table>;
+  tableId: string;
+}
+
+const GameState = ({ history, children }: GameStateProps) => {
   const { socket } = useContext(socketContext);
   const { loadUser } = useContext(authContext);
 
-  const [messages, setMessages] = useState([]);
-  const [currentTable, setCurrentTable] = useState(null);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [currentTable, setCurrentTable] = useState<Table | null>(null);
   const [isPlayerSeated, setIsPlayerSeated] = useState(false);
-  const [seatId, setSeatId] = useState(null);
+  const [seatId, setSeatId] = useState<string | null>(null);
   const [turn, setTurn] = useState(false);
-  const [turnTimeOutHandle, setHandle] = useState(null);
+  const [turnTimeOutHandle, setTurnTimeOutHandle] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const currentTableRef = React.useRef(currentTable);
 
@@ -36,7 +59,7 @@ const GameState = ({ history, children }) => {
 
     isPlayerSeated &&
       seatId &&
-      currentTable.seats[seatId] &&
+      currentTable?.seats[seatId] &&
       turn !== currentTable.seats[seatId].turn &&
       setTurn(currentTable.seats[seatId].turn);
     // eslint-disable-next-line
@@ -45,10 +68,10 @@ const GameState = ({ history, children }) => {
   useEffect(() => {
     if (turn && !turnTimeOutHandle) {
       const handle = setTimeout(fold, 15000);
-      setHandle(handle);
+      setTurnTimeOutHandle(handle);
     } else {
       turnTimeOutHandle && clearTimeout(turnTimeOutHandle);
-      turnTimeOutHandle && setHandle(null);
+      turnTimeOutHandle && setTurnTimeOutHandle(null);
     }
     // eslint-disable-next-line
   }, [turn]);
@@ -58,18 +81,18 @@ const GameState = ({ history, children }) => {
       window.addEventListener('unload', leaveTable);
       window.addEventListener('close', leaveTable);
 
-      socket.on(TABLE_UPDATED, ({ table, message, from }) => {
+      socket.on(TABLE_UPDATED, ({ table, message, from }: TableUpdatedPayload) => {
         console.log(TABLE_UPDATED, table, message, from);
         setCurrentTable(table);
         message && addMessage(message);
       });
 
-      socket.on(TABLE_JOINED, ({ tables, tableId }) => {
+      socket.on(TABLE_JOINED, ({ tables, tableId }: TableEventPayload) => {
         console.log(TABLE_JOINED, tables, tableId);
         setCurrentTable(tables[tableId]);
       });
 
-      socket.on(TABLE_LEFT, ({ tables, tableId }) => {
+      socket.on(TABLE_LEFT, ({ tables, tableId }: TableEventPayload) => {
         console.log(TABLE_LEFT, tables, tableId);
         setCurrentTable(null);
         loadUser(localStorage.token);
@@ -80,7 +103,7 @@ const GameState = ({ history, children }) => {
     // eslint-disable-next-line
   }, [socket]);
 
-  const joinTable = (tableId) => {
+  const joinTable = (tableId: string) => {
     console.log(JOIN_TABLE, tableId);
     socket.emit(JOIN_TABLE, tableId);
   };
@@ -94,13 +117,13 @@ const GameState = ({ history, children }) => {
     history.push('/');
   };
 
-  const sitDown = (tableId, seatId, amount) => {
+  const sitDown = (tableId: string, seatId: string, amount: number) => {
     socket.emit(SIT_DOWN, { tableId, seatId, amount });
     setIsPlayerSeated(true);
     setSeatId(seatId);
   };
 
-  const rebuy = (tableId, seatId, amount) => {
+  const rebuy = (tableId: string, seatId: string, amount: number) => {
     socket.emit(REBUY, { tableId, seatId, amount });
   };
 
@@ -112,7 +135,7 @@ const GameState = ({ history, children }) => {
     setSeatId(null);
   };
 
-  const addMessage = (message) => {
+  const addMessage = (message: string) => {
     setMessages((prevMessages) => [...prevMessages, message]);
     console.log(message);
   };
@@ -135,7 +158,7 @@ const GameState = ({ history, children }) => {
       socket.emit(CALL, currentTableRef.current.id);
   };
 
-  const raise = (amount) => {
+  const raise = (amount: number) => {
     currentTableRef &&
       currentTableRef.current &&
       socket.emit(RAISE, { tableId: currentTableRef.current.id, amount });
@@ -165,4 +188,4 @@ const GameState = ({ history, children }) => {
   );
 };
 
-export default withRouter(GameState);
+export default GameState;

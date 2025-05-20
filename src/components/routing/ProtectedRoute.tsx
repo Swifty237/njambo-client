@@ -1,8 +1,13 @@
 import React, { useContext } from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import authContext from '../../context/auth/authContext';
+import { RouteProps } from 'react-router-dom';
 
-const ProtectedRoute = ({ component: Component, ...rest }) => {
+interface ProtectedRouteProps extends RouteProps {
+  component: React.ComponentType<any>;
+}
+
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ component: Component, ...rest }) => {
   const { isLoggedIn } = useContext(authContext);
 
   return (

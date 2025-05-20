@@ -1,5 +1,15 @@
 import { createContext } from 'react';
 
-const socketContext = createContext();
+interface SocketContextType {
+    cleanUp: () => void;
+    socket: Socket | null;
+    socketId: string | null;
+}
+
+const socketContext = createContext<SocketContextType>({
+    cleanUp: () => { },
+    socket: null,
+    socketId: ''
+});
 
 export default socketContext;

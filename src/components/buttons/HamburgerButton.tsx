@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import HamburgerIcon from '../icons/HamburgerIcon';
 import styled from 'styled-components';
 
@@ -38,8 +38,8 @@ const HamburgerButton = ({ clickHandler }: HamburgerButtonProps) => {
   );
 };
 
-HamburgerButton.propTypes = {
-  clickHandler: PropTypes.func,
-};
+// HamburgerButton.propTypes = {
+//   clickHandler: PropTypes.func,
+// };
 
 export default HamburgerButton;

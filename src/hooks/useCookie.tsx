@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-const useCookie = (cookieName, initialState) => {
+const useCookie = (cookieName: string, initialState: boolean) => {
   const [isCookieSet, setIsCookieSet] = useState(initialState);
 
   useEffect(() => {
@@ -8,7 +8,7 @@ const useCookie = (cookieName, initialState) => {
     // eslint-disable-next-line
   }, []);
 
-  const getCookieValue = () => {
+  const getCookieValue = (cookieName: string) => {
     const allStoredCookies = document.cookie.split('; ');
     const foundCookie = allStoredCookies.filter((cookie) =>
       cookie.split('=').includes(cookieName),
@@ -16,11 +16,11 @@ const useCookie = (cookieName, initialState) => {
     return foundCookie;
   };
 
-  const checkCookies = () => {
+  const checkCookies = (cookieName: string) => {
     return getCookieValue(cookieName) ? true : false;
   };
 
-  const setCookie = (cookieValue, expirationDays) => {
+  const setCookie = (cookieValue: string, expirationDays: number) => {
     console.log('This runs');
     const date = new Date();
     date.setTime(date.getTime() + expirationDays * 24 * 60 * 60 * 1000);
@@ -28,7 +28,7 @@ const useCookie = (cookieName, initialState) => {
     setIsCookieSet(true);
   };
 
-  return [isCookieSet, setCookie, getCookieValue];
+  return { isCookieSet, setCookie, getCookieValue };
 };
 
 export default useCookie;

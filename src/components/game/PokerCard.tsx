@@ -58,7 +58,7 @@ const StyledPokerCardWrapper = styled.div`
   }
 `;
 
-const PokerCard = ({ card: { suit, rank }, width, minWidth, maxWidth }: StyledPokerCardWrapperProps) => {
+const PokerCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
   const concat = suit + rank;
 
   return (

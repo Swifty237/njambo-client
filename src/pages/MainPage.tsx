@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import Container from '../components/layout/Container';
 import Heading from '../components/typography/Heading';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import ColoredText from '../components/typography/ColoredText';
 import jackImg from '../assets/img/jack-rounded-img@2x.png';
 import kingImg from '../assets/img/king-rounded-img@2x.png';
@@ -14,6 +14,20 @@ import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
 import globalContext from '../context/global/globalContext';
 import contentContext from '../context/content/contentContext';
 import modalContext from '../context/modal/modalContext';
+import { RouteComponentProps } from 'react-router-dom';
+
+interface MainMenuCardProps {
+  theme: {
+    colors: {
+      primaryCta: string;
+      playingCardBg: string;
+    };
+    other: {
+      stdBorderRadius: string;
+      cardDropShadow: string;
+    };
+  }
+}
 
 const WelcomeHeading = styled(Heading)`
   @media screen and (min-width: 468px) and (min-height: 600px) {
@@ -61,10 +75,10 @@ const MainMenuCard = styled.div`
   align-items: center;
   text-align: center;
   cursor: pointer;
-  background-color: ${(props) => props.theme.colors.playingCardBg};
-  border-radius: ${(props) => props.theme.other.stdBorderRadius};
+  background-color: ${(props: MainMenuCardProps) => props.theme.colors.playingCardBg};
+  border-radius: ${(props: MainMenuCardProps) => props.theme.other.stdBorderRadius};
   padding: 1.5rem 2rem;
-  box-shadow: ${(props) => props.theme.other.cardDropShadow};
+  box-shadow: ${(props: MainMenuCardProps) => props.theme.other.cardDropShadow};
 
   &,
   & > * {
@@ -77,7 +91,7 @@ const MainMenuCard = styled.div`
 
   ${Heading} {
     margin-bottom: 0;
-    color: ${(props) => props.theme.colors.primaryCta};
+    color: ${(props: MainMenuCardProps) => props.theme.colors.primaryCta};
     word-wrap: break-word;
   }
 
@@ -113,7 +127,7 @@ const MainMenuCard = styled.div`
   }
 `;
 
-const MainPage = ({ history }) => {
+const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
   const { userName } = useContext(globalContext);
   const { getLocalizedString } = useContext(contentContext);
   const { openModal } = useContext(modalContext);
@@ -134,13 +148,13 @@ const MainPage = ({ history }) => {
       </WelcomeHeading>
       <MainMenuWrapper>
         <MainMenuCard onClick={() => history.push('/play')}>
-          <img src={kingImg} alt="Join Table" />
+          <img src={String(kingImg)} alt="Join Table" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-join_table').toUpperCase()}
           </Heading>
         </MainMenuCard>
         <MainMenuCard onClick={() => history.push('/play')}>
-          <img src={queen2Img} alt="Quick Game" />
+          <img src={String(queen2Img)} alt="Quick Game" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-quick_game').toUpperCase()}
           </Heading>
@@ -158,13 +172,13 @@ const MainPage = ({ history }) => {
             );
           }}
         >
-          <img src={jackImg} alt="Shop" />
+          <img src={String(jackImg)} alt="Shop" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-open_shop').toUpperCase()}
           </Heading>
         </MainMenuCard>
         <MainMenuCard onClick={() => history.push('/game-rules')}>
-          <img src={queenImg} alt="Rules" />
+          <img src={String(queenImg)} alt="Rules" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-open_rules').toUpperCase()}
           </Heading>
@@ -174,8 +188,8 @@ const MainPage = ({ history }) => {
   );
 };
 
-MainPage.propTypes = {
-  userName: PropTypes.string,
-};
+// MainPage.propTypes = {
+//   userName: PropTypes.string,
+// };
 
 export default withRouter(MainPage);

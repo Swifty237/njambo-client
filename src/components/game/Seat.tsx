@@ -24,9 +24,9 @@ import { StyledSeat } from './StyledSeat';
 
 interface SeatProps {
   currentTable: any; // Replace 'any' with the actual type if available
-  seatNumber: number;
+  seatNumber: string;
   isPlayerSeated: boolean;
-  sitDown: (tableId: string, seatNumber: number, amount: number) => void;
+  sitDown: (tableId: string, seatNumber: string, amount: number) => void;
 }
 
 interface CardProps {

@@ -14,6 +14,37 @@ import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
 import socketContext from '../../context/websocket/socketContext';
 import globalContext from '../../context/global/globalContext';
+import { Select } from '../forms/Select';
+
+interface StyledNavMenuProps {
+  theme: {
+    colors: {
+      primaryCtaDarker: string
+      lightestBg: string
+      primaryCta: string;
+      lightBg: string;
+      goldenColor: string;
+    };
+    other: {
+      navMenuDropShadow: string;
+    };
+    fonts: {
+      fontFamilySansSerif: string;
+      fontSizeParagraph: string;
+      fontFamilySerif: string;
+    }
+  }
+}
+
+interface NavMenuProps {
+  onClose: () => void,
+  logout: () => void,
+  userName: string,
+  chipsAmount: number,
+  openModal: (...args: any[]) => void,
+  lang: string,
+  setLang: (langOption: string) => void,
+}
 
 const NavMenuWrapper = styled.div`
   position: fixed;
@@ -36,8 +67,8 @@ const StyledNavMenu = styled.div`
   right: 0;
   width: 320px;
   height: 100%;
-  background-color: ${(props) => props.theme.colors.lightestBg};
-  box-shadow: ${(props) => props.theme.other.navMenuDropShadow};
+  background-color: ${(props: StyledNavMenuProps) => props.theme.colors.lightestBg};
+  box-shadow: ${(props: StyledNavMenuProps) => props.theme.other.navMenuDropShadow};
   overflow: hidden;
 
   @media screen and (max-width: 400px) {
@@ -56,20 +87,20 @@ const MenuItem = styled(Link)`
   justify-content: space-between;
   width: 100%;
   text-align: right;
-  font-family: ${(props) => props.theme.fonts.fontFamilySansSerif};
-  color: ${(props) => props.theme.colors.primaryCta} !important;
-  border-bottom: 1px solid ${(props) => props.theme.colors.lightestBg};
-  background-color: ${(props) => props.theme.colors.lightBg} !important;
-  font-size: ${(props) => props.theme.fonts.fontSizeParagraph};
+  font-family: ${(props: StyledNavMenuProps) => props.theme.fonts.fontFamilySansSerif};
+  color: ${(props: StyledNavMenuProps) => props.theme.colors.primaryCta} !important;
+  border-bottom: 1px solid ${(props: StyledNavMenuProps) => props.theme.colors.lightestBg};
+  background-color: ${(props: StyledNavMenuProps) => props.theme.colors.lightBg} !important;
+  font-size: ${(props: StyledNavMenuProps) => props.theme.fonts.fontSizeParagraph};
   font-weight: normal;
 
   &:hover {
-    background-color: ${(props) => props.theme.colors.goldenColor} !important;
+    background-color: ${(props: StyledNavMenuProps) => props.theme.colors.goldenColor} !important;
   }
 
   &:focus {
     outline: none;
-    border-left: 4px solid ${(props) => props.theme.colors.primaryCta};
+    border-left: 4px solid ${(props: StyledNavMenuProps) => props.theme.colors.primaryCta};
   }
 `;
 
@@ -106,7 +137,7 @@ const HorizontalWrapper = styled.div`
 // `;
 
 const SalutationText = styled(Text)`
-  font-family: ${(props) => props.theme.fonts.fontFamilySerif};
+  font-family: ${(props: StyledNavMenuProps) => props.theme.fonts.fontFamilySerif};
   font-size: 1.5rem;
 `;
 
@@ -122,9 +153,9 @@ const NavMenu = ({
   userName,
   chipsAmount,
   openModal,
-  // lang,
-  // setLang,
-}) => {
+  lang,
+  setLang,
+}: NavMenuProps) => {
   const { players } = useContext(globalContext);
   const { getLocalizedString } = useContext(contentContext);
   const { cleanUp } = useContext(socketContext);
@@ -145,8 +176,8 @@ const NavMenu = ({
   return (
     <NavMenuWrapper
       id="wrapper"
-      onClick={(e) => {
-        if (e.target.id === 'wrapper') {
+      onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+        if ((e.target as HTMLElement).id === 'wrapper') {
           onClose();
         }
       }}
@@ -175,12 +206,12 @@ const NavMenu = ({
               {getLocalizedString('shop-coming_soon-modal_heading')}
             </Button>
           </HorizontalWrapper>
-          {/* <HorizontalWrapper>
-            <Select value={lang} onChange={(e) => setLang(e.target.value)}>
+          <HorizontalWrapper>
+            <Select value={lang} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setLang(e.target.value)}>
               <option value="en">English</option>
-              <option value="de">Deutsch</option>
+              <option value="fr">Français</option>
             </Select>
-          </HorizontalWrapper> */}
+          </HorizontalWrapper>
         </MenuHeader>
         <MenuBody>
           <MenuItem
@@ -192,7 +223,7 @@ const NavMenu = ({
           >
             {getLocalizedString('navmenu-menu_item-lobby_txt')}
             <img
-              src={lobbyIcon}
+              src={String(lobbyIcon)}
               alt="Lobby"
               width="25"
               style={{ width: '25px' }}
@@ -207,7 +238,7 @@ const NavMenu = ({
           >
             {getLocalizedString('navmenu-menu_item-dashboard_txt')}
             <img
-              src={userIcon}
+              src={String(userIcon)}
               alt="Dashboard"
               width="25"
               style={{ width: '25px' }}
@@ -222,7 +253,7 @@ const NavMenu = ({
           >
             {getLocalizedString('navmenu-menu_item-news_txt')}
             <img
-              src={newsIcon}
+              src={String(newsIcon)}
               alt="News"
               width="25"
               style={{ width: '25px' }}

@@ -9,6 +9,7 @@ import Text from './components/typography/Text';
 import modalContext from './context/modal/modalContext';
 import config from './clientConfig';
 import GoogleAnalytics from './components/analytics/GoogleAnalytics';
+import { useLocation } from 'react-router-dom';
 
 const App = () => {
   const { isLoading, chipsAmount, setChipsAmount, setIsLoading } = useContext(
@@ -17,6 +18,8 @@ const App = () => {
   const { getLocalizedString } = useContext(contentContext);
   const { openModal, closeModal } = useContext(modalContext);
   const { isLoading: contentIsLoading } = useContext(contentContext);
+
+  const location = useLocation();
 
   function showFreeChipsModal() {
     openModal(
@@ -70,7 +73,7 @@ const App = () => {
       {isLoading || contentIsLoading ? (
         <LoadingScreen />
       ) : (
-        <MainLayout>
+        <MainLayout location={location}>
           <Routes />
         </MainLayout>
       )}

@@ -21,8 +21,8 @@ const LoginPage = () => {
 
   useScrollToTopOnPageLoad();
 
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
 
   if (isLoggedIn) return <Redirect to="/" />;
   return (
@@ -37,10 +37,10 @@ const LoginPage = () => {
         contentCenteredMobile
       >
         <Form
-          onSubmit={(e) => {
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
-            const email = emailRef.current.value;
-            const password = passwordRef.current.value;
+            const email = emailRef.current?.value;
+            const password = passwordRef.current?.value;
 
             console.log('Tentative de connexion avec :', email, password);
 

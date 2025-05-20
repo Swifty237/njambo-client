@@ -3,7 +3,8 @@ import LogoWithText from '../logo/LogoWithText';
 import Logo from '../logo/LogoIcon';
 import Container from '../layout/Container';
 import styled from 'styled-components';
-import { Link, withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Hider from '../layout/Hider';
 import Button from '../buttons/Button';
 import ChipsAmount from '../user/ChipsAmount';
@@ -13,15 +14,34 @@ import Text from '../typography/Text';
 import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
 
+interface StyledNavProps {
+  theme: { colors: { lightestBg: string } }
+}
+
+interface NavbarProps {
+  loggedIn: boolean;
+  chipsAmount: number;
+  location: { pathname: string };
+  openModal: (
+    content: () => React.ReactNode,
+    heading: string,
+    buttonText: string
+  ) => void;
+  openNavMenu: () => void;
+  className?: string;
+}
+
 const StyledNav = styled.nav`
   padding: 1rem 0;
   position: absolute;
   z-index: 99;
   width: 100%;
-  background-color: ${(props) => props.theme.colors.lightestBg};
+  background-color: ${(props: StyledNavProps) => props.theme.colors.lightestBg};
 `;
 
-const Navbar = ({
+
+
+const Navbar: React.FC<NavbarProps> = ({
   loggedIn,
   chipsAmount,
   location,
@@ -98,4 +118,4 @@ const Navbar = ({
     );
 };
 
-export default withRouter(Navbar);
+export default Navbar;

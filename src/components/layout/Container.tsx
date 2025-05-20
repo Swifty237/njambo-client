@@ -1,24 +1,36 @@
 import styled, { css } from 'styled-components';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
+
+interface ContainerProps {
+  contentCenteredMobile?: boolean;
+  fluid?: boolean;
+  fullHeight?: boolean;
+  margin?: string;
+  padding?: string;
+  justifyContent?: string;
+  alignItems?: string;
+  flexDirection?: string;
+  display?: string;
+}
 
 const Container = styled.div`
-  display: ${(props) => props.display};
+  display: ${(props: ContainerProps) => props.display};
   position: relative;
-  flex-direction: ${(props) => props.flexDirection};
-  justify-content: ${(props) => props.justifyContent};
-  align-items: ${(props) => props.alignItems};
+  flex-direction: ${(props: ContainerProps) => props.flexDirection};
+  justify-content: ${(props: ContainerProps) => props.justifyContent};
+  align-items: ${(props: ContainerProps) => props.alignItems};
   max-width: 1440px;
-  margin: ${(props) => props.margin};
-  padding: ${(props) => props.padding};
+  margin: ${(props: ContainerProps) => props.margin};
+  padding: ${(props: ContainerProps) => props.padding};
 
   @media screen and (max-width: 1024px) {
-    justify-content: ${(props) =>
-      props.contentCenteredMobile ? 'center' : 'space-between'};
+    justify-content: ${(props: ContainerProps) =>
+    props.contentCenteredMobile ? 'center' : 'space-between'};
     padding-left: 1rem;
     padding-right: 1rem;
   }
 
-  ${(props) =>
+  ${(props: ContainerProps) =>
     props.fluid &&
     css`
       max-width: 100%;
@@ -26,24 +38,24 @@ const Container = styled.div`
       padding: 0 3rem;
     `}
 
-  ${(props) =>
+  ${(props: ContainerProps) =>
     props.fullHeight &&
     css`
       min-height: 100vh;
     `}
 `;
 
-Container.propTypes = {
-  contentCenteredMobile: PropTypes.bool,
-  fluid: PropTypes.bool,
-  fullHeight: PropTypes.bool,
-  margin: PropTypes.string,
-  padding: PropTypes.string,
-  justifyContent: PropTypes.string,
-  alignItems: PropTypes.string,
-  flexDirection: PropTypes.string,
-  display: PropTypes.string,
-};
+// Container.propTypes = {
+//   contentCenteredMobile: PropTypes.bool,
+//   fluid: PropTypes.bool,
+//   fullHeight: PropTypes.bool,
+//   margin: PropTypes.string,
+//   padding: PropTypes.string,
+//   justifyContent: PropTypes.string,
+//   alignItems: PropTypes.string,
+//   flexDirection: PropTypes.string,
+//   display: PropTypes.string,
+// };
 
 Container.defaultProps = {
   contentCenteredMobile: false,

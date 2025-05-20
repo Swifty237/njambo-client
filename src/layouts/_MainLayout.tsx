@@ -4,7 +4,7 @@ import Footer from '../components/navigation/Footer';
 import WatermarkWrapper from '../components/decoration/WatermarkWrapper';
 import NavMenu from '../components/navigation/NavMenu';
 import CookieBanner from '../components/cookies/CookieBanner';
-import { withRouter } from 'react-router-dom';
+// import { withRouter } from 'react-router-dom';
 import useNavMenu from '../hooks/useNavMenu';
 import useCookie from '../hooks/useCookie';
 import globalContext from '../context/global/globalContext';
@@ -13,15 +13,21 @@ import locaContext from '../context/localization/locaContext';
 import contentContext from '../context/content/contentContext';
 import modalContext from '../context/modal/modalContext';
 
-const MainLayout = ({ children, location }) => {
+
+interface MainLayoutProps {
+  children: React.ReactNode;
+  location: { pathname: string };
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ children, location }) => {
   const { chipsAmount, userName } = useContext(globalContext);
   const { isLoggedIn, logout } = useContext(authContext);
   const { lang, setLang } = useContext(locaContext);
   const { staticPages } = useContext(contentContext);
   const { openModal } = useContext(modalContext);
 
-  const [showNavMenu, openNavMenu, closeNavMenu] = useNavMenu();
-  const [isCookieSet, setCookie] = useCookie('cookies-accepted', true);
+  const { showNavMenu, openNavMenu, closeNavMenu } = useNavMenu();
+  const { isCookieSet, setCookie } = useCookie('cookies-accepted', true);
 
   return (
     <div id="layout-wrapper">
@@ -32,6 +38,7 @@ const MainLayout = ({ children, location }) => {
           openModal={openModal}
           openNavMenu={openNavMenu}
           className="blur-target"
+          location={location}
         />
       )}
       {showNavMenu && (
@@ -61,4 +68,4 @@ const MainLayout = ({ children, location }) => {
   );
 };
 
-export default withRouter(MainLayout);
+export default MainLayout;

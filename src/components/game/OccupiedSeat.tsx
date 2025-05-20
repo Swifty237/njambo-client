@@ -3,14 +3,19 @@ import styled from 'styled-components';
 import userImages from './userImages';
 import { EmptySeat } from './EmptySeat';
 
+interface OccupiedSeatProps {
+  seatNumber: string;
+  hasTurn: boolean;
+}
+
 const StyledOccupiedSeat = styled(EmptySeat)`
   position: relative;
-  background-image: ${({ seatNumber }) => `url(${userImages[seatNumber]})`};
+  background-image: ${({ seatNumber }: OccupiedSeatProps) => `url(${userImages[parseInt(seatNumber)]})`};
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
   padding: 0;
-  border: ${({ hasTurn }) => (hasTurn ? `none` : `5px solid #6297b5`)};
+  border: ${({ hasTurn }: OccupiedSeatProps) => (hasTurn ? `none` : `5px solid #6297b5`)};
   transition: all 0.3s;
   transform-origin: center center;
   -webkit-backface-visibility: hidden;
@@ -109,7 +114,7 @@ const StyledOccupiedSeat = styled(EmptySeat)`
   }
 `;
 
-export const OccupiedSeat = ({ hasTurn, seatNumber }) => (
+export const OccupiedSeat = ({ hasTurn, seatNumber }: OccupiedSeatProps) => (
   <StyledOccupiedSeat
     hasTurn={hasTurn}
     seatNumber={seatNumber}

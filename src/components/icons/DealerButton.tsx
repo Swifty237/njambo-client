@@ -1,7 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 
-const DealerButton = ({ width, height }) => (
+type DealerButtonProps = {
+  width: string;
+  height: string;
+};
+
+const DealerButton = ({ width, height }: DealerButtonProps) => (
   <svg
     width={width}
     height={height}
@@ -34,10 +39,10 @@ const DealerButton = ({ width, height }) => (
   </svg>
 );
 
-DealerButton.propTypes = {
-  width: PropTypes.string,
-  height: PropTypes.string,
-};
+// DealerButton.propTypes = {
+//   width: PropTypes.string,
+//   height: PropTypes.string,
+// };
 
 DealerButton.defaultProps = {
   width: '40',

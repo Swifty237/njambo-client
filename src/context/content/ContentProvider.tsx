@@ -3,6 +3,12 @@ import ContentContext from './contentContext';
 import useContentful from '../../hooks/useContentful';
 import locaContext from '../localization/locaContext';
 
+interface StaticPage {
+  slug: string;
+  title: string;
+  content: string;
+}
+
 const ContentProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
 
   const { lang }: any = useContext(locaContext); // => A typer proprement plus tard
@@ -10,7 +16,7 @@ const ContentProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
   const contentfulClient = useContentful();
 
   const [isLoading, setIsLoading] = useState(true);
-  const [staticPages, setStaticPages] = useState({});
+  const [staticPages, setStaticPages] = useState<StaticPage[]>([]);
   const [localizedStrings, setLocalizedStrings] = useState<Record<string, string>>({});
 
   useEffect(() => {

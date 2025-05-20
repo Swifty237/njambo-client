@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import EyeIcon from '../icons/EyeIcon';
 import styled from 'styled-components';
 
@@ -20,6 +20,7 @@ const StyledShowPasswordButton = styled.div`
 `;
 
 const clickHandler = (ref: React.RefObject<HTMLInputElement>) => {
+  if (!ref.current) return;
   if (ref.current.type === 'password') {
     ref.current.type = 'text';
   } else {
@@ -35,8 +36,8 @@ const ShowPasswordButton: React.FC<ShowPasswordButtonProps> = ({ passwordRef }) 
   );
 };
 
-ShowPasswordButton.propTypes = {
-  clickHandler: PropTypes.func,
-};
+// ShowPasswordButton.propTypes = {
+//   clickHandler: PropTypes.func,
+// };
 
 export default ShowPasswordButton;

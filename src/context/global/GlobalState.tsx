@@ -3,12 +3,12 @@ import GlobalContext from './globalContext';
 
 const GlobalState: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const [id, setId] = useState(null);
-  const [userName, setUserName] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [chipsAmount, setChipsAmount] = useState(null);
-  const [tables, setTables] = useState(null);
-  const [players, setPlayers] = useState(null);
+  const [id, setId] = useState('');
+  const [userName, setUserName] = useState('');
+  const [email, setEmail] = useState('');
+  const [chipsAmount, setChipsAmount] = useState(0);
+  const [tables, setTables] = useState('');
+  const [players, setPlayers] = useState('');
 
   return (
     <GlobalContext.Provider

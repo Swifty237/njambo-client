@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-const offlineContext = createContext();
+const offlineContext = createContext({});
 
 export default offlineContext;

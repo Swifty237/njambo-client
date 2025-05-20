@@ -17,8 +17,14 @@ import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
 import PokerCard from '../components/game/PokerCard';
 import contentContext from '../context/content/contentContext';
+import { RouteComponentProps } from 'react-router-dom';
 
-const Play = ({ history }) => {
+interface CardProps {
+  suit: string,
+  rank: string
+}
+
+const Play: React.FC<RouteComponentProps> = ({ history }) => {
   const { socket } = useContext(socketContext);
   const { openModal } = useContext(modalContext);
   const {
@@ -59,8 +65,8 @@ const Play = ({ history }) => {
       (currentTable.callAmount > currentTable.minBet
         ? setBet(currentTable.callAmount)
         : currentTable.pot > 0
-        ? setBet(currentTable.minRaise)
-        : setBet(currentTable.minBet));
+          ? setBet(currentTable.minRaise)
+          : setBet(currentTable.minBet));
   }, [currentTable]);
 
   return (
@@ -124,7 +130,7 @@ const Play = ({ history }) => {
                 origin="top left"
               >
                 <Seat
-                  seatNumber={1}
+                  seatNumber={'1'}
                   currentTable={currentTable}
                   isPlayerSeated={isPlayerSeated}
                   sitDown={sitDown}
@@ -132,7 +138,7 @@ const Play = ({ history }) => {
               </PositionedUISlot>
               <PositionedUISlot top="-5%" scale="0.55" origin="top center">
                 <Seat
-                  seatNumber={2}
+                  seatNumber={'2'}
                   currentTable={currentTable}
                   isPlayerSeated={isPlayerSeated}
                   sitDown={sitDown}
@@ -145,7 +151,7 @@ const Play = ({ history }) => {
                 origin="top right"
               >
                 <Seat
-                  seatNumber={3}
+                  seatNumber={'3'}
                   currentTable={currentTable}
                   isPlayerSeated={isPlayerSeated}
                   sitDown={sitDown}
@@ -158,7 +164,7 @@ const Play = ({ history }) => {
                 origin="bottom right"
               >
                 <Seat
-                  seatNumber={4}
+                  seatNumber={'4'}
                   currentTable={currentTable}
                   isPlayerSeated={isPlayerSeated}
                   sitDown={sitDown}
@@ -171,7 +177,7 @@ const Play = ({ history }) => {
                 origin="bottom left"
               >
                 <Seat
-                  seatNumber={5}
+                  seatNumber={'5'}
                   currentTable={currentTable}
                   isPlayerSeated={isPlayerSeated}
                   sitDown={sitDown}
@@ -190,8 +196,14 @@ const Play = ({ history }) => {
               >
                 {currentTable.board && currentTable.board.length > 0 && (
                   <>
-                    {currentTable.board.map((card, index) => (
-                      <PokerCard key={index} card={card} />
+                    {currentTable.board.map((card: CardProps, index: number) => (
+                      <PokerCard
+                        key={index}
+                        card={card}
+                        width="7vw"
+                        maxWidth="80px"
+                        minWidth="50px"
+                      />
                     ))}
                   </>
                 )}
@@ -207,7 +219,7 @@ const Play = ({ history }) => {
                       <InfoPill>
                         {
                           currentTable.winMessages[
-                            currentTable.winMessages.length - 1
+                          currentTable.winMessages.length - 1
                           ]
                         }
                       </InfoPill>
@@ -230,11 +242,11 @@ const Play = ({ history }) => {
 
         {currentTable &&
           isPlayerSeated &&
-          currentTable.seats[seatId] &&
-          currentTable.seats[seatId].turn && (
+          currentTable.seats[seatId!] &&
+          currentTable.seats[seatId!].turn && (
             <GameUI
               currentTable={currentTable}
-              seatId={seatId}
+              seatId={seatId!}
               bet={bet}
               setBet={setBet}
               raise={raise}

@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import styled from 'styled-components';
 import Button from '../buttons/Button';
 import { Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import contentContext from '../../context/content/contentContext';
 
 interface StyledCookieBannerProps {
@@ -113,8 +113,8 @@ const CookieBanner = ({ clickHandler, className }: CookieBannerProps) => {
   );
 };
 
-CookieBanner.propTypes = {
-  clickHandler: PropTypes.func.isRequired,
-};
+// CookieBanner.propTypes = {
+//   clickHandler: PropTypes.func.isRequired,
+// };
 
 export default CookieBanner;

@@ -8,22 +8,31 @@ import { ThemeProvider } from 'styled-components';
 import theme from '../styles/theme';
 import Normalize from '../styles/Normalize';
 import GlobalStyles from '../styles/Global';
-import { BrowserRouter } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import OfflineProvider from './offline/OfflineProvider';
 import WebSocketProvider from './websocket/WebsocketProvider';
 import GameState from './game/GameState';
+import { createBrowserHistory } from 'history';
 
-const Providers = ({ children }) => (
-  <BrowserRouter>
+interface ProvidersProps {
+  children: React.ReactNode;
+}
+
+const history = createBrowserHistory();
+
+const Providers = ({ children }: ProvidersProps) => {
+  const location = useLocation();
+
+  return (
     <ThemeProvider theme={theme}>
       <GlobalState>
-        <LocaProvider>
+        <LocaProvider location={location}>
           <ContentProvider>
             <AuthProvider>
               <ModalProvider>
                 <OfflineProvider>
                   <WebSocketProvider>
-                    <GameState>
+                    <GameState history={history}>
                       <Normalize />
                       <GlobalStyles />
                       {children}
@@ -36,7 +45,6 @@ const Providers = ({ children }) => (
         </LocaProvider>
       </GlobalState>
     </ThemeProvider>
-  </BrowserRouter>
-);
-
+  );
+}
 export default Providers;

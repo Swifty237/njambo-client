@@ -28,7 +28,7 @@ const useAuth = () => {
     // eslint-disable-next-line
   }, []);
 
-  const register = async (name, email, password) => {
+  const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
     try {
       const res = await Axios.post(`${SERVER_URI}/api/users`, {
@@ -50,7 +50,7 @@ const useAuth = () => {
     setIsLoading(false);
   };
 
-  const login = async (emailAddress, password) => {
+  const login = async (emailAddress: string, password: string) => {
     setIsLoading(true);
 
     try {
@@ -68,12 +68,12 @@ const useAuth = () => {
       }
     } catch (error) {
       alert(error);
-      console.error(error.response?.data);
+      // console.error(error.response?.data);
     }
     setIsLoading(false);
   };
 
-  const loadUser = async (token) => {
+  const loadUser = async (token: string) => {
     try {
       const res = await Axios.get(`${SERVER_URI}/api/auth`, {
         headers: {
@@ -97,13 +97,13 @@ const useAuth = () => {
   const logout = () => {
     localStorage.removeItem('token');
     setIsLoggedIn(false);
-    setId(null);
-    setUserName(null);
-    setEmail(null);
-    setChipsAmount(null);
+    setId('');
+    setUserName('');
+    setEmail('');
+    setChipsAmount(0);
   };
 
-  return [isLoggedIn, login, logout, register, loadUser];
+  return { isLoggedIn, login, logout, register, loadUser };
 };
 
 export default useAuth;

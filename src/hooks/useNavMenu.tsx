@@ -7,7 +7,7 @@ const useNavMenu = () => {
     document.body.style.overflow = 'hidden';
     Array.from(document.getElementsByClassName('blur-target')).forEach(
       (element) => {
-        element.style.filter = 'blur(4px)';
+        (element as HTMLElement).style.filter = 'blur(4px)';
       },
     );
     setShowNavMenu(true);
@@ -17,13 +17,13 @@ const useNavMenu = () => {
     document.body.style.overflow = 'initial';
     Array.from(document.getElementsByClassName('blur-target')).forEach(
       (element) => {
-        element.style.filter = 'none';
+        (element as HTMLElement).style.filter = 'none';
       },
     );
     setShowNavMenu(false);
   };
 
-  return [showNavMenu, openNavMenu, closeNavMenu];
+  return { showNavMenu, openNavMenu, closeNavMenu };
 };
 
 export default useNavMenu;

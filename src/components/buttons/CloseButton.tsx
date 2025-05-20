@@ -1,14 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import CloseIcon from '../icons/CloseIcon';
 
 interface StyledCloseIconProps {
-  theme: any; // Replace 'any' with your theme type if available
+  theme: { colors: { primaryCtaDarker: string } }
 }
 
 interface CloseButtonProps {
   clickHandler: () => void;
+  autoFocus: boolean;
 }
 
 const StyledCloseIcon = styled.div`
@@ -24,7 +25,7 @@ const StyledCloseIcon = styled.div`
   }
 `;
 
-const CloseButton = ({ clickHandler }: CloseButtonProps) => {
+const CloseButton = ({ clickHandler, autoFocus }: CloseButtonProps) => {
   return (
     <StyledCloseIcon
       onClick={clickHandler}
@@ -38,8 +39,8 @@ const CloseButton = ({ clickHandler }: CloseButtonProps) => {
   );
 };
 
-CloseButton.propTypes = {
-  clickHandler: PropTypes.func,
-};
+// CloseButton.propTypes = {
+//   clickHandler: PropTypes.func,
+// };
 
 export default CloseButton;

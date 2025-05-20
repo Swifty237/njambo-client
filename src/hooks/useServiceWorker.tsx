@@ -1,8 +1,13 @@
 import { useState, useEffect } from 'react';
 import * as serviceWorker from '../serviceWorker';
 
-const useServiceWorker = (callback) => {
-  const [serviceWorkerData, setServiceWorkerData] = useState(null);
+interface ServiceWorkerData {
+  waitingWorker: ServiceWorker | null;
+  newVersionAvailable: boolean;
+};
+
+const useServiceWorker = (callback: () => void) => {
+  const [serviceWorkerData, setServiceWorkerData] = useState<ServiceWorkerData>();
 
   useEffect(() => {
     serviceWorker.register({ onUpdate: onServiceWorkerUpdate });
@@ -15,16 +20,16 @@ const useServiceWorker = (callback) => {
     // eslint-disable-next-line
   }, [serviceWorkerData]);
 
-  const onServiceWorkerUpdate = (registration) =>
+  const onServiceWorkerUpdate = (registration: ServiceWorkerRegistration) =>
     setServiceWorkerData({
       waitingWorker: registration && registration.waiting,
       newVersionAvailable: true,
     });
 
   const updateServiceWorker = () => {
-    const { waitingWorker } = serviceWorkerData;
+    const waitingWorker = serviceWorkerData?.waitingWorker;
     waitingWorker && waitingWorker.postMessage({ type: 'SKIP_WAITING' });
-    setServiceWorkerData({ newVersionAvailable: false });
+    setServiceWorkerData({ newVersionAvailable: false } as ServiceWorkerData);
     window.location.reload();
   };
 

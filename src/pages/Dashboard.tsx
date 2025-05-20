@@ -64,7 +64,7 @@ const Dashboard = () => {
         alignItems="center"
         padding="6rem 2rem 2rem 2rem"
       >
-        <Form onSubmit={(e) => e.preventDefault()}>
+        <Form onSubmit={(e: React.FormEvent) => e.preventDefault()}>
           <HeadingWithLogo textCentered hideIconOnMobile={false}>
             Dashboard
           </HeadingWithLogo>

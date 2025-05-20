@@ -21,9 +21,9 @@ const RegistrationPage = () => {
 
   useScrollToTopOnPageLoad();
 
-  const emailRef = useRef(null);
-  const passwordRef = useRef(null);
-  const nicknameRef = useRef(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
+  const nicknameRef = useRef<HTMLInputElement>(null);
 
   if (isLoggedIn) return <Redirect to="/" />;
   return (
@@ -38,12 +38,12 @@ const RegistrationPage = () => {
         contentCenteredMobile
       >
         <Form
-          onSubmit={(e) => {
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
 
-            const name = nicknameRef.current.value;
-            const email = emailRef.current.value;
-            const password = passwordRef.current.value;
+            const name = nicknameRef.current?.value;
+            const email = emailRef.current?.value;
+            const password = passwordRef.current?.value;
 
             if (
               name &&

@@ -5,14 +5,24 @@ import Text from '../typography/Text';
 import ColoredText from '../typography/ColoredText';
 import contentContext from '../../context/content/contentContext';
 
+interface StyledFooterProps {
+  theme: { colors: { lightestBg: string } }
+}
+
+interface FooterProps {
+  className: string;
+  setLang: (lang: string) => void;
+  staticPages: { slug: string; title: string }[];
+}
+
 const StyledFooter = styled.footer`
   text-align: center;
   padding: 2rem 0;
   font-size: 1rem;
-  background-color: ${(props) => props.theme.colors.lightestBg};
+  background-color: ${(props: StyledFooterProps) => props.theme.colors.lightestBg};
 `;
 
-const Footer = ({ className, setLang, staticPages }) => {
+const Footer: React.FC<FooterProps> = ({ className, setLang, staticPages }) => {
   const { getLocalizedString } = useContext(contentContext);
 
   return (
@@ -33,10 +43,10 @@ const Footer = ({ className, setLang, staticPages }) => {
           href="!"
           onClick={(e) => {
             e.preventDefault();
-            setLang('de');
+            setLang('fr');
           }}
         >
-          DE
+          FR
         </a>
       </Text>
       <Text textAlign="center" fontSize="0.9rem">

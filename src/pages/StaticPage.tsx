@@ -7,7 +7,12 @@ import Markdown from 'react-remarkable';
 import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
 import contentContext from '../context/content/contentContext';
 
-const StaticPage = ({ title, content }) => {
+interface StaticPageProps {
+  title: string;
+  content: string;
+}
+
+const StaticPage: React.FC<StaticPageProps> = ({ title, content }) => {
   const { getLocalizedString } = useContext(contentContext);
   useScrollToTopOnPageLoad();
 

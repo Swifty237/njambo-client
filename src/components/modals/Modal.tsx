@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import CloseButton from '../buttons/CloseButton';
 import HeadingWithLogo from '../typography/HeadingWithLogo';
 import Button from '../buttons/Button';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Text from '../typography/Text';
 
@@ -82,7 +82,13 @@ const IconWrapper = styled.div`
   right: 1.5rem;
 `;
 
-const Modal: React.FC<ModalProps> = ({ children, headingText, btnText, onClose, onBtnClicked }) => {
+const Modal: React.FC<ModalProps> = ({
+  children,
+  headingText = 'Modal',
+  btnText = 'Call to Action',
+  onClose,
+  onBtnClicked,
+}) => {
   const modalRoot = document.getElementById('modal');
   if (!modalRoot) return null;
 
@@ -97,7 +103,7 @@ const Modal: React.FC<ModalProps> = ({ children, headingText, btnText, onClose, 
     >
       <StyledModal>
         <IconWrapper>
-          <CloseButton clickHandler={onClose} />
+          <CloseButton clickHandler={onClose} autoFocus />
         </IconWrapper>
         <ModalContent>
           <HeadingWithLogo textCentered hideIconOnMobile={false}>
@@ -123,12 +129,6 @@ const Modal: React.FC<ModalProps> = ({ children, headingText, btnText, onClose, 
   );
 };
 
-Modal.propTypes = {
-  headingText: PropTypes.string,
-  btnText: PropTypes.string,
-  onClose: PropTypes.func.isRequired,
-  onBtnClicked: PropTypes.func.isRequired,
-};
 
 // Modal.defaultProps = {
 //   headingText: 'Modal',

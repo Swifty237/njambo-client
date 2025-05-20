@@ -4,7 +4,19 @@ import Button from '../buttons/Button';
 import { BetSlider } from './BetSlider';
 import { UIWrapper } from './UIWrapper';
 
-export const GameUI = ({
+type GameUIProps = {
+  currentTable: any; // Replace 'any' with the actual type if available
+  seatId: string;
+  bet: number;
+  setBet: (bet: number) => void;
+  raise: (amount: number) => void;
+  standUp: () => void;
+  fold: () => void;
+  check: () => void;
+  call: () => void;
+};
+
+export const GameUI: React.FC<GameUIProps> = ({
   currentTable,
   seatId,
   bet,
@@ -21,7 +33,7 @@ export const GameUI = ({
     <UIWrapper>
       <BetSlider
         currentTable={currentTable}
-        seatId={seatId}
+        seatId={parseInt(seatId)}
         bet={bet}
         setBet={setBet}
       />
@@ -55,8 +67,8 @@ export const GameUI = ({
       >
         {getLocalizedString('game_ui_call')}{' '}
         {currentTable.callAmount &&
-        currentTable.seats[seatId].bet < currentTable.callAmount &&
-        currentTable.callAmount <= currentTable.seats[seatId].stack
+          currentTable.seats[seatId].bet < currentTable.callAmount &&
+          currentTable.callAmount <= currentTable.seats[seatId].stack
           ? currentTable.callAmount - currentTable.seats[seatId].bet
           : ''}
       </Button>
