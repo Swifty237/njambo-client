@@ -19,12 +19,12 @@ const HomePage = () => {
           inset: 0,
           pointerEvents: 'none',
           zIndex: 0,
-          width: "80%",
-          height: "80%",
+          width: "77%",
+          height: "77%",
           display: "flex",
           justifySelf: "center",
           alignSelf: "center",
-          marginBottom: "10vw"
+          borderRadius: "2vw"
         }}
       />
       <Landing />
