@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-// import PropTypes from 'prop-types';
 
 interface CenteredBlockProps {
   direction: 'column' | 'row';
@@ -14,10 +13,6 @@ const CenteredBlock = styled.section`
   justify-content: center;
   overflow-x: hidden;
 `;
-
-// CenteredBlock.propTypes = {
-//   direction: PropTypes.oneOf(['column', 'row']),
-// };
 
 CenteredBlock.defaultProps = {
   direction: 'column',

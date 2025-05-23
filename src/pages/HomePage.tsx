@@ -6,7 +6,30 @@ import authContext from '../context/auth/authContext';
 const HomePage = () => {
   const { isLoggedIn } = useContext(authContext);
 
-  if (!isLoggedIn) return <Landing />;
+  if (!isLoggedIn) return (
+    <div>
+      <div
+        style={{
+          backgroundImage: "url('/img/Flag_of_Cameroon.png')",
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          opacity: 0.08,
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          zIndex: 0,
+          width: "80%",
+          height: "80%",
+          display: "flex",
+          justifySelf: "center",
+          alignSelf: "center",
+          marginBottom: "10vw"
+        }}
+      />
+      <Landing />
+    </div>
+  );
   else return <MainPage />;
 };
 

@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-// import PropTypes from 'prop-types';
 
 interface ContainerProps {
   contentCenteredMobile?: boolean;
@@ -44,18 +43,6 @@ const Container = styled.div`
       min-height: 100vh;
     `}
 `;
-
-// Container.propTypes = {
-//   contentCenteredMobile: PropTypes.bool,
-//   fluid: PropTypes.bool,
-//   fullHeight: PropTypes.bool,
-//   margin: PropTypes.string,
-//   padding: PropTypes.string,
-//   justifyContent: PropTypes.string,
-//   alignItems: PropTypes.string,
-//   flexDirection: PropTypes.string,
-//   display: PropTypes.string,
-// };
 
 Container.defaultProps = {
   contentCenteredMobile: false,

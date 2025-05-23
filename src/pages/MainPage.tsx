@@ -146,19 +146,23 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
         {getLocalizedString('main_page-salutation')}{' '}
         <ColoredText>{userName}!</ColoredText>
       </WelcomeHeading>
+
       <MainMenuWrapper>
+
         <MainMenuCard onClick={() => history.push('/play')}>
           <img src={String(kingImg)} alt="Join Table" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-join_table').toUpperCase()}
           </Heading>
         </MainMenuCard>
+
         <MainMenuCard onClick={() => history.push('/play')}>
           <img src={String(queen2Img)} alt="Quick Game" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-quick_game').toUpperCase()}
           </Heading>
         </MainMenuCard>
+
         <MainMenuCard
           onClick={() => {
             openModal(
@@ -177,19 +181,17 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
             {getLocalizedString('main_page-open_shop').toUpperCase()}
           </Heading>
         </MainMenuCard>
+
         <MainMenuCard onClick={() => history.push('/game-rules')}>
           <img src={String(queenImg)} alt="Rules" />
           <Heading as="h3" headingClass="h5" textCentered>
             {getLocalizedString('main_page-open_rules').toUpperCase()}
           </Heading>
         </MainMenuCard>
+
       </MainMenuWrapper>
     </Container>
   );
 };
-
-// MainPage.propTypes = {
-//   userName: PropTypes.string,
-// };
 
 export default withRouter(MainPage);

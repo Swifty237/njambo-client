@@ -4,7 +4,6 @@ import Footer from '../components/navigation/Footer';
 import WatermarkWrapper from '../components/decoration/WatermarkWrapper';
 import NavMenu from '../components/navigation/NavMenu';
 import CookieBanner from '../components/cookies/CookieBanner';
-// import { withRouter } from 'react-router-dom';
 import useNavMenu from '../hooks/useNavMenu';
 import useCookie from '../hooks/useCookie';
 import globalContext from '../context/global/globalContext';

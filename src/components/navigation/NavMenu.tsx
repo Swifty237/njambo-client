@@ -128,14 +128,6 @@ const HorizontalWrapper = styled.div`
   }
 `;
 
-// const VerticalWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   margin: 1rem auto;
-//   justify-content: center;
-//   align-items: flex-start;
-// `;
-
 const SalutationText = styled(Text)`
   font-family: ${(props: StyledNavMenuProps) => props.theme.fonts.fontFamilySerif};
   font-size: 1.5rem;

@@ -23,11 +23,6 @@ const ColoredText = styled.span`
   font-weight: ${(props: ColoredTextProps) => (props.emphazised ? 'bold' : 'normal')};
 `;
 
-// ColoredText.propTypes = {
-//   emphazised: PropTypes.bool,
-//   secondary: PropTypes.bool,
-// };
-
 ColoredText.defaultProps = {
   emphazised: false,
   secondary: false,

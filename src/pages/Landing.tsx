@@ -25,9 +25,11 @@ const Landing = () => {
   return (
     <Container fullHeight contentCenteredMobile padding="4rem 2rem 2rem 2rem">
       <CenteredBlockWithAnimation>
+
         <Hider hideOnDesktop>
-          <MobileIllustration src={illustrationMobile} alt="Vintage Poker" />
+          <MobileIllustration src={illustrationMobile} alt="Njambo Poker" />
         </Hider>
+
         <Markdown>
           <MarketingHeadline
             as="h2"
@@ -49,24 +51,20 @@ const Landing = () => {
             }}
           />
         </Markdown>
+
         <Wrapper>
-          <Button
-            as={Link}
-            to="/register"
-            large
-            primary
-            fullWidthOnMobile
-            autoFocus
-          >
+          <Button as={Link} to="/register" large primary fullWidthOnMobile autoFocus>
             {getLocalizedString('navbar-register_btn')}
           </Button>
+
           <Button as={Link} to="/login" large secondary fullWidthOnMobile>
             {getLocalizedString('navbar-login_btn')}
           </Button>
         </Wrapper>
       </CenteredBlockWithAnimation>
+
       <Hider hideOnMobile>
-        <DesktopIllustration src={illustrationDesktop} alt="Vintage Poker" />
+        <DesktopIllustration src={illustrationDesktop} alt="Njambo Poker" />
       </Hider>
     </Container>
   );

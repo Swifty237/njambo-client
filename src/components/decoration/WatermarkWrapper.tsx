@@ -8,11 +8,13 @@ interface WatermarkWrapperProps {
 }
 
 const WatermarkWrapper: React.FC<WatermarkWrapperProps> = ({ className }) => (
-  <div className={className}>
-    <WatermarkLogo />
-    <Hider hideOnMobile>
-      <WatermarkText />
-    </Hider>
+  <div className={`${className} relative`}>
+    <div className="relative z-10">
+      <WatermarkLogo />
+      <Hider hideOnMobile>
+        <WatermarkText />
+      </Hider>
+    </div>
   </div>
 );
 

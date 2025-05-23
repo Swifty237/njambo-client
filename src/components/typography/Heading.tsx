@@ -1,4 +1,3 @@
-// import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 interface StyledHeadingProps {
@@ -21,12 +20,6 @@ const Heading = styled.h1`
     props.textCenteredOnMobile || props.textCentered ? 'center' : 'left'};
   }
 `;
-
-// Heading.propTypes = {
-//   headingClass: PropTypes.oneOf(['h1', 'h2', 'h3', 'h4', 'h5', 'h6']),
-//   textCentered: PropTypes.bool,
-//   textCenteredOnMobile: PropTypes.bool,
-// };
 
 Heading.defaultProps = {
   textCentered: false,

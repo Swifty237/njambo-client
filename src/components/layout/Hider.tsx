@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-// import PropTypes from 'prop-types';
 
 interface HiderProps {
   hideOnDesktop: boolean,
@@ -27,10 +26,5 @@ const Hider = styled.div`
       }
     `}
 `;
-
-// Hider.propTypes = {
-//   hideOnDesktop: PropTypes.bool,
-//   hideOnMobile: PropTypes.bool,
-// };
 
 export default Hider;
