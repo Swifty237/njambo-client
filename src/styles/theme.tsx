@@ -9,8 +9,8 @@ const theme = {
     secondaryCtaDarkest: 'hsl(162, 85%, 35%)',
     // Secondary Brand Colors
     darkBg: 'hsl(43, 100%, 60%)',
-    lightBg: 'hsl(43, 40%, 81%)',
-    lightestBg: 'hsl(43, 40%, 86%)',
+    lightBg: 'hsl(43, 65%, 81%)',
+    lightestBg: 'hsl(23, 0%, 86%)',
     // Font Colors
     fontColorLight: 'hsl(40, 100%, 99%)',
     fontColorDark: 'hsl(36, 71%, 3%)',
@@ -19,7 +19,7 @@ const theme = {
     playingCardBg: 'hsl(49, 63%, 92%)',
     playingCardBgLighter: 'hsl(49, 63%, 94%)',
     goldenColorDarker: 'hsl(43, 100%, 60%)',
-    goldenColor: 'hsl(43, 100%, 65%)',
+    goldenColor: 'hsl(0, 0.00%, 100.00%)',
     dangerColorLighter: 'hsl(0, 100%, 56%)',
     dangerColor: 'hsl(0, 100%, 46%)',
   },
