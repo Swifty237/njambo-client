@@ -51,7 +51,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, location }) => {
           openModal={openModal}
         ></NavMenu>
       )}
-      <main className="blur-target">{children}</main>
+      <main className="blur-target">
+        {children}
+      </main>
       <WatermarkWrapper className="blur-target" />
       {!location.pathname.includes('/play') && (
         <Footer

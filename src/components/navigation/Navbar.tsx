@@ -33,7 +33,7 @@ interface NavbarProps {
 
 const StyledNav = styled.nav`
   padding: 1rem 0;
-  position: absolute;
+  position: fixed;
   z-index: 99;
   width: 100%;
   background-color: ${(props: StyledNavProps) => props.theme.colors.lightestBg};
@@ -68,6 +68,23 @@ const Navbar: React.FC<NavbarProps> = ({
     return (
       <StyledNav className={className}>
         <Container contentCenteredMobile>
+          <div
+            style={{
+              backgroundImage: "url('/img/Flag_of_Cameroon.png')",
+              backgroundRepeat: 'no-repeat',
+              backgroundPosition: 'center',
+              backgroundSize: 'cover',
+              opacity: 0.05,
+              position: 'absolute',
+              inset: 0,
+              pointerEvents: 'none',
+              zIndex: 0,
+              width: "75vw",
+              height: "38vw",
+              top: "2.8vw",
+              borderRadius: "10px"
+            }}
+          />
           <Link to="/">
             <LogoWithText />
           </Link>
