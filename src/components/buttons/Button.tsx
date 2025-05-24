@@ -160,13 +160,4 @@ const Button = styled.button`
   }
 `;
 
-// Button.propTypes = {
-//   primary: PropTypes.bool,
-//   secondary: PropTypes.bool,
-//   small: PropTypes.bool,
-//   large: PropTypes.bool,
-//   fullWidth: PropTypes.bool,
-//   fullWidthOnMobile: PropTypes.bool,
-// };
-
 export default Button;

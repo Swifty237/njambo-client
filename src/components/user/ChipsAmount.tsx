@@ -21,7 +21,6 @@ const Wrapper = styled.div`
   display: inline-block;
 
   & ${Input} {
-    cursor: pointer;
     text-align: right;
     padding: 0.5rem 1rem 0.5rem 2rem;
     border-radius: ${(props: WrapperProps) => props.theme.other.stdBorderRadius};
@@ -56,10 +55,5 @@ const ChipsAmount: React.FC<ChipsAmountProps> = ({ chipsAmount, clickHandler }) 
     </Wrapper>
   );
 };
-
-// ChipsAmount.propTypes = {
-//   chipsAmount: PropTypes.number,
-//   clickHandler: PropTypes.func,
-// };
 
 export default ChipsAmount;

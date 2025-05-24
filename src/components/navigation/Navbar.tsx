@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import Hider from '../layout/Hider';
 import Button from '../buttons/Button';
 import ChipsAmount from '../user/ChipsAmount';
+import RealChipsAmount from '../user/RealChipsAmount';
 import HamburgerButton from '../buttons/HamburgerButton';
 import Spacer from '../layout/Spacer';
 import Text from '../typography/Text';
@@ -68,7 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({
     return (
       <StyledNav className={className}>
         <Container contentCenteredMobile>
-          <div
+          {/* <div
             style={{
               backgroundImage: "url('/img/Flag_of_Cameroon.png')",
               backgroundRepeat: 'no-repeat',
@@ -78,13 +79,13 @@ const Navbar: React.FC<NavbarProps> = ({
               position: 'absolute',
               inset: 0,
               pointerEvents: 'none',
-              zIndex: 0,
               width: "75vw",
               height: "38vw",
               top: "2.8vw",
-              borderRadius: "10px"
+              borderRadius: "10px",
+              zIndex: -1
             }}
-          />
+          /> */}
           <Link to="/">
             <LogoWithText />
           </Link>
@@ -119,15 +120,38 @@ const Navbar: React.FC<NavbarProps> = ({
             </Hider>
           </Link>
           <Spacer>
-            <ChipsAmount
-              chipsAmount={chipsAmount}
-              clickHandler={openShopModal}
-            />
-            <Hider hideOnMobile>
+            <div>
+              <ChipsAmount
+                chipsAmount={chipsAmount}
+                clickHandler={openShopModal}
+              />
+              <span style={{
+                marginLeft: '3px',
+                color: 'hsl(162, 100%, 28%)'
+              }}>
+                Argent fictif
+              </span>
+            </div>
+
+            <div>
+              <RealChipsAmount
+                chipsAmount={chipsAmount}
+                clickHandler={openShopModal}
+              />
+              <span style={{
+                marginLeft: '3px',
+                color: 'hsl(0, 100%, 46%)'
+              }}>
+                Argent réel
+              </span>
+            </div>
+
+
+            {/* <Hider hideOnMobile>
               <Button to="/" primary small onClick={openShopModal}>
                 {getLocalizedString('navbar-buychips_btn')}
               </Button>
-            </Hider>
+            </Hider> */}
             <HamburgerButton clickHandler={openNavMenu} />
           </Spacer>
         </Container>

@@ -4,7 +4,7 @@ import HamburgerIcon from '../icons/HamburgerIcon';
 import styled from 'styled-components';
 
 interface StyledHamburgerButtonProps {
-  theme: any; // Replace 'any' with your theme type if available
+  theme: { colors: { primaryCtaDarker: string } }
 }
 
 interface HamburgerButtonProps {
@@ -37,9 +37,5 @@ const HamburgerButton = ({ clickHandler }: HamburgerButtonProps) => {
     </StyledHamburgerButton>
   );
 };
-
-// HamburgerButton.propTypes = {
-//   clickHandler: PropTypes.func,
-// };
 
 export default HamburgerButton;

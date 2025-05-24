@@ -195,7 +195,7 @@ const Normalize = createGlobalStyle`
         text-shadow: none !important;
       }
       &:after {
-        background: transparent !important;
+       
         color: #000 !important;
         box-shadow: none !important;
         text-shadow: none !important;

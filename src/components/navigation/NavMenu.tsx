@@ -5,11 +5,11 @@ import Button from '../buttons/Button';
 import Text from '../typography/Text';
 import ColoredText from '../typography/ColoredText';
 import ChipsAmount from '../user/ChipsAmount';
+import RealChipsAmount from '../user/RealChipsAmount';
 import { Link } from 'react-router-dom';
-// import { Select } from '../forms/Select';
-import lobbyIcon from '../../assets/icons/lobby-icon.svg';
-import newsIcon from '../../assets/icons/news-icon.svg';
-import userIcon from '../../assets/icons/user-icon.svg';
+import lobbyIcon from '../../assets/icons/lobby-icon.png';
+import newsIcon from '../../assets/icons/news-icon.png';
+import userIcon from '../../assets/icons/user-icon.png';
 import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
 import socketContext from '../../context/websocket/socketContext';
@@ -178,33 +178,65 @@ const NavMenu = ({
         <IconWrapper>
           <CloseButton clickHandler={onClose} autoFocus />
         </IconWrapper>
+
         <MenuHeader>
           <SalutationText textAlign="left">
             {getLocalizedString('main_page-salutation')}
             <br />
             <ColoredText>{userName}!</ColoredText>
           </SalutationText>
-          {players && (
-            <SalutationText textAlign="left">
-              Online: <ColoredText>{players.length}</ColoredText>
-            </SalutationText>
-          )}
+
+          <HorizontalWrapper>
+            {players && (
+              <SalutationText textAlign="left">
+                Online: <ColoredText>{players.length}</ColoredText>
+              </SalutationText>
+            )}
+
+            <Button onClick={openShopModal} small primary>
+              {getLocalizedString('shop-coming_soon-modal_heading')}
+            </Button>
+          </HorizontalWrapper>
+
+
           <HorizontalWrapper>
             <ChipsAmount
               chipsAmount={chipsAmount}
               clickHandler={openShopModal}
             />
-            <Button onClick={openShopModal} small primary>
-              {getLocalizedString('shop-coming_soon-modal_heading')}
-            </Button>
+
+            <span style={{
+              marginLeft: '3px',
+              color: 'hsl(162, 100%, 28%)'
+            }}>
+              Argent fictif
+            </span>
           </HorizontalWrapper>
+
           <HorizontalWrapper>
-            <Select value={lang} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setLang(e.target.value)}>
+            <RealChipsAmount
+              chipsAmount={chipsAmount}
+              clickHandler={openShopModal}
+            />
+
+            <span style={{
+              marginLeft: '3px',
+              color: 'hsl(0, 100%, 46%)'
+            }}>
+              Argent réel
+            </span>
+          </HorizontalWrapper>
+
+
+          <HorizontalWrapper>
+            <Select
+              value={lang} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setLang(e.target.value)}>
               <option value="en">English</option>
               <option value="fr">Français</option>
             </Select>
           </HorizontalWrapper>
         </MenuHeader>
+
         <MenuBody>
           <MenuItem
             as={Link}
