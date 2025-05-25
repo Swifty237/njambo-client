@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import LogoWithText from '../logo/LogoWithText';
-import Logo from '../logo/LogoIcon';
+// import Logo from '../logo/LogoIcon';
 import Container from '../layout/Container';
 import styled from 'styled-components';
 // import { withRouter } from 'react-router-dom';
@@ -112,15 +112,12 @@ const Navbar: React.FC<NavbarProps> = ({
       <StyledNav className={className}>
         <Container>
           <Link to="/">
-            <Hider hideOnMobile>
-              <LogoWithText />
-            </Hider>
-            <Hider hideOnDesktop>
-              <Logo />
-            </Hider>
+            <LogoWithText />
           </Link>
+
           <Spacer>
-            <div>
+
+            <Hider hideOnMobile>
               <ChipsAmount
                 chipsAmount={chipsAmount}
                 clickHandler={openShopModal}
@@ -131,9 +128,9 @@ const Navbar: React.FC<NavbarProps> = ({
               }}>
                 Argent fictif
               </span>
-            </div>
+            </Hider>
 
-            <div>
+            <Hider hideOnMobile>
               <RealChipsAmount
                 chipsAmount={chipsAmount}
                 clickHandler={openShopModal}
@@ -144,7 +141,7 @@ const Navbar: React.FC<NavbarProps> = ({
               }}>
                 Argent réel
               </span>
-            </div>
+            </Hider>
 
 
             {/* <Hider hideOnMobile>

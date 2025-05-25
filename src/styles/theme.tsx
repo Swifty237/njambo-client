@@ -11,6 +11,7 @@ const theme = {
     darkBg: 'hsl(43, 100%, 60%)',
     lightBg: 'hsla(162, 85%, 45%, 0.75)',
     lightestBg: 'hsl(43, 0%, 100%)',
+    lightestTransparentBg: 'hsla(43, 0%, 100%, 0)',
     // Font Colors
     fontColorLight: 'hsl(40, 100%, 99%)',
     fontColorDark: 'hsl(36, 71%, 3%)',

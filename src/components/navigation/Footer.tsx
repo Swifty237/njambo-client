@@ -6,7 +6,7 @@ import ColoredText from '../typography/ColoredText';
 import contentContext from '../../context/content/contentContext';
 
 interface StyledFooterProps {
-  theme: { colors: { lightestBg: string } }
+  theme: { colors: { lightestTransparentBg: string } }
 }
 
 interface FooterProps {
@@ -19,7 +19,7 @@ const StyledFooter = styled.footer`
   text-align: center;
   padding: 2rem 0;
   font-size: 1rem;
-  background-color: ${(props: StyledFooterProps) => props.theme.colors.lightestBg};
+  background-color: ${(props: StyledFooterProps) => props.theme.colors.lightestTransparentBg};
 `;
 
 const Footer: React.FC<FooterProps> = ({ className, setLang, staticPages }) => {

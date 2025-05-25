@@ -72,6 +72,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
   return (
     <>
       <RotateDevicePrompt />
+
       <Container fullHeight>
         {currentTable && (
           <>
@@ -85,6 +86,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                 {getLocalizedString('game_leave-table-btn')}
               </Button>
             </PositionedUISlot>
+
             {!isPlayerSeated && (
               <PositionedUISlot
                 bottom="1.5vh"
@@ -119,6 +121,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
             )}
           </>
         )}
+
         <PokerTableWrapper>
           <PokerTable />
           {currentTable && (
@@ -136,6 +139,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   sitDown={sitDown}
                 />
               </PositionedUISlot>
+
               <PositionedUISlot top="-5%" scale="0.55" origin="top center">
                 <Seat
                   seatNumber={'2'}
@@ -144,6 +148,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   sitDown={sitDown}
                 />
               </PositionedUISlot>
+
               <PositionedUISlot
                 top="-5%"
                 right="2%"
@@ -157,6 +162,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   sitDown={sitDown}
                 />
               </PositionedUISlot>
+
               <PositionedUISlot
                 bottom="15%"
                 right="2%"
@@ -170,6 +176,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   sitDown={sitDown}
                 />
               </PositionedUISlot>
+
               <PositionedUISlot
                 bottom="15%"
                 left="0"
@@ -183,6 +190,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   sitDown={sitDown}
                 />
               </PositionedUISlot>
+
               <PositionedUISlot
                 width="100%"
                 origin="center center"
@@ -208,6 +216,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   </>
                 )}
               </PositionedUISlot>
+
               <PositionedUISlot bottom="8%" scale="0.60" origin="bottom center">
                 {messages && messages.length > 0 && (
                   <>
@@ -227,6 +236,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   </>
                 )}
               </PositionedUISlot>
+
               <PositionedUISlot
                 bottom="25%"
                 scale="0.60"
