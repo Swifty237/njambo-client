@@ -21,6 +21,7 @@ import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
 import DealerButton from '../icons/DealerButton';
 import { StyledSeat } from './StyledSeat';
+import { PlayedCards } from './PlayedCards';
 
 interface Player {
   name: string;
@@ -68,41 +69,121 @@ interface SeatProps {
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
-  const { standUp, seatId, rebuy } = useContext(gameContext);
+  const { standUp, seatId, rebuy, injectDebugHand } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
-  // const seat = currentTable.seats[2];
   const maxBuyin = currentTable.limit;
   const minBuyIn = currentTable.minBet * 2 * 10;
 
-  const handExample = [{
-    suit: "spare",
-    rank: "9"
-  }, {
-    suit: "heart",
-    rank: "10"
-  }]
-
-  const positionElement = (id: string | null) => {
+  const getPosition = (id: string | null) => {
     switch (id) {
       case '1':
         return {
           top: "2vh",
-          left: "4vw"
+          left: "6vw"
         };
+      case '2':
+        return {
+          top: "15vh",
+        };
+      case '3':
+        return {
+          top: "2vh",
+          right: "6vw"
+        };
+      case '4':
+        return {
+          bottom: "15vh",
+        };
+      default:
+        return {};
+    }
+  }
+
+  const getCardsPosition = (id: string | null) => {
+
+    if (id === "1" || id === "3") {
+      return {
+        top: "5.5vh",
+      }
+    } else {
+      return {
+        left: "4.7vh",
+      }
+    }
+  }
+
+  const getPlayedCardsPosition = (id: string | null) => {
+    switch (id) {
+      case '1':
+        if (seat.hand.length === 1) {
+          return {
+            top: "-7vh",
+            left: "8vw"
+          };
+        } else if (seat.hand.length === 2) {
+          return {
+            top: "-7vh",
+            left: "7vw"
+          };
+        } else if (seat.hand.length === 3) {
+          return {
+            top: "-7vh",
+            left: "6vw"
+          };
+        } else if (seat.hand.length === 4) {
+          return {
+            top: "-7vh",
+            left: "5vw"
+          };
+        } else if (seat.hand.length === 5) {
+          return {
+            top: "-7vh",
+            left: "4vw"
+          };
+        } else {
+          return
+        }
+
       case '2':
         return {
           top: "6vh",
         };
       case '3':
-        return {
-          top: "2vh",
-          right: "4vw"
-        };
+
+        if (seat.hand.length === 1) {
+          return {
+            top: "-7vh",
+            right: "8vw"
+          };
+        } else if (seat.hand.length === 2) {
+          return {
+            top: "-7vh",
+            right: "7vw"
+          };
+        } else if (seat.hand.length === 3) {
+          return {
+            top: "-7vh",
+            right: "6vw"
+          };
+        } else if (seat.hand.length === 4) {
+          return {
+            top: "-7vh",
+            right: "5vw"
+          };
+        } else if (seat.hand.length === 5) {
+          return {
+            top: "-7vh",
+            right: "4vw"
+          };
+        } else {
+          return
+        }
+
       case '4':
         return {
-          top: "-9vh",
+          bottom: "6vh",
         };
       default:
         return {};
@@ -174,7 +255,20 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   }, [currentTable]);
 
   return (
+
     <StyledSeat>
+      <Button
+        $small
+        onClick={() => injectDebugHand(seatNumber)}
+        style={{
+          position: "absolute",
+          top: "-150px",
+          left: "250px"
+        }}
+      >
+        Injecter main debug
+      </Button>
+
       {!seat ? (
         <>
           {!isPlayerSeated ? (
@@ -235,6 +329,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           )}
         </>
       ) : (
+
         <PositionedUISlot
           style={{
             display: 'flex',
@@ -288,11 +383,10 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
 
           <PositionedUISlot>
             <OccupiedSeat seatNumber={seatNumber} hasTurn={seat.turn} />
-            {/* <OccupiedSeat seatNumber={"2"} hasTurn={true} /> */}
           </PositionedUISlot>
 
           <PositionedUISlot
-            left="4vh"
+            {...getCardsPosition(seatId)}
             style={{
               display: 'flex',
               textAlign: 'center',
@@ -303,7 +397,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           >
             <Hand>
               {seat.hand &&
-                // handExample.map((card: CardProps, index: number) => (
                 seat.hand.map((card: CardProps, index: number) => (
                   <PokerCard
                     key={index}
@@ -327,7 +420,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           )}
 
           <PositionedUISlot
-            {...positionElement(seatId)}
+            {...getPosition(seatId)}
             style={{ minWidth: '150px', zIndex: '55' }}
             origin="bottom center"
           >
@@ -337,8 +430,33 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             )}
           </PositionedUISlot>
 
+          <PositionedUISlot
+            {...getPlayedCardsPosition(seatId)}
+            style={{
+              display: 'flex',
+              textAlign: 'center',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+            origin="center right"
+          >
+            <PlayedCards>
+              {seat.hand &&
+                seat.hand.map((card: CardProps, index: number) => (
+                  <PokerCard
+                    key={index}
+                    card={card}
+                    width="5vw"
+                    maxWidth="60px"
+                    minWidth="30px"
+                  />
+                ))}
+            </PlayedCards>
+
+          </PositionedUISlot>
         </PositionedUISlot>
       )}
+
     </StyledSeat>
   );
 };

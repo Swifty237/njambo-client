@@ -51,6 +51,7 @@ interface GameContextType {
     call: () => void,
     raise: (amount: number) => void,
     rebuy: (tableId: string, seatId: string, amount: number) => void,
+    injectDebugHand: (seatNumber: string) => void
 }
 
 const gameContext = createContext<GameContextType>({
@@ -68,6 +69,7 @@ const gameContext = createContext<GameContextType>({
     call: () => { },
     raise: () => { },
     rebuy: () => { },
+    injectDebugHand: () => { }
 });
 
 export default gameContext;

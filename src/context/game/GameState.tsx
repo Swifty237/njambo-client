@@ -132,6 +132,34 @@ const GameState = ({ history, children }: GameStateProps) => {
     // eslint-disable-next-line
   }, [socket]);
 
+  const injectDebugHand = (seatNumber: string) => {
+    setCurrentTable((prevTable) => {
+      if (!prevTable) return null;
+
+      // Copie profonde pour éviter mutation
+      const updatedSeats = {
+        ...prevTable.seats,
+        [seatNumber]: {
+          ...prevTable.seats[seatNumber],
+          hand: [
+            { suit: 'h', rank: '8' },
+            { suit: 's', rank: '10' },
+            { suit: 'c', rank: '10' },
+            { suit: 'd', rank: '5' },
+            { suit: 's', rank: '3' },
+          ],
+        },
+      };
+
+      const updatedTable: Table = {
+        ...prevTable,
+        seats: updatedSeats,
+      };
+
+      return updatedTable;
+    });
+  };
+
   const joinTable = (tableId: string) => {
     console.log(JOIN_TABLE, tableId);
     socket.emit(JOIN_TABLE, tableId);
@@ -210,6 +238,7 @@ const GameState = ({ history, children }: GameStateProps) => {
         call,
         raise,
         rebuy,
+        injectDebugHand
       }}
     >
       {children}
