@@ -1,4 +1,46 @@
-const theme = {
+export interface ThemeProps {
+  colors: {
+    primaryCta: string;
+    secondaryCta: string;
+    lightBg: string;
+    lightestBg: string;
+    darkBg: string;
+    fontColorLight: string;
+    fontColorDark: string;
+    primaryCtaDarker: string;
+    secondaryCtaDarker: string;
+    secondaryCtaDarkest: string;
+    playingCardBg: string;
+    playingCardBgLighter: string;
+    goldenColorDarker: string;
+    goldenColor: string;
+    dangerColorLighter: string;
+    dangerColor: string;
+    lightestTransparentBg: string;
+    fontColorDarkLighter: string;
+  };
+  fonts: {
+    fontSizeParagraph: string;
+    fontSizeRoot: string;
+    fontSizeRootMobile: string;
+    fontFamilySansSerif: string;
+    fontFamilySerif: string;
+    fontLineHeight: string;
+    fontSizeH1: string;
+    fontSizeH2: string;
+    fontSizeH3: string;
+    fontSizeH4: string;
+    fontSizeH5: string;
+    fontSizeH6: string;
+  };
+  other: {
+    stdBorderRadius: string;
+    cardDropShadow: string;
+    navMenuDropShadow: string;
+  };
+}
+
+const theme: ThemeProps = {
   // Colors
   colors: {
     // Primary Brand Colors

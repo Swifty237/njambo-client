@@ -1,36 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
-
+import { ThemeProps } from './theme';
 
 interface GlobalStylesProps {
-  theme: {
-    colors: {
-      secondaryCta: string;
-      primaryCta: string;
-      lightBg: string;
-      lightestBg: string;
-      darkBg: string;
-      fontColorLight: string;
-      fontColorDark: string;
-      primaryCtaDarker: string;
-    };
-    fonts: {
-      fontSizeParagraph: string;
-      fontSizeRoot: string;
-      fontSizeRootMobile: string;
-      fontFamilySansSerif: string;
-      fontFamilySerif: string;
-      fontLineHeight: string;
-      fontSizeH1: string;
-      fontSizeH2: string;
-      fontSizeH3: string;
-      fontSizeH4: string;
-      fontSizeH5: string;
-      fontSizeH6: string;
-    };
-    other: {
-      stdBorderRadius: string;
-    };
-  }
+  theme: ThemeProps;
 }
 
 const GlobalStyles = createGlobalStyle`

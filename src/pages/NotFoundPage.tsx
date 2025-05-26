@@ -22,7 +22,7 @@ const NotFoundPage = () => {
           {getLocalizedString('notfound-content_txt')}
         </Heading>
         <Wrapper>
-          <Button as={Link} to="/" large primary fullWidthOnMobile autoFocus>
+          <Button as={Link} to="/" $large $primary $fullWidthOnMobile autoFocus>
             {getLocalizedString('static_page-back_btn_txt')}
           </Button>
         </Wrapper>

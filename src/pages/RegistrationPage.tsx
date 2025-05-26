@@ -100,7 +100,7 @@ const RegistrationPage = () => {
             <Input type="date" name="dob" />
           </FormGroup> */}
           <ButtonGroup>
-            <Button primary type="submit" fullWidth>
+            <Button $primary type="submit" $fullWidth>
               {getLocalizedString('registration_page-cta_btn_txt')}
             </Button>
             <Link to="/login">

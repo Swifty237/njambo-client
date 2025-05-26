@@ -17,7 +17,7 @@ const PokerChip = ({ width, height }: PokerChipProps) => (
     >
         <g clipPath="url(#clip0)" transform="translate(8, 7)">
 
-            <path fill-rule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"
+            <path fillRule="evenodd" d="M11 15a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm5-4a5 5 0 1 1-10 0 5 5 0 0 1 10 0z"
                 fill={theme.colors.dangerColor}
             />
 

@@ -24,10 +24,39 @@ interface GameStateProps {
   children: React.ReactNode
 }
 
+interface CardProps {
+  suit: string,
+  rank: string
+}
+
+interface Player {
+  name: string;
+}
+
+interface SeatData {
+  id: string;
+  turn: boolean;
+  stack: number;
+  sittingOut: boolean;
+  player: Player;
+  bet: number;
+  hand: CardProps[];
+  lastAction?: string;
+}
+
 interface Table {
   id: string;
-  seats: { [seatId: string]: { turn: boolean } };
-  // ...other properties
+  name: string;
+  seats: { [seatId: string]: SeatData };
+  limit: number;
+  minBet: number;
+  callAmount: number;
+  pot: number;
+  minRaise: number;
+  board: CardProps[];
+  winMessages: string;
+  button: string;
+  handOver: boolean;
 }
 
 interface TableUpdatedPayload {

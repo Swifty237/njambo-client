@@ -3,9 +3,10 @@ import Container from '../components/layout/Container';
 import Button from '../components/buttons/Button';
 import gameContext from '../context/game/gameContext';
 import socketContext from '../context/websocket/socketContext';
-import PokerTable from '../components/game/PokerTable';
+// import PokerTable from '../components/game/PokerTable';
 import { RotateDevicePrompt } from '../components/game/RotateDevicePrompt';
 import { PositionedUISlot } from '../components/game/PositionedUISlot';
+import { PositionedUISeat } from '../components/game/PositionedUISeat';
 import { PokerTableWrapper } from '../components/game/PokerTableWrapper';
 import { Seat } from '../components/game/Seat';
 import Text from '../components/typography/Text';
@@ -18,6 +19,7 @@ import { GameStateInfo } from '../components/game/GameStateInfo';
 import PokerCard from '../components/game/PokerCard';
 import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
+import { ResponsiveTable } from '../components/layout/ResponsiveTable';
 
 interface CardProps {
   suit: string,
@@ -46,15 +48,11 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
   const [bet, setBet] = useState(0);
 
   useEffect(() => {
-    !socket &&
-      openModal(
-        () => (
-          <Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>
-        ),
-        getLocalizedString('game_lost-connection-modal_header'),
-        getLocalizedString('game_lost-connection-modal_btn-txt'),
-        () => history.push('/'),
-      );
+    !socket && openModal(() => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
+      getLocalizedString('game_lost-connection-modal_header'),
+      getLocalizedString('game_lost-connection-modal_btn-txt'),
+      () => history.push('/'),
+    );
     socket && joinTable(1);
     return () => leaveTable();
     // eslint-disable-next-line
@@ -98,20 +96,25 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                 <TableInfoWrapper>
                   <Text textAlign="right">
                     <strong>{currentTable.name}</strong> |{' '}
+
                     <strong>
                       {getLocalizedString('game_info_limit-lbl')}:{' '}
                     </strong>
+
                     {new Intl.NumberFormat(
                       document.documentElement.lang,
                     ).format(currentTable.limit)}{' '}
                     |{' '}
+
                     <strong>
                       {getLocalizedString('game_info_blinds-lbl')}:{' '}
                     </strong>
+
                     {new Intl.NumberFormat(
                       document.documentElement.lang,
                     ).format(currentTable.minBet)}{' '}
                     /{' '}
+
                     {new Intl.NumberFormat(
                       document.documentElement.lang,
                     ).format(currentTable.minBet * 2)}
@@ -123,131 +126,111 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
         )}
 
         <PokerTableWrapper>
-          <PokerTable />
-          {currentTable && (
-            <>
-              <PositionedUISlot
-                top="-5%"
-                left="0"
-                scale="0.55"
-                origin="top left"
-              >
-                <Seat
-                  seatNumber={'1'}
-                  currentTable={currentTable}
-                  isPlayerSeated={isPlayerSeated}
-                  sitDown={sitDown}
-                />
-              </PositionedUISlot>
+          <>
+            {currentTable && (
 
-              <PositionedUISlot top="-5%" scale="0.55" origin="top center">
-                <Seat
-                  seatNumber={'2'}
-                  currentTable={currentTable}
-                  isPlayerSeated={isPlayerSeated}
-                  sitDown={sitDown}
-                />
-              </PositionedUISlot>
+              <ResponsiveTable>
+                {/* Gauche */}
+                <PositionedUISeat top="50%">
+                  <Seat
+                    seatNumber={'1'}
+                    currentTable={currentTable}
+                    isPlayerSeated={isPlayerSeated}
+                    sitDown={sitDown}
+                  />
+                </PositionedUISeat>
 
-              <PositionedUISlot
-                top="-5%"
-                right="2%"
-                scale="0.55"
-                origin="top right"
-              >
-                <Seat
-                  seatNumber={'3'}
-                  currentTable={currentTable}
-                  isPlayerSeated={isPlayerSeated}
-                  sitDown={sitDown}
-                />
-              </PositionedUISlot>
+                {/* Haut */}
+                <PositionedUISeat left="50%">
+                  <Seat
+                    seatNumber={'2'}
+                    currentTable={currentTable}
+                    isPlayerSeated={isPlayerSeated}
+                    sitDown={sitDown}
+                  />
+                </PositionedUISeat>
 
-              <PositionedUISlot
-                bottom="15%"
-                right="2%"
-                scale="0.55"
-                origin="bottom right"
-              >
-                <Seat
-                  seatNumber={'4'}
-                  currentTable={currentTable}
-                  isPlayerSeated={isPlayerSeated}
-                  sitDown={sitDown}
-                />
-              </PositionedUISlot>
+                {/* Droite */}
 
-              <PositionedUISlot
-                bottom="15%"
-                left="0"
-                scale="0.55"
-                origin="bottom left"
-              >
-                <Seat
-                  seatNumber={'5'}
-                  currentTable={currentTable}
-                  isPlayerSeated={isPlayerSeated}
-                  sitDown={sitDown}
-                />
-              </PositionedUISlot>
+                <PositionedUISeat top="50%" left="100%">
+                  <Seat
+                    seatNumber={'3'}
+                    currentTable={currentTable}
+                    isPlayerSeated={isPlayerSeated}
+                    sitDown={sitDown}
+                  />
+                </PositionedUISeat>
 
-              <PositionedUISlot
-                width="100%"
-                origin="center center"
-                scale="0.60"
-                style={{
-                  display: 'flex',
-                  textAlign: 'center',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                {currentTable.board && currentTable.board.length > 0 && (
-                  <>
-                    {currentTable.board.map((card: CardProps, index: number) => (
-                      <PokerCard
-                        key={index}
-                        card={card}
-                        width="7vw"
-                        maxWidth="80px"
-                        minWidth="50px"
-                      />
-                    ))}
-                  </>
-                )}
-              </PositionedUISlot>
+                {/* Bas */}
+                <PositionedUISeat left="50%" top="100%">
+                  <Seat
+                    seatNumber={'4'}
+                    currentTable={currentTable}
+                    isPlayerSeated={isPlayerSeated}
+                    sitDown={sitDown}
+                  />
+                </PositionedUISeat>
+              </ResponsiveTable>
 
-              <PositionedUISlot bottom="8%" scale="0.60" origin="bottom center">
-                {messages && messages.length > 0 && (
-                  <>
-                    <InfoPill>{messages[messages.length - 1]}</InfoPill>
-                    {!isPlayerSeated && (
-                      <InfoPill>Sit down to join the game!</InfoPill>
-                    )}
-                    {currentTable.winMessages.length > 0 && (
-                      <InfoPill>
-                        {
-                          currentTable.winMessages[
-                          currentTable.winMessages.length - 1
-                          ]
-                        }
-                      </InfoPill>
-                    )}
-                  </>
-                )}
-              </PositionedUISlot>
 
-              <PositionedUISlot
-                bottom="25%"
-                scale="0.60"
-                origin="center center"
-              >
-                {currentTable.winMessages.length === 0 && (
-                  <GameStateInfo currentTable={currentTable} />
-                )}
-              </PositionedUISlot>
-            </>
-          )}
+            )}
+
+            <PositionedUISlot
+              width="100%"
+              origin="center center"
+              scale="0.60"
+              style={{
+                display: 'flex',
+                textAlign: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}
+            >
+              {currentTable && currentTable.board && currentTable.board.length > 0 && (
+                <>
+                  {currentTable.board.map((card: CardProps, index: number) => (
+                    <PokerCard
+                      key={index}
+                      card={card}
+                      width="7vw"
+                      maxWidth="80px"
+                      minWidth="50px"
+                    />
+                  ))}
+                </>
+              )}
+            </PositionedUISlot>
+
+            <PositionedUISlot bottom="8%" scale="0.60" origin="bottom center">
+              {messages && messages.length > 0 && (
+                <>
+                  <InfoPill>{messages[messages.length - 1]}</InfoPill>
+                  {!isPlayerSeated && (
+                    <InfoPill>Sit down to join the game!</InfoPill>
+                  )}
+                  {currentTable && currentTable.winMessages.length > 0 && (
+                    <InfoPill>
+                      {
+                        currentTable.winMessages[
+                        currentTable.winMessages.length - 1
+                        ]
+                      }
+                    </InfoPill>
+                  )}
+                </>
+              )}
+            </PositionedUISlot>
+
+            <PositionedUISlot
+              bottom="37%"
+              scale="0.60"
+              origin="center center"
+            >
+              {currentTable && currentTable.winMessages.length === 0 && (
+                <GameStateInfo currentTable={currentTable} />
+              )}
+            </PositionedUISlot>
+          </>
         </PokerTableWrapper>
 
         {currentTable &&

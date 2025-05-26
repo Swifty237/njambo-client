@@ -1,7 +1,9 @@
 import React from 'react';
 import PokerChip from '../icons/PokerChip';
-import { Input } from '../forms/Input';
+// import { Input } from '../forms/Input';
 import styled from 'styled-components';
+import ColoredText from '../typography/ColoredText';
+import theme from '../../styles/theme';
 // import PropTypes from 'prop-types';
 
 interface ChipsAmountPillProps {
@@ -10,21 +12,18 @@ interface ChipsAmountPillProps {
 
 const Wrapper = styled.div`
   position: relative;
-  display: inline-block;
-
-  & ${Input} {
-    text-align: center;
-    padding: 0.5rem 1rem 0.5rem 2rem;
-    background: #f7f2dc;
-    opacity: 0.75;
-    border-radius: 40px;
-  }
+  box-shadow: 0 10px 10px rgba(0, 0, 0, .5);
+  background-color:rgba(236, 240, 241, 0.1);
+  height: 45px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-right: 10px;
+  width: auto;
 `;
 
 const IconWrapper = styled.label`
   position: absolute;
-  width: 30px;
-  height: 30px;
   z-index: 5;
   left: 5px;
   top: 5px;
@@ -34,23 +33,15 @@ const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount }) => {
   return (
     <Wrapper>
       <IconWrapper htmlFor="chipsAmount">
-        <PokerChip width="30" height="30" />
+        <PokerChip width="60" height="60" viewBox="7 7 38 38" injectedTheme={theme.colors.primaryCtaDarker} />
       </IconWrapper>
-      <Input
-        disabled
-        type="text"
-        size={10}
-        value={new Intl.NumberFormat(document.documentElement.lang).format(
-          chipsAmount,
-        )}
-        name="chipsAmount"
-      />
+
+      <ColoredText primary style={{ fontSize: "22px" }}>
+        {new Intl.NumberFormat(document.documentElement.lang).format(chipsAmount)}
+        <span style={{ marginLeft: "5px", fontSize: "15px" }}>{"F CFA"}</span>
+      </ColoredText>
     </Wrapper>
   );
 };
-
-// ChipsAmountPill.propTypes = {
-//   chipsAmount: PropTypes.number,
-// };
 
 export default ChipsAmountPill;

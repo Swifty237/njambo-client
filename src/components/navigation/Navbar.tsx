@@ -93,12 +93,12 @@ const Navbar: React.FC<NavbarProps> = ({
           <Hider hideOnMobile>
             <Spacer>
               {location.pathname !== '/register' && (
-                <Button as={Link} to="/register" primary small>
+                <Button as={Link} to="/register" $primary $small>
                   {getLocalizedString('navbar-register_btn')}
                 </Button>
               )}
               {location.pathname !== '/login' && (
-                <Button as={Link} to="/login" secondary small>
+                <Button as={Link} to="/login" $secondary $small>
                   {getLocalizedString('navbar-login_btn')}
                 </Button>
               )}

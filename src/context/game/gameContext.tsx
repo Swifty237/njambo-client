@@ -1,8 +1,44 @@
 import { createContext } from 'react';
 
+interface CardProps {
+    suit: string,
+    rank: string
+}
+
+interface Player {
+    name: string;
+}
+
+interface SeatData {
+    id: string;
+    turn: boolean;
+    stack: number;
+    sittingOut: boolean;
+    player: Player;
+    bet: number;
+    hand: CardProps[];
+    lastAction?: string;
+}
+
+interface Table {
+    id: string;
+    name: string;
+    seats: { [seatId: string]: SeatData };
+    limit: number;
+    minBet: number;
+    callAmount: number;
+    pot: number;
+    minRaise: number;
+    board: CardProps[];
+    winMessages: string;
+    button: string;
+    handOver: boolean;
+}
+
+
 interface GameContextType {
     messages: string[],
-    currentTable: any,
+    currentTable: Table | null,
     isPlayerSeated: boolean,
     seatId: string | null,
     joinTable: (tableId: any) => void,

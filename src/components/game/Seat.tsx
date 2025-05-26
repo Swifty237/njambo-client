@@ -22,11 +22,8 @@ import Markdown from 'react-remarkable';
 import DealerButton from '../icons/DealerButton';
 import { StyledSeat } from './StyledSeat';
 
-interface SeatProps {
-  currentTable: any; // Replace 'any' with the actual type if available
-  seatNumber: string;
-  isPlayerSeated: boolean;
-  sitDown: (tableId: string, seatNumber: string, amount: number) => void;
+interface Player {
+  name: string;
 }
 
 interface CardProps {
@@ -34,6 +31,38 @@ interface CardProps {
   rank: string
 }
 
+interface SeatData {
+  id: string;
+  turn: boolean;
+  stack: number;
+  sittingOut: boolean;
+  player: Player;
+  bet: number;
+  hand: CardProps[];
+  lastAction?: string;
+}
+
+interface Table {
+  id: string;
+  name: string;
+  seats: { [seatId: string]: SeatData };
+  limit: number;
+  minBet: number;
+  callAmount: number;
+  pot: number;
+  minRaise: number;
+  board: CardProps[];
+  winMessages: string;
+  button: string;
+  handOver: boolean;
+}
+
+interface SeatProps {
+  currentTable: Table;
+  seatNumber: string;
+  isPlayerSeated: boolean;
+  sitDown: (tableId: string, seatNumber: string, amount: number) => void;
+}
 
 
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
@@ -43,8 +72,42 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
+  // const seat = currentTable.seats[2];
   const maxBuyin = currentTable.limit;
   const minBuyIn = currentTable.minBet * 2 * 10;
+
+  const handExample = [{
+    suit: "spare",
+    rank: "9"
+  }, {
+    suit: "heart",
+    rank: "10"
+  }]
+
+  const positionElement = (id: string | null) => {
+    switch (id) {
+      case '1':
+        return {
+          top: "2vh",
+          left: "4vw"
+        };
+      case '2':
+        return {
+          top: "6vh",
+        };
+      case '3':
+        return {
+          top: "2vh",
+          right: "4vw"
+        };
+      case '4':
+        return {
+          top: "-9vh",
+        };
+      default:
+        return {};
+    }
+  }
 
   useEffect(() => {
     if (
@@ -88,7 +151,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                 />
               </FormGroup>
               <ButtonGroup>
-                <Button primary type="submit" fullWidth>
+                <Button $primary type="submit" $fullWidth>
                   {getLocalizedString('game_rebuy-modal_confirm')}
                 </Button>
               </ButtonGroup>
@@ -116,7 +179,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
         <>
           {!isPlayerSeated ? (
             <Button
-              small
+              $small
               onClick={() => {
                 openModal(
                   () => (
@@ -152,7 +215,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                         />
                       </FormGroup>
                       <ButtonGroup>
-                        <Button primary type="submit" fullWidth>
+                        <Button $primary type="submit" $fullWidth>
                           {getLocalizedString('game_buyin-modal_confirm')}
                         </Button>
                       </ButtonGroup>
@@ -178,27 +241,56 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             textAlign: 'center',
             justifyContent: 'center',
             alignItems: 'center',
+            backgroundColor: "black"
           }}
         >
-          <PositionedUISlot top="-6.25rem" left="-75px" origin="top center">
+          <PositionedUISlot
+            top={(seatId === "4") ? "4.25rem" : "-9.25rem"}
+            left="-100px"
+            origin="top center"
+          >
             <NameTag>
-              <ColoredText primary textAlign="center">
-                {seat.player.name}
-                <br />
+              <ColoredText primary style={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.5)" }}>
+                <span style={{
+                  fontSize: "22px",
+                  backgroundColor: "#ecf0f1",
+                  display: "flex",
+                  flexDirection: "column"
+                }}>
+                  {seat.player.name}
+                </span>
+
                 {seat.stack && (
-                  <ColoredText secondary>
-                    <PokerChip width="15" height="15" />{' '}
-                    {new Intl.NumberFormat(
-                      document.documentElement.lang,
-                    ).format(seat.stack)}
-                  </ColoredText>
+                  <div style={{
+                    minWidth: "150px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-around",
+                    backgroundColor: "rgba(0, 0, 0)",
+                    paddingRight: "10px",
+                    borderRadius: "10px"
+                  }}>
+                    <PokerChip width="38" height="38" />
+                    <div>
+                      <ColoredText secondary style={{ marginRight: "7px", fontSize: "22px" }}>
+                        {new Intl.NumberFormat(
+                          document.documentElement.lang,
+                        ).format(seat.stack)}
+                      </ColoredText>
+                      <ColoredText secondary>{'F CFA'}</ColoredText>
+                    </div>
+                  </div>
+
                 )}
               </ColoredText>
             </NameTag>
           </PositionedUISlot>
+
           <PositionedUISlot>
             <OccupiedSeat seatNumber={seatNumber} hasTurn={seat.turn} />
+            {/* <OccupiedSeat seatNumber={"2"} hasTurn={true} /> */}
           </PositionedUISlot>
+
           <PositionedUISlot
             left="4vh"
             style={{
@@ -211,6 +303,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           >
             <Hand>
               {seat.hand &&
+                // handExample.map((card: CardProps, index: number) => (
                 seat.hand.map((card: CardProps, index: number) => (
                   <PokerCard
                     key={index}
@@ -234,7 +327,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           )}
 
           <PositionedUISlot
-            top="6vh"
+            {...positionElement(seatId)}
             style={{ minWidth: '150px', zIndex: '55' }}
             origin="bottom center"
           >
@@ -243,6 +336,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
               <InfoPill>{seat.lastAction}</InfoPill>
             )}
           </PositionedUISlot>
+
         </PositionedUISlot>
       )}
     </StyledSeat>

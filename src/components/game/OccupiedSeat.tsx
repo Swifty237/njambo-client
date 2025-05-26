@@ -9,6 +9,7 @@ interface OccupiedSeatProps {
 }
 
 const StyledOccupiedSeat = styled(EmptySeat)`
+  
   position: relative;
   background-image: ${({ seatNumber }: OccupiedSeatProps) => `url(${userImages[parseInt(seatNumber)]})`};
   background-position: center;
@@ -112,6 +113,26 @@ const StyledOccupiedSeat = styled(EmptySeat)`
       transform: rotate(135deg);
     }
   }
+
+      @media (max-width: 2000px) {
+        width: 7vw;
+        height: 7vw;
+    }
+
+     @media (max-width: 1350px) {
+        width: 10vw;
+        height: 10vw;
+    }
+
+    @media (max-width: 1000px) {
+        width: 14vw;
+        height: 14vw;
+    }
+
+    @media (max-width: 700px) {
+        width: 18vw;
+        height: 18vw;
+    }
 `;
 
 export const OccupiedSeat = ({ hasTurn, seatNumber }: OccupiedSeatProps) => (

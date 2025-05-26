@@ -1,14 +1,15 @@
 import styled, { css } from 'styled-components';
+import { ThemeProps } from '../../styles/theme';
 // import PropTypes from 'prop-types';
 
 interface ButtonProps {
-  primary: boolean;
-  secondary: boolean;
-  large: boolean;
-  small: boolean;
-  fullWidth: boolean;
-  fullWidthOnMobile: boolean;
-  theme: any; // Replace 'any' with your theme type if available
+  $primary: boolean;
+  $secondary: boolean;
+  $large: boolean;
+  $small: boolean;
+  $fullWidth: boolean;
+  $fullWidthOnMobile: boolean;
+  theme: ThemeProps;
 }
 
 const Button = styled.button`
@@ -53,12 +54,12 @@ const Button = styled.button`
   }
 
   ${(props: ButtonProps) =>
-    props.primary &&
+    props.$primary &&
     css`
       color: ${(props: ButtonProps) => props.theme.colors.primaryCta};
       padding: ${(props: ButtonProps) => {
-        if (props.large) return 'calc(1rem - 2px) calc(2rem - 2px)';
-        else if (props.small) return 'calc(0.5rem - 2px) calc(1rem - 2px)';
+        if (props.$large) return 'calc(1rem - 2px) calc(2rem - 2px)';
+        else if (props.$small) return 'calc(0.5rem - 2px) calc(1rem - 2px)';
         else return 'calc(0.75rem - 2px) calc(1.5rem - 2px)';
       }};
 
@@ -87,7 +88,7 @@ const Button = styled.button`
     `}
 
   ${(props: ButtonProps) =>
-    props.secondary &&
+    props.$secondary &&
     css`
       color: ${(props: ButtonProps) => props.theme.colors.primaryCta};
 
@@ -119,7 +120,7 @@ const Button = styled.button`
     `}
   
   ${(props: ButtonProps) =>
-    props.large &&
+    props.$large &&
     css`
       font-size: 1.6rem;
       line-height: 1.6rem;
@@ -128,7 +129,7 @@ const Button = styled.button`
     `}
   
   ${(props: ButtonProps) =>
-    props.small &&
+    props.$small &&
     css`
       font-size: 1.1rem;
       line-height: 1.1rem;
@@ -137,14 +138,14 @@ const Button = styled.button`
     `}
   
   ${(props: ButtonProps) =>
-    props.fullWidth &&
+    props.$fullWidth &&
     css`
       width: 100%;
     `}
 
     @media screen and (max-width: 1024px) {
     ${(props: ButtonProps) =>
-    props.large &&
+    props.$large &&
     css`
         font-size: 1.4rem;
         line-height: 1.4rem;
@@ -153,7 +154,7 @@ const Button = styled.button`
       `}
 
     ${(props: ButtonProps) =>
-    (props.fullWidthOnMobile || props.fullWidth) &&
+    (props.$fullWidthOnMobile || props.$fullWidth) &&
     css`
         width: 100%;
       `}

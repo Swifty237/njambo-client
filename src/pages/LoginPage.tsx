@@ -80,7 +80,7 @@ const LoginPage = () => {
             />
           </FormGroup>
           <ButtonGroup>
-            <Button primary type="submit" fullWidth>
+            <Button $primary type="submit" fullWidth>
               {getLocalizedString('login_page-cta_btn_txt')}
             </Button>
             {/* <Link to="/">I foI do not have an account yet!rgot my password!</Link> */}

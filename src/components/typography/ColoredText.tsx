@@ -1,15 +1,11 @@
 import styled from 'styled-components';
+import { ThemeProps } from '../../styles/theme';
 // import PropTypes from 'prop-types';
 
 interface ColoredTextProps {
   emphazised: boolean;
   secondary: boolean;
-  theme: {
-    colors: {
-      secondaryCta: string;
-      primaryCta: string;
-    }
-  }
+  theme: ThemeProps;
 }
 
 const ColoredText = styled.span`

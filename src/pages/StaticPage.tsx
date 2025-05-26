@@ -33,7 +33,7 @@ const StaticPage: React.FC<StaticPageProps> = ({ title, content }) => {
         contentCenteredMobile
         margin="2rem auto"
       >
-        <Button as={Link} to="/" secondary small>
+        <Button as={Link} to="/" $secondary $small>
           {getLocalizedString('static_page-back_btn_txt')}
         </Button>
       </Container>

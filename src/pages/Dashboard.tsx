@@ -72,19 +72,19 @@ const Dashboard = () => {
             <FormGroup>
               <Label>{getLocalizedString('dashboard-nickname_lbl_txt')}</Label>
               <Input value={userName} />
-              <Button primary>
+              <Button $primary>
                 {getLocalizedString('dashboard-nickname_btn_txt')}
               </Button>
             </FormGroup>
             <FormGroup>
               <Label>{getLocalizedString('dashboard-email_lbl_txt')}</Label>
               <Input type="email" value={email} />
-              <Button primary>
+              <Button $primary>
                 {getLocalizedString('dashboard-email_btn_txt')}
               </Button>
             </FormGroup>
             <FormGroup style={{ gridColumnStart: '1', gridColumnEnd: '3' }}>
-              <Button primary>
+              <Button $primary>
                 {getLocalizedString('dashboard-reset_pw_btn_text')}
               </Button>
               <Button>
@@ -94,7 +94,7 @@ const Dashboard = () => {
             <Button
               as={Link}
               to="/"
-              secondary
+              $secondary
               style={{ gridColumnStart: '1', gridColumnEnd: '3' }}
             >
               {getLocalizedString('static_page-back_btn_txt')}
