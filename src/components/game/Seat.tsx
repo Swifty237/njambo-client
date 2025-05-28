@@ -69,7 +69,7 @@ interface SeatProps {
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
-  const { standUp, seatId, rebuy, injectDebugHand } = useContext(gameContext);
+  const { standUp, seatId, rebuy } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
@@ -80,12 +80,12 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
     switch (id) {
       case '1':
         return {
-          top: "2vh",
-          left: "6vw"
+          top: "3vh",
+          left: "8vw"
         };
       case '2':
         return {
-          top: "15vh",
+          top: "20vh",
         };
       case '3':
         return {
@@ -94,7 +94,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
         };
       case '4':
         return {
-          bottom: "15vh",
+          bottom: "20vh",
         };
       default:
         return {};
@@ -257,18 +257,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   return (
 
     <StyledSeat>
-      <Button
-        $small
-        onClick={() => injectDebugHand(seatNumber)}
-        style={{
-          position: "absolute",
-          top: "-150px",
-          left: "250px"
-        }}
-      >
-        Injecter main debug
-      </Button>
-
       {!seat ? (
         <>
           {!isPlayerSeated ? (
@@ -421,10 +409,13 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
 
           <PositionedUISlot
             {...getPosition(seatId)}
-            style={{ minWidth: '150px', zIndex: '55' }}
+            style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
-            <ChipsAmountPill chipsAmount={seat.bet} />
+            <ChipsAmountPill
+              position={seatId as '1' | '2' | '3' | '4'}
+              chipsAmount={seat.bet}
+            />
             {!currentTable.handOver && seat.lastAction && (
               <InfoPill>{seat.lastAction}</InfoPill>
             )}

@@ -17,12 +17,12 @@ export const EmptySeat = styled.div`
     margin-bottom: 0;
   }
 
-  @media (max-width: 2000px) {
+    @media (max-width: 2000px) {
         width: 7vw;
         height: 7vw;
     }
 
-     @media (max-width: 1350px) {
+    @media (max-width: 1350px) {
         width: 10vw;
         height: 10vw;
     }

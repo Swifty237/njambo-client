@@ -70,12 +70,10 @@ const PokerCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank }
       {/* A revoir plus tard */}
       <img
         src={
-          (cards[concat as keyof typeof cards] &&
-            ((cards[concat as keyof typeof cards] as any).default || cards[concat as keyof typeof cards])) || ''
+          (cards[concat as keyof typeof cards] && ((cards[concat as keyof typeof cards] as any).default || cards[concat as keyof typeof cards])) || ''
         }
         alt={concat}
       />
-
     </StyledPokerCardWrapper>
   );
 };

@@ -20,6 +20,8 @@ import PokerCard from '../components/game/PokerCard';
 import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
+// import mockTable from '../components/mocks/mockTable';
+
 
 interface CardProps {
   suit: string,
@@ -42,6 +44,8 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
     check,
     call,
     raise,
+    injectDebugHand,
+    injectFakePlayers,
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
@@ -58,6 +62,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
     // eslint-disable-next-line
   }, [socket]);
 
+
   useEffect(() => {
     currentTable &&
       (currentTable.callAmount > currentTable.minBet
@@ -72,8 +77,10 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
       <RotateDevicePrompt />
 
       <Container fullHeight>
+
         {currentTable && (
           <>
+
             <PositionedUISlot
               bottom="2vh"
               left="1.5rem"
@@ -126,6 +133,34 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
         )}
 
         <PokerTableWrapper>
+
+          <Button
+            $small
+            onClick={() => {
+              injectDebugHand(seatId!);
+            }}
+            style={{
+              position: "absolute",
+              top: "-3vw",
+              left: "-10vw",
+            }}
+          >
+            Injecter des cartes
+          </Button>
+
+          <Button
+            $small
+            onClick={() => {
+              injectFakePlayers();
+            }}
+            style={{
+              position: "absolute",
+              top: "3vw",
+              left: "-10vw",
+            }}
+          >
+            Injecter des joueurs
+          </Button>
           <>
             {currentTable && (
 

@@ -132,6 +132,8 @@ const GameState = ({ history, children }: GameStateProps) => {
     // eslint-disable-next-line
   }, [socket]);
 
+
+  // Fonction de test
   const injectDebugHand = (seatNumber: string) => {
     setCurrentTable((prevTable) => {
       if (!prevTable) return null;
@@ -159,6 +161,39 @@ const GameState = ({ history, children }: GameStateProps) => {
       return updatedTable;
     });
   };
+
+  // Fonction de test
+  const injectFakePlayers = () => {
+    if (!currentTable) {
+      console.warn("Pas de table en cours");
+      return;
+    }
+
+    const mockNames = ['Bot1', 'Bot2', 'Bot3', 'Bot4', 'Bot5', 'Bot6', 'Bot7'];
+    let nameIndex = 0;
+
+    const updatedSeats: typeof currentTable.seats = { ...currentTable.seats };
+
+    Object.entries(updatedSeats).forEach(([seatId, seat]) => {
+      // Vérifie que le siège existe bien et qu'il est vide
+      if (seat && !seat.player) {
+        updatedSeats[seatId] = {
+          ...seat,
+          player: { name: mockNames[nameIndex++] || `Bot${seatId}` },
+          sittingOut: false,
+          stack: 1000,
+          bet: 0,
+          hand: [],
+        };
+      }
+    });
+
+    setCurrentTable({
+      ...currentTable,
+      seats: updatedSeats,
+    });
+  };
+
 
   const joinTable = (tableId: string) => {
     console.log(JOIN_TABLE, tableId);
@@ -238,7 +273,8 @@ const GameState = ({ history, children }: GameStateProps) => {
         call,
         raise,
         rebuy,
-        injectDebugHand
+        injectDebugHand,
+        injectFakePlayers,
       }}
     >
       {children}
