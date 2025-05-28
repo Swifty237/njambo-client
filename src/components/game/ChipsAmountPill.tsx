@@ -4,7 +4,6 @@ import PokerChip from '../icons/PokerChip';
 import styled, { css } from 'styled-components';
 import ColoredText from '../typography/ColoredText';
 import theme from '../../styles/theme';
-// import PropTypes from 'prop-types';
 
 interface ChipsAmountPillProps {
   chipsAmount: number;

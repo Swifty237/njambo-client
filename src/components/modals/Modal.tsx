@@ -119,7 +119,7 @@ const Modal: React.FC<ModalProps> = ({
               rem sunt incidunt inventore esse. Modi.
             </Text>
           )}
-          <Button primary onClick={onBtnClicked}>
+          <Button $primary onClick={onBtnClicked}>
             {btnText}
           </Button>
         </ModalContent>

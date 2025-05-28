@@ -193,7 +193,7 @@ const NavMenu = ({
               </SalutationText>
             )}
 
-            <Button onClick={openShopModal} small primary>
+            <Button onClick={openShopModal} $small $primary>
               {getLocalizedString('shop-coming_soon-modal_heading')}
             </Button>
           </HorizontalWrapper>
@@ -291,9 +291,9 @@ const NavMenu = ({
               logout();
               onClose();
             }}
-            secondary
-            fullWidth
-            small
+            $secondary
+            $fullWidth
+            $small
           >
             {getLocalizedString('navmenu-logout_btn')}
           </Button>
