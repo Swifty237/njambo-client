@@ -35,7 +35,7 @@ const GameState = ({ history, children }: GameStateProps) => {
   const [seatId, setSeatId] = useState<string | null>(null);
   const [turn, setTurn] = useState(false);
   const [turnTimeOutHandle, setTurnTimeOutHandle] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [elevatedCard, setElevatedCard] = useState<string | null>(null);
+  const [elevatedCards, setElevatedCards] = useState<string[]>([]);
 
   const currentTableRef = React.useRef(currentTable);
 
@@ -118,31 +118,13 @@ const GameState = ({ history, children }: GameStateProps) => {
     });
   };
 
-  // Fonction pour jouer une carte (double clic)
+  // Fonction pour jouer une carte (double clic) - modifiée
   const playCard = (card: CardProps, seatNumber: string) => {
-
-    console.log('=== PLAYCARD FUNCTION START ===');
-    console.log('Received card:', card);
-    console.log('Received seatNumber:', seatNumber);
-    console.log('Current table exists:', !!currentTable);
-
     setCurrentTable((prevTable) => {
-
-      console.log('Inside setCurrentTable callback');
-      console.log('prevTable exists:', !!prevTable);
-
-      if (!prevTable) {
-        console.log('No prevTable, returning null');
-        return null;
-      }
+      if (!prevTable) return null;
 
       const currentSeat = prevTable.seats[seatNumber];
-
-      console.log('Current seat:', currentSeat);
-      console.log('Current seat hand:', currentSeat?.hand);
-
       if (!currentSeat || !currentSeat.hand) return prevTable;
-      console.log('No current seat or hand, returning prevTable');
 
       // Trouver la carte dans la main
       const cardIndex = currentSeat.hand.findIndex(
@@ -150,7 +132,6 @@ const GameState = ({ history, children }: GameStateProps) => {
       );
 
       if (cardIndex === -1) {
-        // Carte non trouvée dans la main
         console.warn('Carte non trouvée dans la main du joueur');
         return prevTable;
       }
@@ -159,7 +140,7 @@ const GameState = ({ history, children }: GameStateProps) => {
       const updatedHand = currentSeat.hand.filter((_, index) => index !== cardIndex);
 
       // Ajouter la carte aux cartes jouées
-      const updatedPlayedCards = [...(currentSeat.playedCards || []), card];
+      const updatedPlayedHand = [...(currentSeat.playedHand || []), card];
 
       // Mettre à jour le siège
       const updatedSeats = {
@@ -167,7 +148,7 @@ const GameState = ({ history, children }: GameStateProps) => {
         [seatNumber]: {
           ...currentSeat,
           hand: updatedHand,
-          playedCards: updatedPlayedCards,
+          playedHand: updatedPlayedHand,
         },
       };
 
@@ -178,6 +159,30 @@ const GameState = ({ history, children }: GameStateProps) => {
 
       return updatedTable;
     });
+
+    // Retirer la carte jouée des cartes élevées
+    const cardKey = `${seatNumber}-${card.suit}-${card.rank}`;
+    setElevatedCards(prevCards => prevCards.filter(key => key !== cardKey));
+  };
+
+
+
+  // Nouvelle fonction pour toggle une carte spécifique
+  const toggleElevatedCard = (cardKey: string) => {
+    setElevatedCards(prevCards => {
+      if (prevCards.includes(cardKey)) {
+        // Si la carte est déjà élevée, la retirer
+        return prevCards.filter(key => key !== cardKey);
+      } else {
+        // Si la carte n'est pas élevée, l'ajouter
+        return [...prevCards, cardKey];
+      }
+    });
+  };
+
+  // Optionnel : fonction pour abaisser toutes les cartes
+  const clearAllElevatedCards = () => {
+    setElevatedCards([]);
   };
 
   const getAvatarPosition = (id: string | null) => {
@@ -221,69 +226,21 @@ const GameState = ({ history, children }: GameStateProps) => {
   const getPlayedCardsPosition = (id: string | null, seat: SeatData) => {
     switch (id) {
       case '1':
-        if (seat.hand.length === 1) {
-          return {
-            top: "-7vh",
-            left: "8vw"
-          };
-        } else if (seat.hand.length === 2) {
-          return {
-            top: "-7vh",
-            left: "7vw"
-          };
-        } else if (seat.hand.length === 3) {
-          return {
-            top: "-7vh",
-            left: "6vw"
-          };
-        } else if (seat.hand.length === 4) {
-          return {
-            top: "-7vh",
-            left: "5vw"
-          };
-        } else if (seat.hand.length === 5) {
-          return {
-            top: "-7vh",
-            left: "4vw"
-          };
-        } else {
-          return
-        }
+        return {
+          top: "-7vh",
+          left: "4vw"
+        };
 
       case '2':
         return {
           top: "6vh",
         };
-      case '3':
 
-        if (seat.hand.length === 1) {
-          return {
-            top: "-7vh",
-            right: "8vw"
-          };
-        } else if (seat.hand.length === 2) {
-          return {
-            top: "-7vh",
-            right: "7vw"
-          };
-        } else if (seat.hand.length === 3) {
-          return {
-            top: "-7vh",
-            right: "6vw"
-          };
-        } else if (seat.hand.length === 4) {
-          return {
-            top: "-7vh",
-            right: "5vw"
-          };
-        } else if (seat.hand.length === 5) {
-          return {
-            top: "-7vh",
-            right: "4vw"
-          };
-        } else {
-          return
-        }
+      case '3':
+        return {
+          top: "-7vh",
+          right: "4vw"
+        };
 
       case '4':
         return {
@@ -363,7 +320,7 @@ const GameState = ({ history, children }: GameStateProps) => {
         currentTable,
         isPlayerSeated,
         seatId,
-        elevatedCard,
+        elevatedCards,
         joinTable,
         leaveTable,
         sitDown,
@@ -379,7 +336,8 @@ const GameState = ({ history, children }: GameStateProps) => {
         getHandPosition,
         getPlayedCardsPosition,
         playCard,
-        setElevatedCard
+        setElevatedCards,
+        toggleElevatedCard
       }}
     >
       {children}

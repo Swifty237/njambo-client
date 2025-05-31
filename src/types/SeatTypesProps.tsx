@@ -15,7 +15,7 @@ export interface SeatData {
     player: Player;
     bet: number;
     hand: CardProps[];
-    playedCards?: CardProps[];
+    playedHand: CardProps[];
     lastAction?: string;
 }
 

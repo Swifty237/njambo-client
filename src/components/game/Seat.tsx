@@ -9,7 +9,7 @@ import { Input } from '../forms/Input';
 import gameContext from '../../context/game/gameContext';
 import { PositionedUISlot } from './PositionedUISlot';
 import { InfoPill } from './InfoPill';
-import PokerCard from './PokerCard';
+import HandCard from './HandCard';
 import ChipsAmountPill from './ChipsAmountPill';
 import ColoredText from '../typography/ColoredText';
 import PokerChip from '../icons/PokerChip';
@@ -21,8 +21,9 @@ import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
 import DealerButton from '../icons/DealerButton';
 import { StyledSeat } from './StyledSeat';
-import { PlayedCards } from './PlayedCards';
+import { PlayedHand } from './PlayedHand';
 import { SeatProps, CardProps } from '../../types/SeatTypesProps'
+import PlayedCard from './PlayedCard';
 
 
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
@@ -231,7 +232,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             <Hand>
               {seat.hand &&
                 seat.hand.map((card: CardProps, index: number) => (
-                  <PokerCard
+                  <HandCard
                     key={`${card.suit}-${card.rank}-${index}`} // Clé plus unique
                     card={card}
                     width="5vw"
@@ -276,10 +277,10 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             }}
             origin="center right"
           >
-            <PlayedCards>
-              {seat.playedCards &&
-                seat.playedCards.map((card: CardProps, index: number) => (
-                  <PokerCard
+            <PlayedHand>
+              {seat.playedHand &&
+                seat.playedHand.map((card: CardProps, index: number) => (
+                  <PlayedCard
                     key={index}
                     card={card}
                     width="5vw"
@@ -287,7 +288,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                     minWidth="30px"
                   />
                 ))}
-            </PlayedCards>
+            </PlayedHand>
 
           </PositionedUISlot>
         </PositionedUISlot>

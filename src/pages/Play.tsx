@@ -16,7 +16,7 @@ import { TableInfoWrapper } from '../components/game/TableInfoWrapper';
 import { InfoPill } from '../components/game/InfoPill';
 import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
-import PokerCard from '../components/game/PokerCard';
+import PokerCard from '../components/game/HandCard';
 import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';

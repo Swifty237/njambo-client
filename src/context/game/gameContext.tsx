@@ -14,7 +14,7 @@ interface GameContextType {
     currentTable: Table | null,
     isPlayerSeated: boolean,
     seatId: string | null,
-    elevatedCard: string | null;
+    elevatedCards: string[];
     joinTable: (tableId: any) => void,
     leaveTable: () => void,
     sitDown: (tableId: string, seatId: string, amount: number) => void,
@@ -30,7 +30,8 @@ interface GameContextType {
     getHandPosition: (id: string | null) => PositionProps,
     getPlayedCardsPosition: (id: string | null, seat: SeatData) => PositionProps | undefined
     playCard: (card: CardProps, seatNumber: string) => void;
-    setElevatedCard: (cardKey: string | null) => void;
+    setElevatedCards: (cards: string[]) => void;
+    toggleElevatedCard: (cardKey: string) => void;
 }
 
 const position: PositionProps = {
@@ -45,7 +46,7 @@ const gameContext = createContext<GameContextType>({
     currentTable: null,
     isPlayerSeated: false,
     seatId: '',
-    elevatedCard: '',
+    elevatedCards: [],
     joinTable: () => { },
     leaveTable: () => { },
     sitDown: () => { },
@@ -61,7 +62,8 @@ const gameContext = createContext<GameContextType>({
     getHandPosition: () => position,
     getPlayedCardsPosition: () => position,
     playCard: () => { },
-    setElevatedCard: () => { },
+    setElevatedCards: () => { },
+    toggleElevatedCard: () => { }
 });
 
 export default gameContext;
