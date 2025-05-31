@@ -1,46 +1,20 @@
 import { createContext } from 'react';
+import { CardProps, SeatData, Table } from '../../types/SeatTypesProps';
 
-interface CardProps {
-    suit: string,
-    rank: string
+
+interface PositionProps {
+    top?: string;
+    right?: string;
+    bottom?: string;
+    left?: string
 }
-
-interface Player {
-    name: string;
-}
-
-interface SeatData {
-    id: string;
-    turn: boolean;
-    stack: number;
-    sittingOut: boolean;
-    player: Player;
-    bet: number;
-    hand: CardProps[];
-    lastAction?: string;
-}
-
-interface Table {
-    id: string;
-    name: string;
-    seats: { [seatId: string]: SeatData };
-    limit: number;
-    minBet: number;
-    callAmount: number;
-    pot: number;
-    minRaise: number;
-    board: CardProps[];
-    winMessages: string;
-    button: string;
-    handOver: boolean;
-}
-
 
 interface GameContextType {
     messages: string[],
     currentTable: Table | null,
     isPlayerSeated: boolean,
     seatId: string | null,
+    elevatedCard: string | null;
     joinTable: (tableId: any) => void,
     leaveTable: () => void,
     sitDown: (tableId: string, seatId: string, amount: number) => void,
@@ -52,7 +26,18 @@ interface GameContextType {
     raise: (amount: number) => void,
     rebuy: (tableId: string, seatId: string, amount: number) => void,
     injectDebugHand: (seatNumber: string) => void,
-    injectFakePlayers: () => void
+    getAvatarPosition: (id: string | null) => PositionProps,
+    getHandPosition: (id: string | null) => PositionProps,
+    getPlayedCardsPosition: (id: string | null, seat: SeatData) => PositionProps | undefined
+    playCard: (card: CardProps, seatNumber: string) => void;
+    setElevatedCard: (cardKey: string | null) => void;
+}
+
+const position: PositionProps = {
+    top: "",
+    right: "",
+    left: "",
+    bottom: ""
 }
 
 const gameContext = createContext<GameContextType>({
@@ -60,6 +45,7 @@ const gameContext = createContext<GameContextType>({
     currentTable: null,
     isPlayerSeated: false,
     seatId: '',
+    elevatedCard: '',
     joinTable: () => { },
     leaveTable: () => { },
     sitDown: () => { },
@@ -71,7 +57,11 @@ const gameContext = createContext<GameContextType>({
     raise: () => { },
     rebuy: () => { },
     injectDebugHand: () => { },
-    injectFakePlayers: () => { },
+    getAvatarPosition: () => position,
+    getHandPosition: () => position,
+    getPlayedCardsPosition: () => position,
+    playCard: () => { },
+    setElevatedCard: () => { },
 });
 
 export default gameContext;

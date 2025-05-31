@@ -27,43 +27,43 @@ const Wrapper = styled.div`
       case '1':
         return css`
 
-        @media (max-width: 1370px) and (max-height: 915px) {
+        @media screen and (max-width: 1370px) and (max-height: 915px) {
           top: 35px;
           left: 15px
         }
 
-        @media (max-width: 1345px) and (max-height: 1010px) {
+        @media screen and (max-width: 1345px) and (max-height: 1010px) {
           top: 35px;
           left: 45px
         }
 
-        @media (max-width: 1065px) and (max-height: 530px) {
+        @media screen and (max-width: 1065px) and (max-height: 530px) {
           top: 70px;
           left: 15px
         }
         
-        @media (max-width: 935px) and (max-height: 435px) {
+        @media screen and (max-width: 935px) and (max-height: 435px) {
           top: 35px;
         }
 
-        @media (max-width: 775px) and (max-height: 523px) {
+        @media screen and (max-width: 775px) and (max-height: 523px) {
           top: 25px
         }
 
-        @media (max-width: 775px) and (max-height: 480px) {
+        @media screen and (max-width: 775px) and (max-height: 480px) {
           top: 35px
         }
 
-        @media (max-width: 775px) and (max-height: 340px) {
+        @media screen and (max-width: 775px) and (max-height: 340px) {
           top: 45px
         }
 
-        @media (max-width: 670px) and (max-height: 375px) {
+        @media screen and (max-width: 670px) and (max-height: 375px) {
           top: 22px;
           left: 10px
         }
 
-        @media (max-width: 640px) and (max-height: 565px) {
+        @media screen and (max-width: 640px) and (max-height: 565px) {
           left: 5px
         }
         `;
@@ -71,68 +71,68 @@ const Wrapper = styled.div`
         return css`
         right: 50px;
           
-          @media (max-width: 1370px) and (max-height: 915px) {
+          @media screen and (max-width: 1370px) and (max-height: 915px) {
             top: -15px;
             right: 30px;
           }
 
-           @media (max-width: 1370px) and (max-height: 775px) {
+           @media screen and (max-width: 1370px) and (max-height: 775px) {
             top: 10px;
             right: 30px;
           }
 
-          @media (max-width: 1370px) and (max-height: 625px) {
+          @media screen and (max-width: 1370px) and (max-height: 625px) {
             top: -45px;
             right: 150px;
           }
 
 
-          @media (max-width: 1185px){
+          @media screen and (max-width: 1185px){
             top: -35px;
             right: 50px;
           }
 
-          @media (max-width: 1185px) and (max-height: 825px) {
+          @media screen and (max-width: 1185px) and (max-height: 825px) {
             top: 0px;
             right: 50px;
           }
 
-           @media (max-width: 1185px) and (max-height: 650px) {
+           @media screen and (max-width: 1185px) and (max-height: 650px) {
             top: 20px;
             right: 50px;
           }
 
-           @media (max-width: 1165px) and (max-height: 525px) {
+           @media screen and (max-width: 1165px) and (max-height: 525px) {
             top: -45px;
             right: 150px;
           }
 
 
-          @media (max-width: 1025px) and (max-height: 770px) {
+          @media screen and (max-width: 1025px) and (max-height: 770px) {
             top: -15px;
             right: 30px;
           }
 
-          @media (max-width: 1025px) and (max-height: 605px) {
+          @media screen and (max-width: 1025px) and (max-height: 605px) {
             top: -45px;
             right: 100px;
           }
 
-          @media (max-width: 935px) and (max-height: 435px) {
+          @media screen and (max-width: 935px) and (max-height: 435px) {
             top: -40px;
             right: 100px
           }
 
-          @media (max-width: 745px) and (max-height: 365px) {
+          @media screen and (max-width: 745px) and (max-height: 365px) {
             right: 70px
           }
 
-          @media (max-width: 670px) and (max-height: 380px) {
+          @media screen and (max-width: 670px) and (max-height: 380px) {
             top: -40px;
             right: 70px
           }
 
-          @media (max-width: 725px) and (max-height: 545px) {
+          @media screen and (max-width: 725px) and (max-height: 545px) {
             top: -40px;
             right: 70px
           }
@@ -142,47 +142,47 @@ const Wrapper = styled.div`
           top: -160px;
           right: 50px;
 
-          @media (max-width: 1370px) and (max-height: 915px) {
+          @media screen and (max-width: 1370px) and (max-height: 915px) {
             top: -140px;
             right: 30px;
           }
 
-           @media (max-width: 1185px) and (max-height: 825px) {
+           @media screen and (max-width: 1185px) and (max-height: 825px) {
             top: -120px;
             right: 50px;
           }
 
-          @media (max-width: 1185px) and (max-height: 650px) {
+          @media screen and (max-width: 1185px) and (max-height: 650px) {
             top: -100px;
             right: 20px;
           }
 
-           @media (max-width: 1165px) and (max-height: 525px) {
+           @media screen and (max-width: 1165px) and (max-height: 525px) {
             top: -80px;
             right: 20px;
           }
 
-          @media (max-width: 1025px) and (max-height: 770px) {
+          @media screen and (max-width: 1025px) and (max-height: 770px) {
             top: -100px;
             right: 30px;
           }
 
-          @media (max-width: 1025px) and (max-height: 525px) {
+          @media screen and (max-width: 1025px) and (max-height: 525px) {
             top: -80px;
             right: 10px;
           }
 
-          @media (max-width: 935px) and (max-height: 435px) {
+          @media screen and (max-width: 935px) and (max-height: 435px) {
             top: -70px;
             right: 5px
           }
 
-          @media (max-width: 725px) and (max-height: 545px) {
+          @media screen and (max-width: 725px) and (max-height: 545px) {
             top: -80px;
             right: -10px
           }
 
-          @media (max-width: 670px) and (max-height: 380px) {
+          @media screen and (max-width: 670px) and (max-height: 380px) {
             top: -70px;
             right: 5px
           }
@@ -192,56 +192,56 @@ const Wrapper = styled.div`
         top: -50px;
         left: 50px;
 
-         @media (max-width: 1370px) and (max-height: 650px) {
+         @media screen and (max-width: 1370px) and (max-height: 650px) {
             top: -20px;
             left: 130px
         }
 
-        @media (max-width: 1185px) and (max-height: 650px) {
+        @media screen and (max-width: 1185px) and (max-height: 650px) {
           top: -20px;
         }
 
-        @media (max-width: 1025px) and (max-height: 770px) {
+        @media screen and (max-width: 1025px) and (max-height: 770px) {
             top: -50px;
             left: 40px;
           }
 
-          @media (max-width: 1025px) and (max-height: 525px) {
+          @media screen and (max-width: 1025px) and (max-height: 525px) {
             top: 1px;
             left: 110px;
           }
 
-        @media (max-width: 935px) and (max-height: 435px) {
+        @media screen and (max-width: 935px) and (max-height: 435px) {
             top: 1px;
             left: 90px
           }
 
-          @media (max-width: 800px) and (max-height: 525px) {
+          @media screen and (max-width: 800px) and (max-height: 525px) {
             top: 1px;
             left: 80px
           }
 
-          @media (max-width: 745px) and (max-height: 365px) {
+          @media screen and (max-width: 745px) and (max-height: 365px) {
             top: 1px;
             left: 75px
           }
 
-          @media (max-width: 725px) and (max-height: 545px) {
+          @media screen and (max-width: 725px) and (max-height: 545px) {
             top: -10px;
             left: 65px;
           }
 
-          @media (max-width: 725px) and (max-height: 350px) {
+          @media screen and (max-width: 725px) and (max-height: 350px) {
             top: -20px;
             left: 65px;
           }
 
-        @media (max-width: 670px) and (max-height: 380px) {
+        @media screen and (max-width: 670px) and (max-height: 380px) {
             top: -10px;
             left: 55px
           }
 
-          @media (max-width: 550px) {
+          @media screen and (max-width: 550px) {
             top: -20px;
           }
         `;

@@ -22,173 +22,18 @@ import Markdown from 'react-remarkable';
 import DealerButton from '../icons/DealerButton';
 import { StyledSeat } from './StyledSeat';
 import { PlayedCards } from './PlayedCards';
-
-interface Player {
-  name: string;
-}
-
-interface CardProps {
-  suit: string,
-  rank: string
-}
-
-interface SeatData {
-  id: string;
-  turn: boolean;
-  stack: number;
-  sittingOut: boolean;
-  player: Player;
-  bet: number;
-  hand: CardProps[];
-  lastAction?: string;
-}
-
-interface Table {
-  id: string;
-  name: string;
-  seats: { [seatId: string]: SeatData };
-  limit: number;
-  minBet: number;
-  callAmount: number;
-  pot: number;
-  minRaise: number;
-  board: CardProps[];
-  winMessages: string;
-  button: string;
-  handOver: boolean;
-}
-
-interface SeatProps {
-  currentTable: Table;
-  seatNumber: string;
-  isPlayerSeated: boolean;
-  sitDown: (tableId: string, seatNumber: string, amount: number) => void;
-}
+import { SeatProps, CardProps } from '../../types/SeatTypesProps'
 
 
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
-  const { standUp, seatId, rebuy } = useContext(gameContext);
+  const { standUp, seatId, rebuy, getAvatarPosition, getHandPosition, getPlayedCardsPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
   const maxBuyin = currentTable.limit;
   const minBuyIn = currentTable.minBet * 2 * 10;
-
-  const getPosition = (id: string | null) => {
-    switch (id) {
-      case '1':
-        return {
-          top: "3vh",
-          left: "8vw"
-        };
-      case '2':
-        return {
-          top: "20vh",
-        };
-      case '3':
-        return {
-          top: "2vh",
-          right: "6vw"
-        };
-      case '4':
-        return {
-          bottom: "20vh",
-        };
-      default:
-        return {};
-    }
-  }
-
-  const getCardsPosition = (id: string | null) => {
-
-    if (id === "1" || id === "3") {
-      return {
-        top: "5.5vh",
-      }
-    } else {
-      return {
-        left: "4.7vh",
-      }
-    }
-  }
-
-  const getPlayedCardsPosition = (id: string | null) => {
-    switch (id) {
-      case '1':
-        if (seat.hand.length === 1) {
-          return {
-            top: "-7vh",
-            left: "8vw"
-          };
-        } else if (seat.hand.length === 2) {
-          return {
-            top: "-7vh",
-            left: "7vw"
-          };
-        } else if (seat.hand.length === 3) {
-          return {
-            top: "-7vh",
-            left: "6vw"
-          };
-        } else if (seat.hand.length === 4) {
-          return {
-            top: "-7vh",
-            left: "5vw"
-          };
-        } else if (seat.hand.length === 5) {
-          return {
-            top: "-7vh",
-            left: "4vw"
-          };
-        } else {
-          return
-        }
-
-      case '2':
-        return {
-          top: "6vh",
-        };
-      case '3':
-
-        if (seat.hand.length === 1) {
-          return {
-            top: "-7vh",
-            right: "8vw"
-          };
-        } else if (seat.hand.length === 2) {
-          return {
-            top: "-7vh",
-            right: "7vw"
-          };
-        } else if (seat.hand.length === 3) {
-          return {
-            top: "-7vh",
-            right: "6vw"
-          };
-        } else if (seat.hand.length === 4) {
-          return {
-            top: "-7vh",
-            right: "5vw"
-          };
-        } else if (seat.hand.length === 5) {
-          return {
-            top: "-7vh",
-            right: "4vw"
-          };
-        } else {
-          return
-        }
-
-      case '4':
-        return {
-          bottom: "6vh",
-        };
-      default:
-        return {};
-    }
-  }
 
   useEffect(() => {
     if (
@@ -374,7 +219,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           </PositionedUISlot>
 
           <PositionedUISlot
-            {...getCardsPosition(seatId)}
+            {...getHandPosition(seatId)}
             style={{
               display: 'flex',
               textAlign: 'center',
@@ -387,7 +232,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
               {seat.hand &&
                 seat.hand.map((card: CardProps, index: number) => (
                   <PokerCard
-                    key={index}
+                    key={`${card.suit}-${card.rank}-${index}`} // Clé plus unique
                     card={card}
                     width="5vw"
                     maxWidth="60px"
@@ -408,7 +253,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           )}
 
           <PositionedUISlot
-            {...getPosition(seatId)}
+            {...getAvatarPosition(seatId)}
             style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
@@ -422,7 +267,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           </PositionedUISlot>
 
           <PositionedUISlot
-            {...getPlayedCardsPosition(seatId)}
+            {...getPlayedCardsPosition(seatId, seat)}
             style={{
               display: 'flex',
               textAlign: 'center',
@@ -432,8 +277,8 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             origin="center right"
           >
             <PlayedCards>
-              {seat.hand &&
-                seat.hand.map((card: CardProps, index: number) => (
+              {seat.playedCards &&
+                seat.playedCards.map((card: CardProps, index: number) => (
                   <PokerCard
                     key={index}
                     card={card}

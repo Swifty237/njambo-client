@@ -20,8 +20,8 @@ declare global {
 }
 
 interface LobbyInfo {
-  tables: string;    // Replace 'any' with the actual type if known
-  players: string;   // Replace 'any' with the actual type if known
+  tables: string;
+  players: string;
   socketId: string;
 }
 

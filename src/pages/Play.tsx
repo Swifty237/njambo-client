@@ -20,7 +20,6 @@ import PokerCard from '../components/game/PokerCard';
 import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
-// import mockTable from '../components/mocks/mockTable';
 
 
 interface CardProps {
@@ -44,8 +43,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
     check,
     call,
     raise,
-    injectDebugHand,
-    injectFakePlayers,
+    injectDebugHand
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
@@ -77,7 +75,6 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
       <RotateDevicePrompt />
 
       <Container fullHeight>
-
         {currentTable && (
           <>
 
@@ -148,19 +145,6 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
             Injecter des cartes
           </Button>
 
-          <Button
-            $small
-            onClick={() => {
-              injectFakePlayers();
-            }}
-            style={{
-              position: "absolute",
-              top: "3vw",
-              left: "-10vw",
-            }}
-          >
-            Injecter des joueurs
-          </Button>
           <>
             {currentTable && (
 
