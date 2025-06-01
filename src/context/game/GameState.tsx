@@ -167,7 +167,7 @@ const GameState = ({ history, children }: GameStateProps) => {
 
 
 
-  // Nouvelle fonction pour toggle une carte spécifique
+  // Fonction pour toggle une carte spécifique
   const toggleElevatedCard = (cardKey: string) => {
     setElevatedCards(prevCards => {
       if (prevCards.includes(cardKey)) {
@@ -180,7 +180,7 @@ const GameState = ({ history, children }: GameStateProps) => {
     });
   };
 
-  // Optionnel : fonction pour abaisser toutes les cartes
+  // Fonction pour abaisser toutes les cartes
   const clearAllElevatedCards = () => {
     setElevatedCards([]);
   };

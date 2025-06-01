@@ -15,9 +15,6 @@ interface StyledPokerCardWrapperProps {
 
 const StyledPokerCardWrapper = styled.div`
   display: inline-block;
-  margin-top: 1rem;
-  min-width: 70px;
-  position: relative; /* Nécessaire pour utiliser top */
   animation-duration: 0.5s;
   animation-fill-mode: both;
   -webkit-animation-duration: 0.5s;
@@ -54,9 +51,9 @@ const StyledPokerCardWrapper = styled.div`
   }
 
   img {
-    width: ${({ width }: StyledPokerCardWrapperProps) => width || '7vw'};
-    max-width: ${({ maxWidth }: StyledPokerCardWrapperProps) => maxWidth || '80px'};
-    min-width: ${({ minWidth }: StyledPokerCardWrapperProps) => minWidth || '50px'};
+    width: ${({ width }: StyledPokerCardWrapperProps) => width};
+    max-width: ${({ maxWidth }: StyledPokerCardWrapperProps) => maxWidth};
+    min-width: ${({ minWidth }: StyledPokerCardWrapperProps) => minWidth};
     box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1);
   }
 `;

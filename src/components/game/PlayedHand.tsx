@@ -4,7 +4,6 @@ export const PlayedHand = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 55;
   transition: all 0.3s ease;
 
   * ~ * {

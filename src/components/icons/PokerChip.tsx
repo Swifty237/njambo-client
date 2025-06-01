@@ -1,6 +1,5 @@
 import React from 'react';
 import theme from '../../styles/theme';
-// import PropTypes from 'prop-types';
 
 type PokerChipProps = {
   width: string;
@@ -37,7 +36,7 @@ const PokerChip = ({ width, height, viewBox, injectedTheme }: PokerChipProps) =>
     </g>
     <defs>
       <clipPath id="clip0">
-        <rect width="38" height="38" fill="white" />
+        <rect width="33" height="33" />
       </clipPath>
     </defs>
   </svg>
