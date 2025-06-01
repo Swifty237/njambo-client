@@ -86,6 +86,7 @@ const PartiesListWrapper = styled.div`
 
   @media screen and (max-width: 800px) {
     width: 88vw;
+    height: 37vh;
   }
 `
 
