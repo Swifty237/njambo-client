@@ -1,15 +1,8 @@
 import styled from 'styled-components';
+import { ThemeProps } from '../../styles/theme';
 
 interface InputProps {
-  theme: {
-    colors: {
-      playingCardBgLighter: string,
-      primaryCta: string,
-    },
-    other: {
-      stdBorderRadius: string,
-    }
-  }
+  theme: ThemeProps;
 }
 
 export const Input = styled.input`

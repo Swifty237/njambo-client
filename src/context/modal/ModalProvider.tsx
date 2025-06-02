@@ -1,22 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import ModalContext from './modalContext';
+import ModalContext, { ModalDataProps } from './modalContext';
 import Modal, { initialModalData } from '../../components/modals/Modal';
 
 interface ModalProviderProps {
   children: React.ReactNode;
 }
 
-interface ModalProps {
-  children: () => React.ReactNode;
-  headingText: string;
-  btnText: string;
-  btnCallBack: () => void;
-  onCloseCallBack: () => void;
-}
-
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [showModal, setShowModal] = useState(false);
-  const [modalData, setModalData] = useState<ModalProps>(initialModalData);
+  const [modalData, setModalData] = useState<ModalDataProps>(initialModalData);
 
   useEffect(() => {
     const layoutWrapper = document.getElementById('layout-wrapper');
@@ -60,20 +52,18 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const closeModal = () => setShowModal(false);
 
   return (
-    <ModalContext.Provider
-      value={{ showModal, modalData, openModal, closeModal }}
-    >
-      {children}
+    <ModalContext.Provider value={{ showModal, modalData, openModal, closeModal }}>
       {showModal && (
         <Modal
           headingText={modalData.headingText}
           btnText={modalData.btnText}
-          onClose={modalData.onCloseCallBack}
-          onBtnClicked={modalData.btnCallBack}
+          btnCallBack={modalData.btnCallBack}
+          onCloseCallBack={modalData.onCloseCallBack}
         >
-          {modalData.children()}
+          {modalData.children}
         </Modal>
       )}
+      {children}
     </ModalContext.Provider>
   );
 };

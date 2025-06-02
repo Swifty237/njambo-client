@@ -1,13 +1,8 @@
 import styled from 'styled-components';
+import { ThemeProps } from '../../styles/theme';
 
 interface FormProps {
-  theme: {
-    colors: { lightBg: string },
-    other: {
-      stdBorderRadius: string,
-      cardDropShadow: string,
-    }
-  }
+  theme: ThemeProps;
 }
 
 export const Form = styled.form`

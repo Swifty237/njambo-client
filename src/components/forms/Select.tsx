@@ -1,16 +1,8 @@
 import styled from 'styled-components';
+import { ThemeProps } from '../../styles/theme';
 
 interface SelectProps {
-  theme: {
-    colors: {
-      playingCardBgLighter: string,
-      primaryCta: string,
-      secondaryCta: string
-    },
-    other: {
-      stdBorderRadius: string,
-    }
-  }
+  theme: ThemeProps;
 }
 
 export const Select = styled.select`

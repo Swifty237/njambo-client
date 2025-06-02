@@ -3,26 +3,13 @@ import ReactDOM from 'react-dom';
 import CloseButton from '../buttons/CloseButton';
 import HeadingWithLogo from '../typography/HeadingWithLogo';
 import Button from '../buttons/Button';
-// import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import Text from '../typography/Text';
+import { ThemeProps } from '../../styles/theme';
+import { ModalDataProps } from '../../context/modal/modalContext';
 
 interface StyledModalProps {
-  theme: {
-    colors: { lightestBg: string },
-    other: {
-      stdBorderRadius: string,
-      cardDropShadow: string,
-    }
-  }
-};
-
-interface ModalProps {
-  children: React.ReactNode;
-  headingText: string;
-  btnText: string;
-  onClose: () => void;
-  onBtnClicked: () => void;
+  theme: ThemeProps;
 };
 
 const ModalWrapper = styled.div`
@@ -82,12 +69,12 @@ const IconWrapper = styled.div`
   right: 1.5rem;
 `;
 
-const Modal: React.FC<ModalProps> = ({
+const Modal: React.FC<ModalDataProps> = ({
   children,
   headingText = 'Modal',
   btnText = 'Call to Action',
-  onClose,
-  onBtnClicked,
+  btnCallBack,
+  onCloseCallBack,
 }) => {
   const modalRoot = document.getElementById('modal');
   if (!modalRoot) return null;
@@ -97,20 +84,20 @@ const Modal: React.FC<ModalProps> = ({
       id="wrapper"
       onClick={(e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
         if ((e.target as HTMLDivElement).id === 'wrapper') {
-          onClose();
+          onCloseCallBack();
         }
       }}
     >
       <StyledModal>
         <IconWrapper>
-          <CloseButton clickHandler={onClose} autoFocus />
+          <CloseButton clickHandler={onCloseCallBack} autoFocus />
         </IconWrapper>
         <ModalContent>
           <HeadingWithLogo textCentered hideIconOnMobile={false}>
             {headingText}
           </HeadingWithLogo>
           {children ? (
-            children
+            typeof children === 'function' ? children() : children
           ) : (
             <Text>
               Lorem ipsum, dolor sit amet consectetur adipisicing elit.
@@ -119,7 +106,7 @@ const Modal: React.FC<ModalProps> = ({
               rem sunt incidunt inventore esse. Modi.
             </Text>
           )}
-          <Button $primary onClick={onBtnClicked}>
+          <Button $primary onClick={btnCallBack}>
             {btnText}
           </Button>
         </ModalContent>

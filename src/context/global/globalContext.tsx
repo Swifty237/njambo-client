@@ -15,7 +15,6 @@ const globalContext = createContext({
     setTables: (value: React.SetStateAction<string>) => { },
     players: '',
     setPlayers: (value: React.SetStateAction<string>) => { },
-
 });
 
 export default globalContext;

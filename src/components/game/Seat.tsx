@@ -109,46 +109,45 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             <Button
               $small
               onClick={() => {
-                openModal(
-                  () => (
-                    <Form
-                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                        e.preventDefault();
+                openModal(() => (
+                  <Form
+                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                      e.preventDefault();
 
-                        const amountInput = document.getElementById('amount') as HTMLInputElement | null;
-                        const amount = amountInput ? + amountInput.value : 0;
+                      const amountInput = document.getElementById('amount') as HTMLInputElement | null;
+                      const amount = amountInput ? + amountInput.value : 0;
 
-                        if (
-                          amount &&
-                          amount >= minBuyIn &&
-                          amount <= chipsAmount &&
-                          amount <= maxBuyin
-                        ) {
-                          sitDown(
-                            currentTable.id,
-                            seatNumber,
-                            amount,
-                          );
-                          closeModal();
-                        }
-                      }}
-                    >
-                      <FormGroup>
-                        <Input
-                          id="amount"
-                          type="number"
-                          min={minBuyIn}
-                          max={chipsAmount <= maxBuyin ? chipsAmount : maxBuyin}
-                          defaultValue={minBuyIn}
-                        />
-                      </FormGroup>
-                      <ButtonGroup>
-                        <Button $primary type="submit" $fullWidth>
-                          {getLocalizedString('game_buyin-modal_confirm')}
-                        </Button>
-                      </ButtonGroup>
-                    </Form>
-                  ),
+                      if (
+                        amount &&
+                        amount >= minBuyIn &&
+                        amount <= chipsAmount &&
+                        amount <= maxBuyin
+                      ) {
+                        sitDown(
+                          currentTable.id,
+                          seatNumber,
+                          amount,
+                        );
+                        closeModal();
+                      }
+                    }}>
+
+                    <FormGroup>
+                      <Input
+                        id="amount"
+                        type="number"
+                        min={minBuyIn}
+                        max={chipsAmount <= maxBuyin ? chipsAmount : maxBuyin}
+                        defaultValue={minBuyIn}
+                      />
+                    </FormGroup>
+                    <ButtonGroup>
+                      <Button $primary type="submit" $fullWidth>
+                        {getLocalizedString('game_buyin-modal_confirm')}
+                      </Button>
+                    </ButtonGroup>
+                  </Form>
+                ),
                   getLocalizedString('game_buyin-modal_header'),
                   getLocalizedString('game_buyin-modal_cancel'),
                 );
@@ -171,8 +170,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: "black"
-          }}
-        >
+          }}>
           <PositionedUISlot
             top={(seatId === "4") ? "4.25rem" : "-9.25rem"}
             left="-100px"

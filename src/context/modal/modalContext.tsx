@@ -1,6 +1,6 @@
-import { createContext } from 'react';
+import { createContext, ReactNode } from 'react';
 
-interface ModalProps {
+export interface ModalDataProps {
     children: () => React.ReactNode;
     headingText: string;
     btnText: string;
@@ -10,7 +10,7 @@ interface ModalProps {
 
 interface modalContextType {
     showModal: boolean;
-    modalData: ModalProps;
+    modalData: ModalDataProps;
     openModal: (
         children: () => React.ReactNode,
         headingText: string,
@@ -21,8 +21,8 @@ interface modalContextType {
     closeModal: () => void;
 }
 
-const modalDataObject: ModalProps = {
-    children: () => null,
+const modalDataObject: ModalDataProps = {
+    children: () => { },
     headingText: '',
     btnText: '',
     btnCallBack: () => { },

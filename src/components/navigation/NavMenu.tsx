@@ -15,25 +15,10 @@ import Markdown from 'react-remarkable';
 import socketContext from '../../context/websocket/socketContext';
 import globalContext from '../../context/global/globalContext';
 import { Select } from '../forms/Select';
+import { ThemeProps } from '../../styles/theme';
 
 interface StyledNavMenuProps {
-  theme: {
-    colors: {
-      primaryCtaDarker: string
-      lightestBg: string
-      primaryCta: string;
-      lightBg: string;
-      goldenColor: string;
-    };
-    other: {
-      navMenuDropShadow: string;
-    };
-    fonts: {
-      fontFamilySansSerif: string;
-      fontSizeParagraph: string;
-      fontFamilySerif: string;
-    }
-  }
+  theme: ThemeProps;
 }
 
 interface NavMenuProps {
