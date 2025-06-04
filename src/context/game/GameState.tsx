@@ -16,7 +16,7 @@ import {
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
-import GameContext from './gameContext';
+import GameContext, { TatamiProps } from './gameContext';
 import { History } from 'history';
 import { Table, TableUpdatedPayload, TableEventPayload, CardProps, SeatData } from '../../types/SeatTypesProps';
 
@@ -31,6 +31,7 @@ const GameState = ({ history, children }: GameStateProps) => {
 
   const [messages, setMessages] = useState<string[]>([]);
   const [currentTable, setCurrentTable] = useState<Table | null>(null);
+  const [currentTables, setCurrentTables] = useState<{ [key: string]: Table } | null>(null);
   const [isPlayerSeated, setIsPlayerSeated] = useState(false);
   const [seatId, setSeatId] = useState<string | null>(null);
   const [turn, setTurn] = useState(false);
@@ -38,9 +39,11 @@ const GameState = ({ history, children }: GameStateProps) => {
   const [elevatedCards, setElevatedCards] = useState<string[]>([]);
 
   const currentTableRef = React.useRef(currentTable);
+  const currentTablesRef = React.useRef(currentTables);
 
   useEffect(() => {
     currentTableRef.current = currentTable;
+    currentTablesRef.current = currentTables;
 
     isPlayerSeated &&
       seatId &&
@@ -74,7 +77,11 @@ const GameState = ({ history, children }: GameStateProps) => {
 
       socket.on(TABLE_JOINED, ({ tables, tableId }: TableEventPayload) => {
         console.log(TABLE_JOINED, tables, tableId);
+        setCurrentTables(tables);
         setCurrentTable(tables[tableId]);
+
+        console.log("currentTable :")
+        console.log(currentTable)
       });
 
       socket.on(TABLE_LEFT, ({ tables, tableId }: TableEventPayload) => {
@@ -90,33 +97,33 @@ const GameState = ({ history, children }: GameStateProps) => {
 
 
   // Fonction de test
-  const injectDebugHand = (seatNumber: string) => {
-    setCurrentTable((prevTable) => {
-      if (!prevTable) return null;
+  // const injectDebugHand = (seatNumber: string) => {
+  //   setCurrentTable((prevTable) => {
+  //     if (!prevTable) return null;
 
-      // Copie profonde pour éviter mutation
-      const updatedSeats = {
-        ...prevTable.seats,
-        [seatNumber]: {
-          ...prevTable.seats[seatNumber],
-          hand: [
-            { suit: 'h', rank: '8' },
-            { suit: 's', rank: '10' },
-            { suit: 'c', rank: '10' },
-            { suit: 'd', rank: '5' },
-            { suit: 's', rank: '3' },
-          ],
-        },
-      };
+  //     // Copie profonde pour éviter mutation
+  //     const updatedSeats = {
+  //       ...prevTable.seats,
+  //       [seatNumber]: {
+  //         ...prevTable.seats[seatNumber],
+  //         hand: [
+  //           { suit: 'h', rank: '8' },
+  //           { suit: 's', rank: '10' },
+  //           { suit: 'c', rank: '10' },
+  //           { suit: 'd', rank: '5' },
+  //           { suit: 's', rank: '3' },
+  //         ],
+  //       },
+  //     };
 
-      const updatedTable: Table = {
-        ...prevTable,
-        seats: updatedSeats,
-      };
+  //     const updatedTable: Table = {
+  //       ...prevTable,
+  //       seats: updatedSeats,
+  //     };
 
-      return updatedTable;
-    });
-  };
+  //     return updatedTable;
+  //   });
+  // };
 
   // Fonction pour jouer une carte (double clic) - modifiée
   const playCard = (card: CardProps, seatNumber: string) => {
@@ -252,9 +259,9 @@ const GameState = ({ history, children }: GameStateProps) => {
   }
 
 
-  const joinTable = (tableId: string) => {
-    console.log(JOIN_TABLE, tableId);
-    socket.emit(JOIN_TABLE, tableId);
+  const joinTable = (tatamiData: TatamiProps) => {
+    console.log(JOIN_TABLE, tatamiData);
+    socket.emit(JOIN_TABLE, tatamiData);
   };
 
   const leaveTable = () => {
@@ -331,7 +338,7 @@ const GameState = ({ history, children }: GameStateProps) => {
         call,
         raise,
         rebuy,
-        injectDebugHand,
+        // injectDebugHand,
         getAvatarPosition,
         getHandPosition,
         getPlayedCardsPosition,

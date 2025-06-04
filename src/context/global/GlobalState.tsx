@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import GlobalContext from './globalContext';
+import { Player, Table } from '../../types/SeatTypesProps';
 
 const GlobalState: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -7,8 +8,8 @@ const GlobalState: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [chipsAmount, setChipsAmount] = useState(0);
-  const [tables, setTables] = useState('');
-  const [players, setPlayers] = useState('');
+  const [tables, setTables] = useState<Table[]>([]);
+  const [players, setPlayers] = useState<Player[]>([]);
 
   return (
     <GlobalContext.Provider

@@ -11,6 +11,7 @@ import {
 } from '../../pokergame/actions';
 import globalContext from '../global/globalContext';
 import config from '../../clientConfig';
+import { Player, Table } from '../../types/SeatTypesProps';
 
 // Extend the Window interface to include the socket property
 declare global {
@@ -20,8 +21,8 @@ declare global {
 }
 
 interface LobbyInfo {
-  tables: string;
-  players: string;
+  tables: Table[];
+  players: Player[];
   socketId: string;
 }
 
@@ -57,8 +58,8 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     window.socket && window.socket.close();
     setSocket(null);
     setSocketId(null);
-    setPlayers('');
-    setTables('');
+    setPlayers([]);
+    setTables([]);
   }
 
   function connect() {
@@ -79,12 +80,12 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       setPlayers(players);
     });
 
-    socket.on(PLAYERS_UPDATED, (players: string) => {
+    socket.on(PLAYERS_UPDATED, (players: Player[]) => {
       console.log(PLAYERS_UPDATED, players);
       setPlayers(players);
     });
 
-    socket.on(TABLES_UPDATED, (tables: string) => {
+    socket.on(TABLES_UPDATED, (tables: Table[]) => {
       console.log(TABLES_UPDATED, tables);
       setTables(tables);
     });

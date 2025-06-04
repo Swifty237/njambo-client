@@ -17,7 +17,8 @@
     "react-router-dom": "^5.2.0",
     "react-scripts": "^5.0.1",
     "socket.io": "^2.3.0",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.1.1",
+    "uuid": "^11.1.0"
   },
   "resolutions": {
     "typescript": "3.9.10",

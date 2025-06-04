@@ -9,13 +9,21 @@ interface PositionProps {
     left?: string
 }
 
+export interface TatamiProps {
+    id: string;
+    name: string;
+    price: string;
+    isPrivate: boolean;
+    createdAt: string;
+}
+
 interface GameContextType {
     messages: string[],
     currentTable: Table | null,
     isPlayerSeated: boolean,
     seatId: string | null,
     elevatedCards: string[];
-    joinTable: (tableId: any) => void,
+    joinTable: (tatamiData: TatamiProps) => void,
     leaveTable: () => void,
     sitDown: (tableId: string, seatId: string, amount: number) => void,
     standUp: () => void,
@@ -25,7 +33,7 @@ interface GameContextType {
     call: () => void,
     raise: (amount: number) => void,
     rebuy: (tableId: string, seatId: string, amount: number) => void,
-    injectDebugHand: (seatNumber: string) => void,
+    // injectDebugHand: (seatNumber: string) => void,
     getAvatarPosition: (id: string | null) => PositionProps,
     getHandPosition: (id: string | null) => PositionProps,
     getPlayedCardsPosition: (id: string | null, seat: SeatData) => PositionProps | undefined
@@ -57,7 +65,7 @@ const gameContext = createContext<GameContextType>({
     call: () => { },
     raise: () => { },
     rebuy: () => { },
-    injectDebugHand: () => { },
+    // injectDebugHand: () => { },
     getAvatarPosition: () => position,
     getHandPosition: () => position,
     getPlayedCardsPosition: () => position,

@@ -33,7 +33,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
-  const maxBuyin = currentTable.limit;
+  const maxBuyin = currentTable.price;
   const minBuyIn = currentTable.minBet * 2 * 10;
 
   useEffect(() => {

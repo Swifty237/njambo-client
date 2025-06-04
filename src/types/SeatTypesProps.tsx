@@ -1,5 +1,8 @@
 export interface Player {
+    socketId: string;
+    userId: string;
     name: string;
+    chipsAmount: string;
 }
 
 export interface CardProps {
@@ -23,7 +26,7 @@ export interface Table {
     id: string;
     name: string;
     seats: { [seatId: string]: SeatData };
-    limit: number;
+    price: number;
     minBet: number;
     callAmount: number;
     pot: number;
@@ -32,6 +35,8 @@ export interface Table {
     winMessages: string;
     button: string;
     handOver: boolean;
+    isPrivate?: boolean;
+    createdAt?: string;
 }
 
 export interface SeatProps {
@@ -48,6 +53,6 @@ export interface TableUpdatedPayload {
 }
 
 export interface TableEventPayload {
-    tables: Record<string, Table>;
+    tables: { [key: string]: Table };
     tableId: string;
 }

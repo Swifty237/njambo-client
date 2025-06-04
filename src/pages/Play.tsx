@@ -11,7 +11,6 @@ import { PokerTableWrapper } from '../components/game/PokerTableWrapper';
 import { Seat } from '../components/game/Seat';
 import Text from '../components/typography/Text';
 import modalContext from '../context/modal/modalContext';
-import { withRouter } from 'react-router-dom';
 import { TableInfoWrapper } from '../components/game/TableInfoWrapper';
 import { InfoPill } from '../components/game/InfoPill';
 import { GameUI } from '../components/game/GameUI';
@@ -20,14 +19,19 @@ import PokerCard from '../components/game/HandCard';
 import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
+import { TatamiProps } from '../context/game/gameContext'
 
 
 interface CardProps {
-  suit: string,
-  rank: string
+  suit: string;
+  rank: string;
 }
 
-const Play: React.FC<RouteComponentProps> = ({ history }) => {
+interface LocationState {
+  tatamiData?: TatamiProps;
+}
+
+const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, location }) => {
   const { socket } = useContext(socketContext);
   const { openModal } = useContext(modalContext);
   const {
@@ -43,7 +47,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
     check,
     call,
     raise,
-    injectDebugHand
+    // injectDebugHand
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
@@ -55,19 +59,21 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
       getLocalizedString('game_lost-connection-modal_btn-txt'),
       () => history.push('/'),
     );
-    socket && joinTable(1);
+
+    // Récupérer les données passées depuis MainPage
+    const receivedTatamiData = location.state?.tatamiData;
+
+    socket && receivedTatamiData && joinTable(receivedTatamiData);
     return () => leaveTable();
     // eslint-disable-next-line
-  }, [socket]);
+  }, [socket, location.state]);
 
 
   useEffect(() => {
     currentTable &&
-      (currentTable.callAmount > currentTable.minBet
-        ? setBet(currentTable.callAmount)
-        : currentTable.pot > 0
-          ? setBet(currentTable.minRaise)
-          : setBet(currentTable.minBet));
+      (currentTable.callAmount > currentTable.minBet ?
+        setBet(currentTable.callAmount) : currentTable.pot > 0 ?
+          setBet(currentTable.minRaise) : setBet(currentTable.minBet));
   }, [currentTable]);
 
   return (
@@ -77,14 +83,13 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
       <Container fullHeight>
         {currentTable && (
           <>
-
             <PositionedUISlot
               bottom="2vh"
               left="1.5rem"
               scale="0.65"
               style={{ zIndex: '50' }}
             >
-              <Button small secondary onClick={leaveTable}>
+              <Button $small $secondary onClick={leaveTable}>
                 {getLocalizedString('game_leave-table-btn')}
               </Button>
             </PositionedUISlot>
@@ -102,26 +107,26 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                     <strong>{currentTable.name}</strong> |{' '}
 
                     <strong>
-                      {getLocalizedString('game_info_limit-lbl')}:{' '}
+                      {/* {getLocalizedString('game_info_limit-lbl')}:{' '} */}
+                      Tarif/coup :
+                    </strong>
+                    {' '}
+                    {new Intl.NumberFormat(
+                      document.documentElement.lang,
+                    ).format(currentTable.price)} {' '} {'F'}
+                    {' '} | {' '}
+
+                    {/* <strong>
+                      {'Statut du tatami : '}
+                    </strong> */}
+
+                    {currentTable.isPrivate ? 'Privé' : 'Ouvert'}
+
+                    {/* <strong>
+                      {'Date d\'ouverture : '}
                     </strong>
 
-                    {new Intl.NumberFormat(
-                      document.documentElement.lang,
-                    ).format(currentTable.limit)}{' '}
-                    |{' '}
-
-                    <strong>
-                      {getLocalizedString('game_info_blinds-lbl')}:{' '}
-                    </strong>
-
-                    {new Intl.NumberFormat(
-                      document.documentElement.lang,
-                    ).format(currentTable.minBet)}{' '}
-                    /{' '}
-
-                    {new Intl.NumberFormat(
-                      document.documentElement.lang,
-                    ).format(currentTable.minBet * 2)}
+                    {currentTable.createdAt} */}
                   </Text>
                 </TableInfoWrapper>
               </PositionedUISlot>
@@ -131,7 +136,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
 
         <PokerTableWrapper>
 
-          <Button
+          {/* <Button
             $small
             onClick={() => {
               injectDebugHand(seatId!);
@@ -143,7 +148,7 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
             }}
           >
             Injecter des cartes
-          </Button>
+          </Button> */}
 
           <>
             {currentTable && (
@@ -190,8 +195,6 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
                   />
                 </PositionedUISeat>
               </ResponsiveTable>
-
-
             )}
 
             <PositionedUISlot
@@ -273,4 +276,4 @@ const Play: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(Play);
+export default Play;
