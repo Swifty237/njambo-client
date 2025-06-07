@@ -29,12 +29,12 @@ import PlayedCard from './PlayedCard';
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
-  const { standUp, seatId, rebuy, getAvatarPosition, getHandPosition, getPlayedCardsPosition } = useContext(gameContext);
+  const { standUp, seatId, rebuy, getHandsPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
-  const minBuyIn = currentTable.price * 10;
-  const maxBuyin = currentTable.price * 10 * 5;
+  const minBuyIn = currentTable.bet * 10;
+  const maxBuyin = currentTable.bet * 10 * 5;
 
   useEffect(() => {
     if (
@@ -218,27 +218,59 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           </PositionedUISlot>
 
           <PositionedUISlot
-            {...getHandPosition(seatId)}
             style={{
               display: 'flex',
-              textAlign: 'center',
-              justifyContent: 'center',
-              alignItems: 'center',
+              ...getHandsPosition(seatId || '1')
             }}
             origin="center right"
           >
-            <Hand>
-              {seat.hand &&
-                seat.hand.map((card: CardProps, index: number) => (
-                  <HandCard
-                    key={`${card.suit}-${card.rank}-${index}`} // Clé plus unique
-                    card={card}
-                    width="5vw"
-                    maxWidth="60px"
-                    minWidth="30px"
-                  />
-                ))}
+            <Hand
+              style={{
+                background: 'green',
+              }}>
+              {seat.hand && seat.hand.map((card: CardProps, index: number) => (
+                <HandCard
+                  key={`${card.suit}-${card.rank}-${index}`} // Clé plus unique
+                  card={card}
+                  width="5vw"
+                  maxWidth="60px"
+                  minWidth="30px"
+                />
+              ))}
             </Hand>
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}>
+              {currentTable.seats[`${seatId}`] && seat.bet && (seatId !== '1') && (seatId !== '2') && (seatId === '3' || '4') &&
+                <ChipsAmountPill
+                  chipsAmount={seat.bet}
+                  seatPosition={seatId as '1' | '2' | '3' | '4'}
+                />
+              }
+
+              <PlayedHand>
+                {seat.playedHand &&
+                  seat.playedHand.map((card: CardProps, index: number) => (
+                    <PlayedCard
+                      key={index}
+                      card={card}
+                      width="5vw"
+                      maxWidth="60px"
+                      minWidth="30px"
+                    />
+
+                  ))}
+              </PlayedHand>
+
+              {currentTable.seats[`${seatId}`] && seat.bet && (seatId === '1' || '2') && (seatId !== '3') && (seatId !== '4') &&
+                <ChipsAmountPill
+                  chipsAmount={seat.bet}
+                  seatPosition={seatId as '1' | '2' | '3' | '4'}
+                />
+              }
+            </div>
           </PositionedUISlot>
 
           {currentTable.button === seatNumber && (
@@ -252,7 +284,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           )}
 
           <PositionedUISlot
-            {...getAvatarPosition(seatId)}
             style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
@@ -260,62 +291,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             {!currentTable.handOver && seat.lastAction && (
               <InfoPill>{seat.lastAction}</InfoPill>
             )}
-          </PositionedUISlot>
-
-          <PositionedUISlot
-            {...getPlayedCardsPosition(seatId, seat)}
-            origin="center right"
-          >
-            {seatId === "1" || seatId === "3" || seatId === "4" ?
-              (<div
-                style={{
-                  display: 'flex',
-                  flexDirection: `${seatId === "3" ? 'column-reverse' : 'row'}`,
-                  width: `${seatId === "3" ? '235px' : 'auto'}`,
-                  alignItems: `${seatId === "3" ? 'end' : ''}`,
-                }}>
-                <PlayedHand>
-                  {seat.playedHand &&
-                    seat.playedHand.map((card: CardProps, index: number) => (
-                      <PlayedCard
-                        key={index}
-                        card={card}
-                        width="5vw"
-                        maxWidth="60px"
-                        minWidth="30px"
-                      />
-
-                    ))}
-                </PlayedHand>
-
-                <ChipsAmountPill
-                  seatPosition={seatId as '1' | '2' | '3' | '4'}
-                  chipsAmount={seat.bet}
-                />
-              </div>) :
-
-              (<div style={{ display: "flex" }}>
-                <ChipsAmountPill
-                  seatPosition={seatId as '1' | '2' | '3' | '4'}
-                  chipsAmount={seat.bet}
-                />
-
-                <PlayedHand>
-                  {seat.playedHand &&
-                    seat.playedHand.map((card: CardProps, index: number) => (
-                      <PlayedCard
-                        key={index}
-                        card={card}
-                        width="5vw"
-                        maxWidth="60px"
-                        minWidth="30px"
-                      />
-
-                    ))}
-                </PlayedHand>
-              </div>)
-            }
-
           </PositionedUISlot>
         </PositionedUISlot>
       )}

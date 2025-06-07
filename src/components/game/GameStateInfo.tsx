@@ -23,10 +23,10 @@ export const GameStateInfo = ({ currentTable }: any) => {
         <InfoPill>{getLocalizedString('game_state-info_wait')}</InfoPill>
       ) : (
         <InfoPill>
-          {currentTable.board.length === 0 && 'Pre-Flop'}
+          {/* {currentTable.board.length === 0 && 'Pre-Flop'}
           {currentTable.board.length === 3 && 'Flop'}
           {currentTable.board.length === 4 && 'Turn'}
-          {currentTable.board.length === 5 && 'River'}
+          {currentTable.board.length === 5 && 'River'} */}
           {currentTable.wentToShowdown && 'Showdown'}
         </InfoPill>
       )}

@@ -58,7 +58,7 @@ const StyledPokerCardWrapper = styled.div`
   }
 `;
 
-const PlayedPokerCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
+const PlayedCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
   const concat = suit + rank;
 
   return (
@@ -78,4 +78,4 @@ const PlayedPokerCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, 
   );
 };
 
-export default PlayedPokerCard;
+export default PlayedCard;

@@ -13,6 +13,8 @@ import {
   TABLE_JOINED,
   TABLE_LEFT,
   TABLE_UPDATED,
+  PLAY_ONE_CARD,
+  PLAYED_CARD
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
@@ -90,6 +92,12 @@ const GameState = ({ history, children }: GameStateProps) => {
         loadUser(localStorage.token);
         setMessages([]);
       });
+
+      socket.on(PLAYED_CARD, ({ tables, tableId }: TableEventPayload) => {
+        console.log(PLAYED_CARD, tables, tableId);
+        setCurrentTables(tables);
+        setCurrentTable(tables[tableId]);
+      });
     }
     return () => leaveTable();
     // eslint-disable-next-line
@@ -97,81 +105,40 @@ const GameState = ({ history, children }: GameStateProps) => {
 
 
   // Fonction de test
-  // const injectDebugHand = (seatNumber: string) => {
-  //   setCurrentTable((prevTable) => {
-  //     if (!prevTable) return null;
-
-  //     // Copie profonde pour éviter mutation
-  //     const updatedSeats = {
-  //       ...prevTable.seats,
-  //       [seatNumber]: {
-  //         ...prevTable.seats[seatNumber],
-  //         hand: [
-  //           { suit: 'h', rank: '8' },
-  //           { suit: 's', rank: '10' },
-  //           { suit: 'c', rank: '10' },
-  //           { suit: 'd', rank: '5' },
-  //           { suit: 's', rank: '3' },
-  //         ],
-  //       },
-  //     };
-
-  //     const updatedTable: Table = {
-  //       ...prevTable,
-  //       seats: updatedSeats,
-  //     };
-
-  //     return updatedTable;
-  //   });
-  // };
-
-  // Fonction pour jouer une carte (double clic) - modifiée
-  const playCard = (card: CardProps, seatNumber: string) => {
+  const injectDebugHand = (seatNumber: string) => {
     setCurrentTable((prevTable) => {
       if (!prevTable) return null;
 
-      const currentSeat = prevTable.seats[seatNumber];
-      if (!currentSeat || !currentSeat.hand) return prevTable;
-
-      // Trouver la carte dans la main
-      const cardIndex = currentSeat.hand.findIndex(
-        (handCard) => handCard.suit === card.suit && handCard.rank === card.rank
-      );
-
-      if (cardIndex === -1) {
-        console.warn('Carte non trouvée dans la main du joueur');
-        return prevTable;
-      }
-
-      // Retirer la carte de la main
-      const updatedHand = currentSeat.hand.filter((_, index) => index !== cardIndex);
-
-      // Ajouter la carte aux cartes jouées
-      const updatedPlayedHand = [...(currentSeat.playedHand || []), card];
-
-      // Mettre à jour le siège
+      // Copie profonde pour éviter mutation
       const updatedSeats = {
         ...prevTable.seats,
         [seatNumber]: {
-          ...currentSeat,
-          hand: updatedHand,
-          playedHand: updatedPlayedHand,
+          ...prevTable.seats[seatNumber],
+          hand: [
+            { suit: 'h', rank: '8' },
+            { suit: 's', rank: '10' },
+            { suit: 'c', rank: '10' },
+            { suit: 'd', rank: '5' },
+            { suit: 's', rank: '3' },
+          ],
+          playedHand: [
+            { suit: 'h', rank: '8' },
+            { suit: 's', rank: '10' },
+            { suit: 'c', rank: '10' },
+            { suit: 'd', rank: '5' },
+            { suit: 's', rank: '3' },
+          ],
         },
       };
 
-      const updatedTable = {
+      const updatedTable: Table = {
         ...prevTable,
         seats: updatedSeats,
       };
 
       return updatedTable;
     });
-
-    // Retirer la carte jouée des cartes élevées
-    const cardKey = `${seatNumber}-${card.suit}-${card.rank}`;
-    setElevatedCards(prevCards => prevCards.filter(key => key !== cardKey));
   };
-
 
 
   // Fonction pour toggle une carte spécifique
@@ -188,75 +155,41 @@ const GameState = ({ history, children }: GameStateProps) => {
   };
 
   // Fonction pour abaisser toutes les cartes
-  const clearAllElevatedCards = () => {
-    setElevatedCards([]);
-  };
+  // const clearAllElevatedCards = () => {
+  //   setElevatedCards([]);
+  // };
 
-  const getAvatarPosition = (id: string | null) => {
-    switch (id) {
-      case '1':
+  const getHandsPosition = (seatId: string) => {
+    switch (seatId) {
+      case "1":
         return {
-          top: "3vh",
-          left: "8vw"
+          flexDirection: 'column',
+          padding: '0 0 25vh 18vw'
         };
-      case '2':
+      case "2":
         return {
-          top: "20vh",
+          flexDirection: 'column',
+          padding: '15vh 0 0 20vw'
         };
-      case '3':
+      case "3":
         return {
-          top: "2vh",
-          right: "6vw"
+          flexDirection: 'column-reverse',
+          padding: '25vh 18vw 0 0'
         };
-      case '4':
+      case "4":
         return {
-          bottom: "20vh",
+          flexDirection: 'column-reverse',
+          padding: '0 20vw 15vh 0'
         };
       default:
-        return {};
+        return {
+          flexDirection: 'column',
+          padding: '0'
+        };
     }
   }
 
-  const getHandPosition = (id: string | null) => {
 
-    if (id === "1" || id === "3") {
-      return {
-        top: "5.5vh",
-      }
-    } else {
-      return {
-        left: "4.7vh",
-      }
-    }
-  }
-
-  const getPlayedCardsPosition = (id: string | null, seat: SeatData) => {
-    switch (id) {
-      case '1':
-        return {
-          top: "-7vh",
-          left: "4vw"
-        };
-
-      case '2':
-        return {
-          top: "6vh",
-        };
-
-      case '3':
-        return {
-          top: "-7vh",
-          right: "4vw"
-        };
-
-      case '4':
-        return {
-          bottom: "6vh",
-        };
-      default:
-        return {};
-    }
-  }
 
 
   const joinTable = (tatamiData: TatamiProps) => {
@@ -277,6 +210,38 @@ const GameState = ({ history, children }: GameStateProps) => {
     socket.emit(SIT_DOWN, { tableId, seatId, amount });
     setIsPlayerSeated(true);
     setSeatId(seatId);
+  };
+
+  // Fonction pour jouer une carte (double clic) - modifiée
+  const playOneCard = (card: CardProps, seatNumber: string) => {
+
+    if (currentTable) {
+      const currentSeat = currentTable.seats[seatNumber];
+
+      if (currentSeat && currentSeat.hand) {
+
+        // Trouver la carte dans la main
+        const cardIndex = currentSeat.hand.findIndex((handCard) => handCard.suit === card.suit && handCard.rank === card.rank);
+
+        if (cardIndex === -1) {
+          console.warn('Carte non trouvée dans la main du joueur');
+          return;
+        }
+
+        // Envoyer la carte au serveur via socket
+        if (socket && currentTable) {
+          socket.emit(PLAY_ONE_CARD, {
+            tableId: currentTable.id,
+            seatId: seatNumber,
+            playedCard: card,
+          });
+        }
+      }
+    }
+
+    // Retirer la carte jouée des cartes élevées
+    const cardKey = `${seatNumber}-${card.suit}-${card.rank}`;
+    setElevatedCards(prevCards => prevCards.filter(key => key !== cardKey));
   };
 
   const rebuy = (tableId: string, seatId: string, amount: number) => {
@@ -338,11 +303,9 @@ const GameState = ({ history, children }: GameStateProps) => {
         call,
         raise,
         rebuy,
-        // injectDebugHand,
-        getAvatarPosition,
-        getHandPosition,
-        getPlayedCardsPosition,
-        playCard,
+        injectDebugHand,
+        getHandsPosition,
+        playOneCard,
         setElevatedCards,
         toggleElevatedCard
       }}

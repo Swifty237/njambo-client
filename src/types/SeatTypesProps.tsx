@@ -26,12 +26,9 @@ export interface Table {
     id: string;
     name: string;
     seats: { [seatId: string]: SeatData };
-    price: number;
-    minBet: number;
+    bet: number;
     callAmount: number;
     pot: number;
-    minRaise: number;
-    board: CardProps[];
     winMessages: string;
     button: string;
     handOver: boolean;

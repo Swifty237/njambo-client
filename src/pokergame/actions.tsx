@@ -19,3 +19,5 @@ export const STAND_UP = 'STAND_UP';
 export const SITTING_OUT = 'SITTING_OUT';
 export const SITTING_IN = 'SITTING_IN';
 export const DISCONNECT = 'DISCONNECT';
+export const PLAY_ONE_CARD = 'PLAY_ONE_CARD';
+export const PLAYED_CARD = 'PLAYED_CARD';

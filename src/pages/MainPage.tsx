@@ -93,7 +93,7 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
   const { getLocalizedString } = useContext(contentContext);
   // const { openModal, closeModal } = useContext(modalContext);
   const { joinTable } = useContext(gameContext);
-  const [price, setPrice] = useState<string>('25');
+  const [bet, setBet] = useState<string>('25');
   const [isPrivate, setIsPrivate] = useState<boolean>(false)
   const [tatamiDataList, setTatamiDataList] = useState<TatamiProps[]>([])
   const [displayTatamiList, setDisplayTatamiList] = useState<Boolean>(true);
@@ -108,7 +108,7 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
           const tatamiData: TatamiProps = {
             id: table.id,
             name: table.name,
-            price: table.price.toString(),
+            bet: (table.bet || '0').toString(),
             isPrivate: table.isPrivate || false,
             createdAt: table.createdAt || new Date().toLocaleString()
           };
@@ -140,7 +140,7 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
   };
 
   // Fonction pour créer un lien tatami
-  const createTatamiData = (price: string, isPrivate: boolean) => {
+  const createTatamiData = (bet: string, isPrivate: boolean) => {
     const id = uuidv4();
     const tatamiNameId = generateTatamiId();
     const tatamiName = `tatami-${tatamiNameId}`;
@@ -148,7 +148,7 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
     return {
       id: id,
       name: tatamiName,
-      price: price,
+      bet: bet,
       isPrivate: isPrivate,
       createdAt: new Date().toLocaleString()
     };
@@ -211,12 +211,12 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
                       state: {
                         id: tatamiData.id,
                         name: tatamiData.name,
-                        price: tatamiData.price,
+                        bet: tatamiData.bet,
                         isPrivate: tatamiData.isPrivate
                       }
                     }}>
                       <span style={{ textDecoration: 'underline' }}>
-                        <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.price} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
+                        <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
                       </span>
                     </Link>
                   </li>
@@ -248,7 +248,7 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
                     e.preventDefault();
 
                     // Créer le nouveau lien tatami
-                    const newTatamiData = createTatamiData(price, isPrivate);
+                    const newTatamiData = createTatamiData(bet, isPrivate);
 
                     setDisplayTatamiList(true);
 
@@ -260,7 +260,7 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
                     <Label>{'Tarif / coup'}</Label>
                     <Select
                       id="select-price"
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setPrice(e.target.value)}
+                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBet(e.target.value)}
                     >
                       <option value="25">25 F CFA</option>
                       <option value="50">50 F CFA</option>

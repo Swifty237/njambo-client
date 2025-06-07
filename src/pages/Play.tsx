@@ -15,17 +15,17 @@ import { TableInfoWrapper } from '../components/game/TableInfoWrapper';
 import { InfoPill } from '../components/game/InfoPill';
 import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
-import PokerCard from '../components/game/HandCard';
+// import PokerCard from '../components/game/HandCard';
 import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
 import { TatamiProps } from '../context/game/gameContext'
 
 
-interface CardProps {
-  suit: string;
-  rank: string;
-}
+// interface CardProps {
+//   suit: string;
+//   rank: string;
+// }
 
 interface LocationState {
   tatamiData?: TatamiProps;
@@ -47,7 +47,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
     check,
     call,
     raise,
-    // injectDebugHand
+    injectDebugHand
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
@@ -69,12 +69,12 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
   }, [socket, location.state]);
 
 
-  useEffect(() => {
-    currentTable &&
-      (currentTable.callAmount > currentTable.minBet ?
-        setBet(currentTable.callAmount) : currentTable.pot > 0 ?
-          setBet(currentTable.minRaise) : setBet(currentTable.minBet));
-  }, [currentTable]);
+  // useEffect(() => {
+  //   currentTable &&
+  //     (currentTable.callAmount > currentTable.bet ?
+  //       setBet(currentTable.callAmount) : currentTable.pot > 0 ?
+  //         setBet(currentTable.minRaise) : setBet(currentTable.minBet));
+  // }, [currentTable]);
 
   return (
     <>
@@ -113,7 +113,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                     {' '}
                     {new Intl.NumberFormat(
                       document.documentElement.lang,
-                    ).format(currentTable.price)} {' '} {'F'}
+                    ).format(currentTable.bet)} {' '} {'F'}
                     {' '} | {' '}
 
                     {/* <strong>
@@ -136,7 +136,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
 
         <PokerTableWrapper>
 
-          {/* <Button
+          <Button
             $small
             onClick={() => {
               injectDebugHand(seatId!);
@@ -148,7 +148,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
             }}
           >
             Injecter des cartes
-          </Button> */}
+          </Button>
 
           <>
             {currentTable && (
@@ -208,7 +208,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                 alignItems: 'center',
               }}
             >
-              {currentTable && currentTable.board && currentTable.board.length > 0 && (
+              {/* {currentTable && currentTable.board && currentTable.board.length > 0 && (
                 <>
                   {currentTable.board.map((card: CardProps, index: number) => (
                     <PokerCard
@@ -220,7 +220,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                     />
                   ))}
                 </>
-              )}
+              )} */}
             </PositionedUISlot>
 
             <PositionedUISlot bottom="8%" scale="0.60" origin="bottom center">

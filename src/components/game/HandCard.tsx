@@ -69,7 +69,7 @@ const StyledPokerCardWrapper = styled.div`
 
 const HandCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
   const concat = suit + rank;
-  const { seatId, elevatedCards, playCard, toggleElevatedCard } = useContext(gameContext);
+  const { seatId, elevatedCards, playOneCard, toggleElevatedCard } = useContext(gameContext);
   const cardKey = `${seatId}-${suit}-${rank}`;
   const isElevated = elevatedCards.includes(cardKey);
 
@@ -81,8 +81,8 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank },
   };
 
   const handleDoubleClick = () => {
-    if (seatId && playCard) {
-      playCard({ suit, rank }, seatId);
+    if (seatId && playOneCard) {
+      playOneCard({ suit, rank }, seatId);
 
       // Retirer la carte des cartes élevées si elle était élevée
       if (isElevated && toggleElevatedCard) {
@@ -100,7 +100,7 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank },
       minWidth={minWidth}
       maxWidth={maxWidth}
       isElevated={isElevated}
-      onClick={handleClickEvents}
+      onClick={suit === 'hidden' && rank === 'hidden' ? undefined : handleClickEvents}
     >
       {/* A revoir plus tard */}
       <img

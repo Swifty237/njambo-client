@@ -38,10 +38,6 @@ const Wrapper = styled.div<WrapperProps>`
   padding: 5px;
   
   /* Application des positions dynamiques avec fallbacks */
-  ${(props: WrapperProps) => props.position.top && `top: ${props.position.top};`}
-  ${(props: WrapperProps) => props.position.bottom && `bottom: ${props.position.bottom};`}
-  ${(props: WrapperProps) => props.position.left && `left: ${props.position.left};`}
-  ${(props: WrapperProps) => props.position.right && `right: ${props.position.right};`}
 `;
 
 const CurrencySpan = styled.span<FontSizeProps>`
