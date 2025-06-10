@@ -1,13 +1,13 @@
 import { createContext } from 'react';
-import { CardProps, SeatData, Table } from '../../types/SeatTypesProps';
+import { CardProps, Table } from '../../types/SeatTypesProps';
 
 
-interface PositionProps {
-    top?: string;
-    right?: string;
-    bottom?: string;
-    left?: string
-}
+// interface PositionProps {
+//     top?: string;
+//     right?: string;
+//     bottom?: string;
+//     left?: string
+// }
 
 export interface TatamiProps {
     id: string;
@@ -22,7 +22,7 @@ interface GameContextType {
     currentTable: Table | null,
     isPlayerSeated: boolean,
     seatId: string | null,
-    elevatedCards: string[];
+    elevatedCard: string | null;
     joinTable: (tatamiData: TatamiProps) => void,
     leaveTable: () => void,
     sitDown: (tableId: string, seatId: string, amount: number) => void,
@@ -36,8 +36,7 @@ interface GameContextType {
     injectDebugHand: (seatNumber: string) => void,
     getHandsPosition: (seatId: string) => { flexDirection: string; padding: string },
     playOneCard: (card: CardProps, seatNumber: string) => void;
-    setElevatedCards: (cards: string[]) => void;
-    toggleElevatedCard: (cardKey: string) => void;
+    setElevatedCard: (cardKey: string | null) => void;
 }
 
 const gameContext = createContext<GameContextType>({
@@ -45,7 +44,7 @@ const gameContext = createContext<GameContextType>({
     currentTable: null,
     isPlayerSeated: false,
     seatId: '',
-    elevatedCards: [],
+    elevatedCard: null,
     joinTable: () => { },
     leaveTable: () => { },
     sitDown: () => { },
@@ -59,8 +58,7 @@ const gameContext = createContext<GameContextType>({
     injectDebugHand: () => { },
     getHandsPosition: () => ({ flexDirection: 'column', padding: '0' }),
     playOneCard: () => { },
-    setElevatedCards: () => { },
-    toggleElevatedCard: () => { }
+    setElevatedCard: () => { }
 });
 
 export default gameContext;

@@ -34,6 +34,9 @@ export interface Table {
     handOver: boolean;
     isPrivate?: boolean;
     createdAt?: string;
+    demandedSuit: string;
+    currentRoundCards: CardProps[];
+    roundNumber: number;
 }
 
 export interface SeatProps {

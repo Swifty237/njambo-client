@@ -25,23 +25,29 @@ import { PlayedHand } from './PlayedHand';
 import { SeatProps, CardProps } from '../../types/SeatTypesProps'
 import PlayedCard from './PlayedCard';
 
-
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
-  const { standUp, seatId, rebuy, getHandsPosition } = useContext(gameContext);
+  const { standUp, rebuy, getHandsPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
   const seat = currentTable.seats[seatNumber];
   const minBuyIn = currentTable.bet * 10;
   const maxBuyin = currentTable.bet * 10 * 5;
 
+  const isHiddenCards = (): boolean => {
+    if (!seat.hand || seat.hand.length === 0) {
+      return false;
+    }
+    return seat.hand.every(card => card.rank === 'hidden' && card.suit === 'hidden');
+  }
+
   useEffect(() => {
     if (
       currentTable &&
       isPlayerSeated &&
       seat &&
-      seat.id === seatId &&
+      seat.id === seatNumber &&
       seat.stack === 0 &&
       seat.sittingOut
     ) {
@@ -101,7 +107,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   }, [currentTable]);
 
   return (
-
     <StyledSeat>
       {!seat ? (
         <>
@@ -131,7 +136,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                         closeModal();
                       }
                     }}>
-
                     <FormGroup>
                       <Input
                         id="amount"
@@ -162,7 +166,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           )}
         </>
       ) : (
-
         <PositionedUISlot
           style={{
             display: 'flex',
@@ -172,7 +175,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             backgroundColor: "black"
           }}>
           <PositionedUISlot
-            top={(seatId === "4") ? "4.25rem" : "-9.25rem"}
+            top={(seatNumber === "4") ? "4.25rem" : "-9.25rem"}
             left="-100px"
             origin="top center"
           >
@@ -207,7 +210,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                       <ColoredText secondary>{'F CFA'}</ColoredText>
                     </div>
                   </div>
-
                 )}
               </ColoredText>
             </NameTag>
@@ -220,17 +222,14 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           <PositionedUISlot
             style={{
               display: 'flex',
-              ...getHandsPosition(seatId || '1')
+              ...getHandsPosition(seatNumber)
             }}
             origin="center right"
           >
-            <Hand
-              style={{
-                background: 'green',
-              }}>
+            <Hand hiddenCards={isHiddenCards()}>
               {seat.hand && seat.hand.map((card: CardProps, index: number) => (
                 <HandCard
-                  key={`${card.suit}-${card.rank}-${index}`} // Clé plus unique
+                  key={`${card.suit}-${card.rank}-${index}`}
                   card={card}
                   width="5vw"
                   maxWidth="60px"
@@ -238,15 +237,16 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                 />
               ))}
             </Hand>
+
             <div style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}>
-              {currentTable.seats[`${seatId}`] && seat.bet && (seatId !== '1') && (seatId !== '2') && (seatId === '3' || '4') &&
+              {seat.bet && (seatNumber === '3' || seatNumber === '4') &&
                 <ChipsAmountPill
                   chipsAmount={seat.bet}
-                  seatPosition={seatId as '1' | '2' | '3' | '4'}
+                  seatPosition={seatNumber as '1' | '2' | '3' | '4'}
                 />
               }
 
@@ -260,14 +260,13 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                       maxWidth="60px"
                       minWidth="30px"
                     />
-
                   ))}
               </PlayedHand>
 
-              {currentTable.seats[`${seatId}`] && seat.bet && (seatId === '1' || '2') && (seatId !== '3') && (seatId !== '4') &&
+              {seat.bet && (seatNumber === '1' || seatNumber === '2') &&
                 <ChipsAmountPill
                   chipsAmount={seat.bet}
-                  seatPosition={seatId as '1' | '2' | '3' | '4'}
+                  seatPosition={seatNumber as '1' | '2' | '3' | '4'}
                 />
               }
             </div>
@@ -275,8 +274,9 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
 
           {currentTable.button === seatNumber && (
             <PositionedUISlot
-              right="35px"
-              origin="center left"
+              right={seatNumber === '1' || seatNumber === '2' ? '38px' : 'auto'}
+              left={seatNumber === '3' || seatNumber === '4' ? '38px' : 'auto'}
+              origin={seatNumber === '1' || seatNumber === '2' ? 'center left' : 'center right'}
               style={{ zIndex: '55' }}
             >
               <DealerButton />
@@ -287,14 +287,12 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
-
             {!currentTable.handOver && seat.lastAction && (
               <InfoPill>{seat.lastAction}</InfoPill>
             )}
           </PositionedUISlot>
         </PositionedUISlot>
       )}
-
     </StyledSeat>
   );
 };

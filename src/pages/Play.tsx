@@ -20,7 +20,7 @@ import contentContext from '../context/content/contentContext';
 import { RouteComponentProps } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
 import { TatamiProps } from '../context/game/gameContext'
-
+// import { SeatData, Player } from '../types/SeatTypesProps';
 
 // interface CardProps {
 //   suit: string;
@@ -43,11 +43,9 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
     leaveTable,
     sitDown,
     standUp,
-    fold,
     check,
-    call,
-    raise,
-    injectDebugHand
+    // injectDebugHand,
+    playOneCard
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
@@ -67,14 +65,6 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
     return () => leaveTable();
     // eslint-disable-next-line
   }, [socket, location.state]);
-
-
-  // useEffect(() => {
-  //   currentTable &&
-  //     (currentTable.callAmount > currentTable.bet ?
-  //       setBet(currentTable.callAmount) : currentTable.pot > 0 ?
-  //         setBet(currentTable.minRaise) : setBet(currentTable.minBet));
-  // }, [currentTable]);
 
   return (
     <>
@@ -136,7 +126,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
 
         <PokerTableWrapper>
 
-          <Button
+          {/* <Button
             $small
             onClick={() => {
               injectDebugHand(seatId!);
@@ -148,7 +138,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
             }}
           >
             Injecter des cartes
-          </Button>
+          </Button> */}
 
           <>
             {currentTable && (
@@ -208,19 +198,6 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                 alignItems: 'center',
               }}
             >
-              {/* {currentTable && currentTable.board && currentTable.board.length > 0 && (
-                <>
-                  {currentTable.board.map((card: CardProps, index: number) => (
-                    <PokerCard
-                      key={index}
-                      card={card}
-                      width="7vw"
-                      maxWidth="80px"
-                      minWidth="50px"
-                    />
-                  ))}
-                </>
-              )} */}
             </PositionedUISlot>
 
             <PositionedUISlot bottom="8%" scale="0.60" origin="bottom center">
@@ -264,11 +241,9 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
               seatId={seatId!}
               bet={bet}
               setBet={setBet}
-              raise={raise}
               standUp={standUp}
-              fold={fold}
               check={check}
-              call={call}
+              playOneCard={playOneCard}
             />
           )}
       </Container>

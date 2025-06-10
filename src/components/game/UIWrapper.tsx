@@ -5,7 +5,7 @@ export const UIWrapper = styled.div`
   bottom: 1vh;
   right: 1vh;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: 0.5rem;
   background-color: hsla(49, 63%, 92%, 60%);
   box-shadow: 10px 10px 30px rgba(0, 0, 0, 0.1);

@@ -14,13 +14,14 @@ import {
   TABLE_LEFT,
   TABLE_UPDATED,
   PLAY_ONE_CARD,
-  PLAYED_CARD
+  PLAYED_CARD,
+  SET_TURN
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
 import GameContext, { TatamiProps } from './gameContext';
 import { History } from 'history';
-import { Table, TableUpdatedPayload, TableEventPayload, CardProps, SeatData } from '../../types/SeatTypesProps';
+import { Table, TableUpdatedPayload, TableEventPayload, CardProps } from '../../types/SeatTypesProps';
 
 interface GameStateProps {
   history: History;
@@ -38,7 +39,7 @@ const GameState = ({ history, children }: GameStateProps) => {
   const [seatId, setSeatId] = useState<string | null>(null);
   const [turn, setTurn] = useState(false);
   const [turnTimeOutHandle, setTurnTimeOutHandle] = useState<ReturnType<typeof setTimeout> | null>(null);
-  const [elevatedCards, setElevatedCards] = useState<string[]>([]);
+  const [elevatedCard, setElevatedCard] = useState<string | null>(null);
 
   const currentTableRef = React.useRef(currentTable);
   const currentTablesRef = React.useRef(currentTables);
@@ -47,24 +48,24 @@ const GameState = ({ history, children }: GameStateProps) => {
     currentTableRef.current = currentTable;
     currentTablesRef.current = currentTables;
 
-    isPlayerSeated &&
-      seatId &&
-      currentTable?.seats[seatId] &&
-      turn !== currentTable.seats[seatId].turn &&
-      setTurn(currentTable.seats[seatId].turn);
+    // isPlayerSeated &&
+    //   seatId &&
+    //   currentTable?.seats[seatId] &&
+    //   turn !== currentTable.seats[seatId].turn &&
+    //   setTurn(currentTable.seats[seatId].turn);
     // eslint-disable-next-line
   }, [currentTable]);
 
-  useEffect(() => {
-    if (turn && !turnTimeOutHandle) {
-      const handle = setTimeout(fold, 15000);
-      setTurnTimeOutHandle(handle);
-    } else {
-      turnTimeOutHandle && clearTimeout(turnTimeOutHandle);
-      turnTimeOutHandle && setTurnTimeOutHandle(null);
-    }
-    // eslint-disable-next-line
-  }, [turn]);
+  // useEffect(() => {
+  //   if (turn && !turnTimeOutHandle) {
+  //     const handle = setTimeout(fold, 15000);
+  //     setTurnTimeOutHandle(handle);
+  //   } else {
+  //     turnTimeOutHandle && clearTimeout(turnTimeOutHandle);
+  //     turnTimeOutHandle && setTurnTimeOutHandle(null);
+  //   }
+  //   // eslint-disable-next-line
+  // }, [turn]);
 
   useEffect(() => {
     if (socket) {
@@ -98,6 +99,11 @@ const GameState = ({ history, children }: GameStateProps) => {
         setCurrentTables(tables);
         setCurrentTable(tables[tableId]);
       });
+
+      socket.on(SET_TURN, ({ tables, tableId }: TableEventPayload) => {
+        setCurrentTables(tables);
+        setCurrentTable(tables[tableId]);
+      });
     }
     return () => leaveTable();
     // eslint-disable-next-line
@@ -121,13 +127,6 @@ const GameState = ({ history, children }: GameStateProps) => {
             { suit: 'd', rank: '5' },
             { suit: 's', rank: '3' },
           ],
-          playedHand: [
-            { suit: 'h', rank: '8' },
-            { suit: 's', rank: '10' },
-            { suit: 'c', rank: '10' },
-            { suit: 'd', rank: '5' },
-            { suit: 's', rank: '3' },
-          ],
         },
       };
 
@@ -141,18 +140,6 @@ const GameState = ({ history, children }: GameStateProps) => {
   };
 
 
-  // Fonction pour toggle une carte spécifique
-  const toggleElevatedCard = (cardKey: string) => {
-    setElevatedCards(prevCards => {
-      if (prevCards.includes(cardKey)) {
-        // Si la carte est déjà élevée, la retirer
-        return prevCards.filter(key => key !== cardKey);
-      } else {
-        // Si la carte n'est pas élevée, l'ajouter
-        return [...prevCards, cardKey];
-      }
-    });
-  };
 
   // Fonction pour abaisser toutes les cartes
   // const clearAllElevatedCards = () => {
@@ -241,7 +228,9 @@ const GameState = ({ history, children }: GameStateProps) => {
 
     // Retirer la carte jouée des cartes élevées
     const cardKey = `${seatNumber}-${card.suit}-${card.rank}`;
-    setElevatedCards(prevCards => prevCards.filter(key => key !== cardKey));
+    if (elevatedCard === cardKey) {
+      setElevatedCard(null);
+    }
   };
 
   const rebuy = (tableId: string, seatId: string, amount: number) => {
@@ -292,7 +281,7 @@ const GameState = ({ history, children }: GameStateProps) => {
         currentTable,
         isPlayerSeated,
         seatId,
-        elevatedCards,
+        elevatedCard,
         joinTable,
         leaveTable,
         sitDown,
@@ -306,8 +295,7 @@ const GameState = ({ history, children }: GameStateProps) => {
         injectDebugHand,
         getHandsPosition,
         playOneCard,
-        setElevatedCards,
-        toggleElevatedCard
+        setElevatedCard
       }}
     >
       {children}

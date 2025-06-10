@@ -67,26 +67,72 @@ const StyledPokerCardWrapper = styled.div`
   }
 `;
 
-const HandCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank }, width, minWidth, maxWidth }) => {
+const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
+  card: { suit, rank }, width, minWidth, maxWidth }) => {
   const concat = suit + rank;
-  const { seatId, elevatedCards, playOneCard, toggleElevatedCard } = useContext(gameContext);
+  const { seatId, elevatedCard, playOneCard, setElevatedCard, currentTable } = useContext(gameContext);
   const cardKey = `${seatId}-${suit}-${rank}`;
-  const isElevated = elevatedCards.includes(cardKey);
+  const isElevated = elevatedCard === cardKey;
+
+  // Vérifie si le joueur a une carte de la couleur demandée dans sa main
+  const hasCardOfDemandedSuit = (demandedSuit: string): boolean => {
+    if (!currentTable || !seatId) return false;
+    const playerHand = currentTable.seats[seatId].hand;
+    return playerHand.some(card => card.suit === demandedSuit);
+  };
 
   const handleSingleClick = () => {
-    // Toggle l'état d'élévation de cette carte spécifique
-    if (toggleElevatedCard) {
-      toggleElevatedCard(cardKey);
+    if (setElevatedCard) {
+      if (isElevated) {
+        // Si la carte est déjà levée, l'abaisser
+        setElevatedCard(null);
+      } else {
+        // Sinon, lever uniquement cette carte (remplace toutes les autres)
+        setElevatedCard(cardKey);
+      }
     }
   };
 
   const handleDoubleClick = () => {
-    if (seatId && playOneCard) {
-      playOneCard({ suit, rank }, seatId);
+    if (!currentTable || !seatId || !playOneCard) return;
 
-      // Retirer la carte des cartes élevées si elle était élevée
-      if (isElevated && toggleElevatedCard) {
-        toggleElevatedCard(cardKey);
+    const isFirstCardOfRound = currentTable.currentRoundCards.length === 0;
+    const isFirstRound = currentTable.roundNumber === 1;
+
+    // Premier tour, première carte : aucune restriction
+    if (isFirstRound && isFirstCardOfRound) {
+      playOneCard({ suit, rank }, seatId);
+      return;
+    }
+
+    // Premier tour, cartes suivantes : doit suivre la couleur demandée
+    if (isFirstRound && !isFirstCardOfRound) {
+      if (suit === currentTable.demandedSuit) {
+        playOneCard({ suit, rank }, seatId);
+      } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
+        console.log("vous devez jouer la couleur demandée");
+      } else {
+        // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
+        playOneCard({ suit, rank }, seatId);
+      }
+      return;
+    }
+
+    // Tours suivants
+    if (!isFirstRound) {
+      // Première carte du tour : aucune restriction
+      if (isFirstCardOfRound) {
+        playOneCard({ suit, rank }, seatId);
+      } else {
+        // Cartes suivantes : même logique que le premier tour
+        if (suit === currentTable.demandedSuit) {
+          playOneCard({ suit, rank }, seatId);
+        } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
+          console.log("vous devez jouer la couleur demandée");
+        } else {
+          // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
+          playOneCard({ suit, rank }, seatId);
+        }
       }
     }
   };
@@ -102,7 +148,6 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({ card: { suit, rank },
       isElevated={isElevated}
       onClick={suit === 'hidden' && rank === 'hidden' ? undefined : handleClickEvents}
     >
-      {/* A revoir plus tard */}
       <img
         src={
           (cards[concat as keyof typeof cards] && ((cards[concat as keyof typeof cards] as any).default || cards[concat as keyof typeof cards])) || ''

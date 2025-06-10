@@ -21,3 +21,6 @@ export const SITTING_IN = 'SITTING_IN';
 export const DISCONNECT = 'DISCONNECT';
 export const PLAY_ONE_CARD = 'PLAY_ONE_CARD';
 export const PLAYED_CARD = 'PLAYED_CARD';
+export const NO_CARD_PLAYED = 'NO_CARD_PLAYED';
+export const RANDOM_CARD = 'RANDOM_CARD';
+export const SET_TURN = 'SET_TURN';
