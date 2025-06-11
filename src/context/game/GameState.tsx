@@ -15,7 +15,6 @@ import {
   TABLE_UPDATED,
   PLAY_ONE_CARD,
   PLAYED_CARD,
-  SET_TURN
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
@@ -37,8 +36,6 @@ const GameState = ({ history, children }: GameStateProps) => {
   const [currentTables, setCurrentTables] = useState<{ [key: string]: Table } | null>(null);
   const [isPlayerSeated, setIsPlayerSeated] = useState(false);
   const [seatId, setSeatId] = useState<string | null>(null);
-  const [turn, setTurn] = useState(false);
-  const [turnTimeOutHandle, setTurnTimeOutHandle] = useState<ReturnType<typeof setTimeout> | null>(null);
   const [elevatedCard, setElevatedCard] = useState<string | null>(null);
 
   const currentTableRef = React.useRef(currentTable);
@@ -48,24 +45,8 @@ const GameState = ({ history, children }: GameStateProps) => {
     currentTableRef.current = currentTable;
     currentTablesRef.current = currentTables;
 
-    // isPlayerSeated &&
-    //   seatId &&
-    //   currentTable?.seats[seatId] &&
-    //   turn !== currentTable.seats[seatId].turn &&
-    //   setTurn(currentTable.seats[seatId].turn);
     // eslint-disable-next-line
   }, [currentTable]);
-
-  // useEffect(() => {
-  //   if (turn && !turnTimeOutHandle) {
-  //     const handle = setTimeout(fold, 15000);
-  //     setTurnTimeOutHandle(handle);
-  //   } else {
-  //     turnTimeOutHandle && clearTimeout(turnTimeOutHandle);
-  //     turnTimeOutHandle && setTurnTimeOutHandle(null);
-  //   }
-  //   // eslint-disable-next-line
-  // }, [turn]);
 
   useEffect(() => {
     if (socket) {
@@ -96,11 +77,6 @@ const GameState = ({ history, children }: GameStateProps) => {
 
       socket.on(PLAYED_CARD, ({ tables, tableId }: TableEventPayload) => {
         console.log(PLAYED_CARD, tables, tableId);
-        setCurrentTables(tables);
-        setCurrentTable(tables[tableId]);
-      });
-
-      socket.on(SET_TURN, ({ tables, tableId }: TableEventPayload) => {
         setCurrentTables(tables);
         setCurrentTable(tables[tableId]);
       });
@@ -138,8 +114,6 @@ const GameState = ({ history, children }: GameStateProps) => {
       return updatedTable;
     });
   };
-
-
 
   // Fonction pour abaisser toutes les cartes
   // const clearAllElevatedCards = () => {
