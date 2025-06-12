@@ -222,7 +222,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           <PositionedUISlot
             style={{
               display: 'flex',
-              ...getHandsPosition(seatNumber)
+              ...getHandsPosition(seatNumber),
             }}
             origin="center right"
           >
@@ -243,12 +243,13 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
               flexDirection: 'column',
               alignItems: 'center',
             }}>
-              {seat.bet && (seatNumber === '3' || seatNumber === '4') &&
+              {(seatNumber === '3' || seatNumber === '4') ? (
                 <ChipsAmountPill
                   chipsAmount={seat.bet}
                   seatPosition={seatNumber as '1' | '2' | '3' | '4'}
                 />
-              }
+              ) :
+                (<></>)}
 
               <PlayedHand>
                 {seat.playedHand &&
@@ -263,12 +264,13 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                   ))}
               </PlayedHand>
 
-              {seat.bet && (seatNumber === '1' || seatNumber === '2') &&
+              {(seatNumber === '1' || seatNumber === '2') ? (
                 <ChipsAmountPill
                   chipsAmount={seat.bet}
                   seatPosition={seatNumber as '1' | '2' | '3' | '4'}
                 />
-              }
+              ) :
+                (<></>)}
             </div>
           </PositionedUISlot>
 

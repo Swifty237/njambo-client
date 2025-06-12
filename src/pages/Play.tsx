@@ -44,7 +44,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
     sitDown,
     standUp,
     check,
-    // injectDebugHand,
+    injectDebugHand,
     playOneCard
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
@@ -126,7 +126,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
 
         <PokerTableWrapper>
 
-          {/* <Button
+          <Button
             $small
             onClick={() => {
               injectDebugHand(seatId!);
@@ -138,7 +138,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
             }}
           >
             Injecter des cartes
-          </Button> */}
+          </Button>
 
           <>
             {currentTable && (
@@ -234,11 +234,12 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
 
         {currentTable &&
           isPlayerSeated &&
-          currentTable.seats[seatId!] &&
-          currentTable.seats[seatId!].turn && (
+          seatId &&
+          currentTable.seats[seatId] &&
+          currentTable.seats[seatId].turn && (
             <GameUI
               currentTable={currentTable}
-              seatId={seatId!}
+              seatId={seatId}
               bet={bet}
               setBet={setBet}
               standUp={standUp}

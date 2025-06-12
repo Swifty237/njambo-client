@@ -103,6 +103,13 @@ const GameState = ({ history, children }: GameStateProps) => {
             { suit: 'd', rank: '5' },
             { suit: 's', rank: '3' },
           ],
+          playedHand: [
+            { suit: 'h', rank: '8' },
+            { suit: 's', rank: '10' },
+            { suit: 'c', rank: '10' },
+            { suit: 'd', rank: '5' },
+            { suit: 's', rank: '3' },
+          ],
         },
       };
 
@@ -125,22 +132,22 @@ const GameState = ({ history, children }: GameStateProps) => {
       case "1":
         return {
           flexDirection: 'column',
-          padding: '0 0 25vh 18vw'
+          padding: '0 0 22vh 20vw'
         };
       case "2":
         return {
           flexDirection: 'column',
-          padding: '15vh 0 0 20vw'
+          padding: '7vh 0 0 17vw'
         };
       case "3":
         return {
           flexDirection: 'column-reverse',
-          padding: '25vh 18vw 0 0'
+          padding: '22vh 20vw 0 0'
         };
       case "4":
         return {
           flexDirection: 'column-reverse',
-          padding: '0 20vw 15vh 0'
+          padding: '0 17vw 7vh 0'
         };
       default:
         return {
