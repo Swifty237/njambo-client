@@ -229,8 +229,8 @@ const Play: React.FC = () => {
                   />
 
                   <PositionedUISlot
-                    bottom="28vh"
-                    right="17vw"
+                    bottom="33vh"
+                    right="16vw"
                   >
                     {currentTable.seats['3'] && (
                       <ChipsAmountPill
