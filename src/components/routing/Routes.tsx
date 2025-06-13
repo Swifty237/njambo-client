@@ -29,7 +29,7 @@ const Routes = () => {
             )}
           />
         ))}
-      <ProtectedRoute path="/play" component={Play} />
+      <ProtectedRoute path="/play/:link?" component={Play} />
       <Route component={NotFoundPage} />
     </Switch>
   );

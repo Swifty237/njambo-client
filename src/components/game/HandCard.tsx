@@ -26,8 +26,9 @@ const StyledPokerCardWrapper = styled.div`
   opacity: 0;
   animation-name: fadeInUp;
   -webkit-animation-name: fadeInUp;
-  transition: all 0.3s ease;
+  transition: top 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  transform: translateZ(0); /* Force hardware acceleration */
 
   top: ${({ isElevated }: StyledPokerCardWrapperProps) => isElevated ? '-20px' : '0px'};
 
@@ -64,6 +65,7 @@ const StyledPokerCardWrapper = styled.div`
     box-shadow: ${({ isElevated }: StyledPokerCardWrapperProps) =>
     isElevated ? '15px 15px 40px rgba(0, 0, 0, 0.2)' : '10px 10px 30px rgba(0, 0, 0, 0.1)'};
     transition: box-shadow 0.3s ease;
+    will-change: box-shadow; /* Optimize for animations */
   }
 `;
 

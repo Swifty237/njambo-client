@@ -15,6 +15,7 @@ export interface TatamiProps {
     bet: string;
     isPrivate: boolean;
     createdAt: string;
+    link: string;
 }
 
 interface GameContextType {
@@ -34,9 +35,10 @@ interface GameContextType {
     raise: (amount: number) => void,
     rebuy: (tableId: string, seatId: string, amount: number) => void,
     injectDebugHand: (seatNumber: string) => void,
-    getHandsPosition: (seatId: string) => { flexDirection: string; padding: string },
+    getHandsPosition: (seatId: string) => { top?: string, right?: string, bottom?: string, left?: string },
     playOneCard: (card: CardProps, seatNumber: string) => void;
     setElevatedCard: (cardKey: string | null) => void;
+    showDown: () => void;
 }
 
 const gameContext = createContext<GameContextType>({
@@ -56,9 +58,10 @@ const gameContext = createContext<GameContextType>({
     raise: () => { },
     rebuy: () => { },
     injectDebugHand: () => { },
-    getHandsPosition: () => ({ flexDirection: 'column', padding: '0' }),
+    getHandsPosition: () => ({}),
     playOneCard: () => { },
-    setElevatedCard: () => { }
+    setElevatedCard: () => { },
+    showDown: () => { }
 });
 
 export default gameContext;

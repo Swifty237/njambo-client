@@ -12,13 +12,10 @@ import { useLocation } from 'react-router-dom';
 import OfflineProvider from './offline/OfflineProvider';
 import WebSocketProvider from './websocket/WebsocketProvider';
 import GameState from './game/GameState';
-import { createBrowserHistory } from 'history';
 
 interface ProvidersProps {
   children: React.ReactNode;
 }
-
-const history = createBrowserHistory();
 
 const Providers = ({ children }: ProvidersProps) => {
   const location = useLocation();
@@ -32,7 +29,7 @@ const Providers = ({ children }: ProvidersProps) => {
               <ModalProvider>
                 <OfflineProvider>
                   <WebSocketProvider>
-                    <GameState history={history}>
+                    <GameState>
                       <Normalize />
                       <GlobalStyles />
                       {children}

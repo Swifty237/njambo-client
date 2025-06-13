@@ -20,6 +20,7 @@ export interface SeatData {
     hand: CardProps[];
     playedHand: CardProps[];
     lastAction?: string;
+    showingCards?: boolean;
 }
 
 export interface Table {
@@ -37,6 +38,7 @@ export interface Table {
     demandedSuit: string;
     currentRoundCards: CardProps[];
     roundNumber: number;
+    link: string;
 }
 
 export interface SeatProps {

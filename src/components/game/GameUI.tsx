@@ -13,6 +13,7 @@ type GameUIProps = {
   standUp: () => void;
   check: () => void;
   playOneCard: (cards: CardProps, seatNumber: string) => void;
+  showDown: () => void
 };
 
 export const GameUI: React.FC<GameUIProps> = ({
@@ -22,7 +23,8 @@ export const GameUI: React.FC<GameUIProps> = ({
   setBet,
   standUp,
   check,
-  playOneCard
+  playOneCard,
+  showDown
 }) => {
   // const { getLocalizedString } = useContext(contentContext);
   const { elevatedCard } = useContext(gameContext);
@@ -64,6 +66,11 @@ export const GameUI: React.FC<GameUIProps> = ({
       <Button $small $secondary onClick={standUp}>
         {'Se lever'}
         {/* {getLocalizedString('game_ui_stand-up')} */}
+      </Button>
+
+      <Button $small $secondary onClick={showDown}>
+        {'Montrer son jeu'}
+        {/* {getLocalizedString('game_ui_showdown')} */}
       </Button>
     </UIWrapper>
   );

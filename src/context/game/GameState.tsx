@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-// import { withRouter } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import {
   CALL,
   CHECK,
@@ -15,19 +15,19 @@ import {
   TABLE_UPDATED,
   PLAY_ONE_CARD,
   PLAYED_CARD,
+  SHOW_DOWN,
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
 import GameContext, { TatamiProps } from './gameContext';
-import { History } from 'history';
 import { Table, TableUpdatedPayload, TableEventPayload, CardProps } from '../../types/SeatTypesProps';
 
 interface GameStateProps {
-  history: History;
   children: React.ReactNode
 }
 
-const GameState = ({ history, children }: GameStateProps) => {
+const GameState = ({ children }: GameStateProps) => {
+  const history = useHistory();
   const { socket } = useContext(socketContext);
   const { loadUser } = useContext(authContext);
 
@@ -37,7 +37,6 @@ const GameState = ({ history, children }: GameStateProps) => {
   const [isPlayerSeated, setIsPlayerSeated] = useState(false);
   const [seatId, setSeatId] = useState<string | null>(null);
   const [elevatedCard, setElevatedCard] = useState<string | null>(null);
-
   const currentTableRef = React.useRef(currentTable);
   const currentTablesRef = React.useRef(currentTables);
 
@@ -53,30 +52,28 @@ const GameState = ({ history, children }: GameStateProps) => {
       window.addEventListener('unload', leaveTable);
       window.addEventListener('close', leaveTable);
 
-      socket.on(TABLE_UPDATED, ({ table, message, from }: TableUpdatedPayload) => {
-        console.log(TABLE_UPDATED, table, message, from);
+      socket.on(TABLE_UPDATED, ({ table, message }: TableUpdatedPayload) => {
         setCurrentTable(table);
         message && addMessage(message);
       });
 
       socket.on(TABLE_JOINED, ({ tables, tableId }: TableEventPayload) => {
-        console.log(TABLE_JOINED, tables, tableId);
         setCurrentTables(tables);
         setCurrentTable(tables[tableId]);
-
-        console.log("currentTable :")
-        console.log(currentTable)
       });
 
-      socket.on(TABLE_LEFT, ({ tables, tableId }: TableEventPayload) => {
-        console.log(TABLE_LEFT, tables, tableId);
+      socket.on(TABLE_LEFT, ({ tables }: TableEventPayload) => {
         setCurrentTable(null);
         loadUser(localStorage.token);
         setMessages([]);
       });
 
       socket.on(PLAYED_CARD, ({ tables, tableId }: TableEventPayload) => {
-        console.log(PLAYED_CARD, tables, tableId);
+        setCurrentTables(tables);
+        setCurrentTable(tables[tableId]);
+      });
+
+      socket.on(SHOW_DOWN, ({ tables, tableId }: TableEventPayload) => {
         setCurrentTables(tables);
         setCurrentTable(tables[tableId]);
       });
@@ -131,28 +128,29 @@ const GameState = ({ history, children }: GameStateProps) => {
     switch (seatId) {
       case "1":
         return {
-          flexDirection: 'column',
-          padding: '0 0 22vh 20vw'
+          bottom: "-5vh",
+          left: "2vw"
         };
       case "2":
         return {
-          flexDirection: 'column',
-          padding: '7vh 0 0 17vw'
+          left: "2vw"
         };
       case "3":
         return {
-          flexDirection: 'column-reverse',
-          padding: '22vh 20vw 0 0'
+          display: "flex",
+          flexDirection: "column-reverse",
+          top: "-5vh",
+          right: "2vw"
         };
       case "4":
         return {
-          flexDirection: 'column-reverse',
-          padding: '0 17vw 7vh 0'
+          display: "flex",
+          flexDirection: "column-reverse",
+          right: "2vw"
         };
       default:
         return {
-          flexDirection: 'column',
-          padding: '0'
+
         };
     }
   }
@@ -161,7 +159,6 @@ const GameState = ({ history, children }: GameStateProps) => {
 
 
   const joinTable = (tatamiData: TatamiProps) => {
-    console.log(JOIN_TABLE, tatamiData);
     socket.emit(JOIN_TABLE, tatamiData);
   };
 
@@ -214,6 +211,15 @@ const GameState = ({ history, children }: GameStateProps) => {
     }
   };
 
+  const showDown = () => {
+    if (currentTableRef && currentTableRef.current && seatId) {
+      socket.emit(SHOW_DOWN, {
+        tableId: currentTableRef.current.id,
+        seatId: seatId
+      });
+    }
+  }
+
   const rebuy = (tableId: string, seatId: string, amount: number) => {
     socket.emit(REBUY, { tableId, seatId, amount });
   };
@@ -228,7 +234,6 @@ const GameState = ({ history, children }: GameStateProps) => {
 
   const addMessage = (message: string) => {
     setMessages((prevMessages) => [...prevMessages, message]);
-    console.log(message);
   };
 
   const fold = () => {
@@ -276,7 +281,8 @@ const GameState = ({ history, children }: GameStateProps) => {
         injectDebugHand,
         getHandsPosition,
         playOneCard,
-        setElevatedCard
+        setElevatedCard,
+        showDown
       }}
     >
       {children}

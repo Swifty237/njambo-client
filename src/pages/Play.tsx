@@ -15,23 +15,26 @@ import { TableInfoWrapper } from '../components/game/TableInfoWrapper';
 import { InfoPill } from '../components/game/InfoPill';
 import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
-// import PokerCard from '../components/game/HandCard';
 import contentContext from '../context/content/contentContext';
-import { RouteComponentProps } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
 import { TatamiProps } from '../context/game/gameContext'
-// import { SeatData, Player } from '../types/SeatTypesProps';
+import ChipsAmountPill from '../components/game/ChipsAmountPill';
 
-// interface CardProps {
-//   suit: string;
-//   rank: string;
-// }
+
 
 interface LocationState {
   tatamiData?: TatamiProps;
 }
 
-const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, location }) => {
+interface RouteParams {
+  link?: string;
+}
+
+const Play: React.FC = () => {
+  const history = useHistory();
+  const location = useLocation<LocationState>();
+  const { link } = useParams<RouteParams>();
   const { socket } = useContext(socketContext);
   const { openModal } = useContext(modalContext);
   const {
@@ -45,26 +48,52 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
     standUp,
     check,
     injectDebugHand,
-    playOneCard
+    playOneCard,
+    showDown
   } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
 
   const [bet, setBet] = useState(0);
 
   useEffect(() => {
-    !socket && openModal(() => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
-      getLocalizedString('game_lost-connection-modal_header'),
-      getLocalizedString('game_lost-connection-modal_btn-txt'),
-      () => history.push('/'),
-    );
+    // Si on n'a pas de socket, on affiche la modal de déconnexion
+    if (!socket) {
+      openModal(() => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
+        getLocalizedString('game_lost-connection-modal_header'),
+        getLocalizedString('game_lost-connection-modal_btn-txt'),
+        () => history.push('/'),
+      );
+      return;
+    }
 
-    // Récupérer les données passées depuis MainPage
-    const receivedTatamiData = location.state?.tatamiData;
+    // Si on a les données de la table dans location.state
+    if (location.state?.tatamiData) {
+      joinTable(location.state.tatamiData);
+      return;
+    }
 
-    socket && receivedTatamiData && joinTable(receivedTatamiData);
+    // Si on a un lien dans l'URL, on essaie de décoder les données de la table
+    if (link) {
+      try {
+        const decodedData = JSON.parse(atob(link));
+        const tatamiData: TatamiProps = {
+          id: decodedData.id,
+          name: decodedData.name,
+          bet: decodedData.bet,
+          isPrivate: decodedData.isPrivate,
+          createdAt: new Date().toLocaleString(),
+          link: link
+        };
+        joinTable(tatamiData);
+      } catch (error) {
+        console.error('Invalid table link:', error);
+        history.push('/');
+      }
+    }
+
     return () => leaveTable();
     // eslint-disable-next-line
-  }, [socket, location.state]);
+  }, [socket, location.state, link]);
 
   return (
     <>
@@ -126,7 +155,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
 
         <PokerTableWrapper>
 
-          <Button
+          {/* <Button
             $small
             onClick={() => {
               injectDebugHand(seatId!);
@@ -138,7 +167,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
             }}
           >
             Injecter des cartes
-          </Button>
+          </Button> */}
 
           <>
             {currentTable && (
@@ -152,6 +181,19 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                     isPlayerSeated={isPlayerSeated}
                     sitDown={sitDown}
                   />
+
+                  {currentTable.seats['1'] && (
+                    <PositionedUISlot
+                      top="7vh"
+                      left="2vw"
+                    >
+                      <ChipsAmountPill
+                        chipsAmount={currentTable.seats['1'].bet}
+                        seatPosition='1'
+                      />
+                    </PositionedUISlot>
+
+                  )}
                 </PositionedUISeat>
 
                 {/* Haut */}
@@ -162,6 +204,18 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                     isPlayerSeated={isPlayerSeated}
                     sitDown={sitDown}
                   />
+                  <PositionedUISlot
+                    top="50%"
+                    right="50%"
+                  >
+                    {currentTable.seats['2'] && (
+                      <ChipsAmountPill
+                        chipsAmount={currentTable.seats['2'].bet}
+                        seatPosition='2'
+                      />
+                    )}
+                  </PositionedUISlot>
+
                 </PositionedUISeat>
 
                 {/* Droite */}
@@ -173,6 +227,20 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                     isPlayerSeated={isPlayerSeated}
                     sitDown={sitDown}
                   />
+
+                  <PositionedUISlot
+                    top="14vh"
+                    right="14vw"
+                  >
+                    {currentTable.seats['3'] && (
+                      <ChipsAmountPill
+                        chipsAmount={currentTable.seats['3'].bet}
+                        seatPosition='3'
+                      />
+                    )}
+                  </PositionedUISlot>
+
+
                 </PositionedUISeat>
 
                 {/* Bas */}
@@ -183,6 +251,19 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
                     isPlayerSeated={isPlayerSeated}
                     sitDown={sitDown}
                   />
+
+                  <PositionedUISlot
+                    bottom="42vh"
+                    right="7vw"
+                  >
+                    {currentTable.seats['4'] && (
+                      <ChipsAmountPill
+                        chipsAmount={currentTable.seats['4'].bet}
+                        seatPosition='4'
+                      />
+                    )}
+                  </PositionedUISlot>
+
                 </PositionedUISeat>
               </ResponsiveTable>
             )}
@@ -245,6 +326,7 @@ const Play: React.FC<RouteComponentProps<{}, any, LocationState>> = ({ history, 
               standUp={standUp}
               check={check}
               playOneCard={playOneCard}
+              showDown={showDown}
             />
           )}
       </Container>

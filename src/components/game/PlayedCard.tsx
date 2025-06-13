@@ -22,7 +22,8 @@ const StyledPokerCardWrapper = styled.div`
   opacity: 0;
   animation-name: fadeInUp;
   -webkit-animation-name: fadeInUp;
-  transition: all 0.5s;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translateZ(0); /* Force hardware acceleration */
 
   @keyframes fadeInUp {
     from {

@@ -3,12 +3,11 @@ import Container from '../components/layout/Container';
 import Heading from '../components/typography/Heading';
 import ColoredText from '../components/typography/ColoredText';
 import styled from 'styled-components';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
 import globalContext from '../context/global/globalContext';
 import contentContext from '../context/content/contentContext';
 // import modalContext from '../context/modal/modalContext';
-import { RouteComponentProps } from 'react-router-dom';
 import Button from '../components/buttons/Button';
 import { ThemeProps } from '../styles/theme';
 import { Form } from '../components/forms/Form';
@@ -44,7 +43,7 @@ const ResponsiveFlexDiv = styled.div`
 
 const MainMenuWrapper = styled.div`
   width: 40vw;
-  height: 75vh;
+  height: 57vh;
   background-color: ${(props: MainMenuCardProps) => props.theme.colors.lightBg};
   border-radius: 1.5em;
 
@@ -63,15 +62,15 @@ const MainMenuWrapper = styled.div`
 
 const PartiesListWrapper = styled.div`
   width: 38vw;
-  height: 55vh;
+  height: 37vh;
   background-color: white;
   justify-self: center;
   margin-top: 1em;
+  overflow-y: auto;
 
    ul {
     padding: 2em 5em;
-    height: 100%;
-    overflow-y: auto;
+    margin: 0;
   }
 
   @media screen and (max-width: 1900px) {
@@ -84,11 +83,12 @@ const PartiesListWrapper = styled.div`
 
   @media screen and (max-width: 800px) {
     width: 88vw;
-    height: 37vh;
+    max-height: 35vh;
   }
 `
 
-const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
+const MainPage: React.FC = () => {
+  const history = useHistory();
   const { userName, tables } = useContext(globalContext);
   const { getLocalizedString } = useContext(contentContext);
   // const { openModal, closeModal } = useContext(modalContext);
@@ -105,12 +105,23 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
         const updatedList = [...prevList];
 
         tables.forEach(table => {
-          const tatamiData: TatamiProps = {
-            id: table.id,
-            name: table.name,
+          // Only create new tatamiData if table doesn't have a link
+          const tatamiData: TatamiProps = table.link ? {
+            ...table,
             bet: (table.bet || '0').toString(),
             isPrivate: table.isPrivate || false,
             createdAt: table.createdAt || new Date().toLocaleString()
+          } : {
+            ...table,
+            bet: (table.bet || '0').toString(),
+            isPrivate: table.isPrivate || false,
+            createdAt: table.createdAt || new Date().toLocaleString(),
+            link: btoa(JSON.stringify({
+              id: table.id,
+              name: table.name,
+              bet: (table.bet || '0').toString(),
+              isPrivate: table.isPrivate || false
+            }))
           };
 
           // Chercher l'index de la table existante
@@ -145,12 +156,24 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
     const tatamiNameId = generateTatamiId();
     const tatamiName = `tatami-${tatamiNameId}`;
 
+    // Create an object with the required info
+    const tatamiInfo = {
+      id: id,
+      name: tatamiName,
+      bet: bet,
+      isPrivate: isPrivate
+    };
+
+    // Encode the object as base64 string to use as unique link
+    const tatamiLink = btoa(JSON.stringify(tatamiInfo));
+
     return {
       id: id,
       name: tatamiName,
       bet: bet,
       isPrivate: isPrivate,
-      createdAt: new Date().toLocaleString()
+      createdAt: new Date().toLocaleString(),
+      link: tatamiLink
     };
   };
 
@@ -205,16 +228,23 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
                 </li>
               ) : (
                 tatamiDataList.map((tatamiData) => (
-                  <li key={tatamiData.id} onClick={() => joinTable(tatamiData)}>
-                    <Link to={{
-                      pathname: '/play',
-                      state: {
-                        id: tatamiData.id,
-                        name: tatamiData.name,
-                        bet: tatamiData.bet,
-                        isPrivate: tatamiData.isPrivate
-                      }
-                    }}>
+                  <li key={tatamiData.id}>
+                    <Link
+                      to={{
+                        pathname: `/play/${tatamiData.link}`,
+                        state: {
+                          tatamiData: {
+                            id: tatamiData.id,
+                            name: tatamiData.name,
+                            bet: tatamiData.bet,
+                            isPrivate: tatamiData.isPrivate,
+                            createdAt: tatamiData.createdAt,
+                            link: tatamiData.link
+                          }
+                        }
+                      }}
+                      onClick={() => joinTable(tatamiData)}
+                    >
                       <span style={{ textDecoration: 'underline' }}>
                         <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
                       </span>
@@ -225,78 +255,70 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
             </ul>
           ) : (
             <div style={{
-              width: '100%',
-              height: '100%',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
+              paddingTop: "7vh",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}>
 
-              <div style={{
-                width: '70%',
-                height: '60%',
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                border: '2px solid #ccc',
-                borderRadius: '10px',
-                boxShadow: '0 0 10px rgba(0, 0, 0)',
-              }}>
-                <Form
-                  onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                    e.preventDefault();
 
-                    // Créer le nouveau lien tatami
-                    const newTatamiData = createTatamiData(bet, isPrivate);
+              <Form
+                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                  e.preventDefault();
 
-                    setDisplayTatamiList(true);
+                  // Créer le nouveau lien tatami
+                  const newTatamiData = createTatamiData(bet, isPrivate);
 
-                    // Rediriger vers la page de jeu avec le nouveau lien
-                    history.push('/play', { tatamiData: newTatamiData });
-                  }}>
+                  setDisplayTatamiList(true);
 
-                  <FormGroup>
-                    <Label>{'Tarif / coup'}</Label>
-                    <Select
-                      id="select-price"
-                      onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBet(e.target.value)}
-                    >
-                      <option value="25">25 F CFA</option>
-                      <option value="50">50 F CFA</option>
-                      <option value="100">100 F CFA</option>
-                      <option value="200">200 F CFA</option>
-                    </Select>
-                  </FormGroup>
+                  // Ajouter le nouveau tatami à la liste
+                  setTatamiDataList(prevList => [...prevList, newTatamiData]);
 
-                  <FormGroup>
-                    <Label>{'Tatami privé ?'}</Label>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        margin: '5px 0 10px 0',
-                      }}>
+                  // Ouvrir dans une nouvelle fenêtre
+                  history.push(`/play/${newTatamiData.link}`);
+                }}>
 
-                      <label className="switch">
-                        <input type="checkbox" onChange={() => setIsPrivate(!isPrivate)} />
-                        <span className="slider"></span>
-                      </label>
+                <FormGroup>
+                  <Label>{'Tarif / coup'}</Label>
+                  <Select
+                    id="select-price"
+                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBet(e.target.value)}
+                  >
+                    <option value="25">25 F CFA</option>
+                    <option value="50">50 F CFA</option>
+                    <option value="100">100 F CFA</option>
+                    <option value="200">200 F CFA</option>
+                  </Select>
+                </FormGroup>
 
-                      <span>{isPrivate ? "Oui" : "Non"}</span>
-                    </div>
-                  </FormGroup>
+                <FormGroup>
+                  <Label>{'Tatami privé ?'}</Label>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      margin: '5px 0 10px 0',
+                    }}>
 
-                  <Button $primary type="submit" $fullWidth>
-                    {'Créer'}
-                  </Button>
-                </Form>
+                    <label className="switch">
+                      <input type="checkbox" onChange={() => setIsPrivate(!isPrivate)} />
+                      <span className="slider"></span>
+                    </label>
 
-                <Button $secondary onClick={() => setDisplayTatamiList(true)}>
-                  {'Annuler'}
+                    <span>{isPrivate ? "Oui" : "Non"}</span>
+                  </div>
+                </FormGroup>
+
+                <Button $small $primary type="submit" $fullWidth>
+                  {'Créer'}
                 </Button>
-              </div>
+              </Form>
+
+              <Button style={{ marginTop: "5vh" }} $small $secondary onClick={() => setDisplayTatamiList(true)}>
+                {'Annuler'}
+              </Button>
 
             </div>
           )
@@ -309,4 +331,4 @@ const MainPage: React.FC<RouteComponentProps> = ({ history }) => {
   );
 };
 
-export default withRouter(MainPage);
+export default MainPage;
