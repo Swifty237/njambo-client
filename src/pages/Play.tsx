@@ -185,7 +185,7 @@ const Play: React.FC = () => {
                   {currentTable.seats['1'] && (
                     <PositionedUISlot
                       top="7vh"
-                      left="2vw"
+                      left="1vw"
                     >
                       <ChipsAmountPill
                         chipsAmount={currentTable.seats['1'].bet}
@@ -205,8 +205,8 @@ const Play: React.FC = () => {
                     sitDown={sitDown}
                   />
                   <PositionedUISlot
-                    top="50%"
-                    right="50%"
+                    top="7vh"
+                    right="14vw"
                   >
                     {currentTable.seats['2'] && (
                       <ChipsAmountPill
@@ -229,8 +229,8 @@ const Play: React.FC = () => {
                   />
 
                   <PositionedUISlot
-                    top="14vh"
-                    right="14vw"
+                    bottom="28vh"
+                    right="17vw"
                   >
                     {currentTable.seats['3'] && (
                       <ChipsAmountPill
@@ -239,8 +239,6 @@ const Play: React.FC = () => {
                       />
                     )}
                   </PositionedUISlot>
-
-
                 </PositionedUISeat>
 
                 {/* Bas */}
@@ -253,8 +251,8 @@ const Play: React.FC = () => {
                   />
 
                   <PositionedUISlot
-                    bottom="42vh"
-                    right="7vw"
+                    bottom="35vh"
+                    left="5vw"
                   >
                     {currentTable.seats['4'] && (
                       <ChipsAmountPill
