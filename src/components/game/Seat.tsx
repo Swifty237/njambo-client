@@ -10,7 +10,6 @@ import gameContext from '../../context/game/gameContext';
 import { PositionedUISlot } from './PositionedUISlot';
 import { InfoPill } from './InfoPill';
 import HandCard from './HandCard';
-import ChipsAmountPill from './ChipsAmountPill';
 import ColoredText from '../typography/ColoredText';
 import PokerChip from '../icons/PokerChip';
 import { EmptySeat } from './EmptySeat';

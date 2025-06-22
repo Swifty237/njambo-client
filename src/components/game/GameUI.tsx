@@ -69,7 +69,7 @@ export const GameUI: React.FC<GameUIProps> = ({
       </Button>
 
       <Button $small $secondary onClick={showDown}>
-        {'Montrer son jeu'}
+        {currentTable.seats[seatId].showingCards ? 'Cacher son jeu' : 'Montrer son jeu'}
         {/* {getLocalizedString('game_ui_showdown')} */}
       </Button>
     </UIWrapper>
