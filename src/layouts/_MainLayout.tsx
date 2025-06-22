@@ -23,7 +23,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, location }) => {
   const { isLoggedIn, logout } = useContext(authContext);
   const { lang, setLang } = useContext(locaContext);
   const { staticPages } = useContext(contentContext);
-  const { openModal } = useContext(modalContext);
+  const { openModal, closeModal } = useContext(modalContext);
 
   const { showNavMenu, openNavMenu, closeNavMenu } = useNavMenu();
   const { isCookieSet, setCookie } = useCookie('cookies-accepted', true);
@@ -34,7 +34,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children, location }) => {
         <Navbar
           chipsAmount={chipsAmount}
           loggedIn={isLoggedIn}
-          openModal={openModal}
           openNavMenu={openNavMenu}
           className="blur-target"
           location={location}

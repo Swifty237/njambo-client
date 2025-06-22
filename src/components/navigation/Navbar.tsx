@@ -1,5 +1,9 @@
-import React, { useContext } from 'react';
+import React, { useContext, useCallback } from 'react';
+import addChips from '../../helpers/addChips';
 import LogoWithText from '../logo/LogoWithText';
+import globalContext from '../../context/global/globalContext';
+import modalContext from '../../context/modal/modalContext';
+import authContext from '../../context/auth/authContext';
 // import Logo from '../logo/LogoIcon';
 import Container from '../layout/Container';
 import styled from 'styled-components';
@@ -14,6 +18,10 @@ import Spacer from '../layout/Spacer';
 import Text from '../typography/Text';
 import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
+import { Form } from '../forms/Form';
+import { FormGroup } from '../forms/FormGroup';
+import { Input } from '../forms/Input';
+import { ButtonGroup } from '../forms/ButtonGroup';
 
 interface StyledNavProps {
   theme: { colors: { lightestBg: string } }
@@ -23,11 +31,6 @@ interface NavbarProps {
   loggedIn: boolean;
   chipsAmount: number;
   location: { pathname: string };
-  openModal: (
-    content: () => React.ReactNode,
-    heading: string,
-    buttonText: string
-  ) => void;
   openNavMenu: () => void;
   className?: string;
 }
@@ -46,14 +49,29 @@ const Navbar: React.FC<NavbarProps> = ({
   loggedIn,
   chipsAmount,
   location,
-  openModal,
   openNavMenu,
   className,
 }) => {
   const { getLocalizedString } = useContext(contentContext);
+  const { id: userId } = useContext(globalContext);
+  const { openModal: openModalFromContext, closeModal: closeModalFromContext } = useContext(modalContext);
+  const { loadUser } = useContext(authContext);
+
+  const handleAddChips = useCallback(async (amount: number) => {
+    console.log('handleAddChips appelé avec:', { userId, amount });
+    try {
+      await addChips(userId, amount);
+      console.log('Ajout de jetons réussi');
+    } catch (error) {
+      console.error('Erreur lors de l\'ajout de jetons:', error);
+    }
+  }, [userId]);
+
+  const minBuyIn = 1000;
+  const maxBuyIn = 30000 - chipsAmount;
 
   const openShopModal = () =>
-    openModal(
+    openModalFromContext(
       () => (
         <Markdown>
           <Text textAlign="center">
@@ -65,27 +83,100 @@ const Navbar: React.FC<NavbarProps> = ({
       getLocalizedString('shop-coming_soon-modal_btn_text'),
     );
 
+  const submitAddChipsForm = () => {
+    console.log('submitAddChipsForm appelé');
+
+    const addChipsInput = document.getElementById('chipsInput') as HTMLInputElement | null;
+    const chipsAmountToAdd = addChipsInput ? + addChipsInput.value : 0;
+
+    console.log('Valeurs:', {
+      chipsAmountToAdd,
+      minBuyIn,
+      maxBuyIn,
+      chipsAmount,
+      userId
+    });
+
+    if (
+      chipsAmountToAdd &&
+      chipsAmountToAdd >= minBuyIn &&
+      chipsAmountToAdd <= maxBuyIn
+    ) {
+      console.log('Validation réussie, appel de handleAddChips');
+      handleAddChips(chipsAmountToAdd)
+        .then(() => {
+          console.log('handleAddChips terminé avec succès');
+          // Recharger les données utilisateur pour mettre à jour l'interface
+          loadUser(localStorage.token);
+          closeModalFromContext();
+        })
+        .catch((error) => {
+          console.error('Erreur dans handleAddChips:', error);
+          closeModalFromContext(); // Fermer la modal même en cas d'erreur
+        });
+    } else {
+      console.log('Validation échouée');
+    }
+  };
+
+  const openAddChipsModal = () => {
+    console.log('Ouverture du modal d\'ajout de jetons');
+    openModalFromContext(() => (
+      <div>
+        <Markdown>
+          <Text textAlign="center">
+            {'Tu as raison de take plus de jetons'}
+          </Text>
+        </Markdown>
+
+        <div>
+          <FormGroup>
+            <Input
+              id="chipsInput"
+              type="number"
+              min={minBuyIn}
+              max={maxBuyIn}
+              defaultValue={minBuyIn}
+            />
+          </FormGroup>
+          <ButtonGroup>
+            <Button
+              $primary
+              type="button"
+              $fullWidth
+              onClick={() => {
+                const input = document.getElementById('chipsInput') as HTMLInputElement;
+                if (input) input.value = maxBuyIn.toString();
+              }}
+            >
+              {'Max'}
+            </Button>
+
+            <Button
+              $primary
+              type="button"
+              $fullWidth
+              onClick={() => {
+                const input = document.getElementById('chipsInput') as HTMLInputElement;
+                if (input) input.value = minBuyIn.toString();
+              }}
+            >
+              {'Min'}
+            </Button>
+          </ButtonGroup>
+        </div>
+      </div>
+    ),
+      'Ajouter des jetons',
+      'Valider',
+      submitAddChipsForm
+    );
+  };
+
   if (!loggedIn)
     return (
       <StyledNav className={className}>
         <Container contentCenteredMobile>
-          {/* <div
-            style={{
-              backgroundImage: "url('/img/Flag_of_Cameroon.png')",
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              backgroundSize: 'cover',
-              opacity: 0.05,
-              position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
-              width: "75vw",
-              height: "38vw",
-              top: "2.8vw",
-              borderRadius: "10px",
-              zIndex: -1
-            }}
-          /> */}
           <Link to="/">
             <LogoWithText />
           </Link>
@@ -120,7 +211,7 @@ const Navbar: React.FC<NavbarProps> = ({
             <Hider hideOnMobile>
               <ChipsAmount
                 chipsAmount={chipsAmount}
-                clickHandler={openShopModal}
+                clickHandler={openAddChipsModal}
               />
               <span style={{
                 marginLeft: '3px',
@@ -143,12 +234,6 @@ const Navbar: React.FC<NavbarProps> = ({
               </span>
             </Hider>
 
-
-            {/* <Hider hideOnMobile>
-              <Button to="/" primary small onClick={openShopModal}>
-                {getLocalizedString('navbar-buychips_btn')}
-              </Button>
-            </Hider> */}
             <HamburgerButton clickHandler={openNavMenu} />
           </Spacer>
         </Container>

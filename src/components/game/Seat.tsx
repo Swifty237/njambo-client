@@ -278,7 +278,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
-            {!currentTable.handOver && seat.lastAction && seat.lastAction !== 'PLAY_ONE_CARD' && (
+            {currentTable.handOver && seat.lastAction && seat.lastAction !== 'PLAY_ONE_CARD' && (
               <InfoPill>{seat.lastAction}</InfoPill>
             )}
           </PositionedUISlot>
