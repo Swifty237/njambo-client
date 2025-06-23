@@ -60,11 +60,11 @@ const StyledOccupiedSeat = styled(EmptySeat)`
         z-index: 5;
       }
       .timer-lt {
-        animation: 15s linear infinite timer-slide-lt;
+        animation: 30s linear infinite timer-slide-lt;
         left: 100%;
       }
       .timer-rt {
-        animation: 15s linear infinite timer-slide-rt;
+        animation: 30s linear infinite timer-slide-rt;
       }
     }
   }

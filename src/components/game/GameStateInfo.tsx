@@ -25,7 +25,7 @@ export const GameStateInfo = ({ currentTable }: any) => {
         <>
           {currentTable.pot !== 0 ? (
             <InfoPill>
-              {`Total mises : ${currentTable.pot}`}
+              {`Pot: ${currentTable.pot} F CFA`}
             </InfoPill>
           ) : (
             <></>
