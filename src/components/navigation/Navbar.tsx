@@ -53,7 +53,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const { id: userId } = useContext(globalContext);
   const { openModal: openModalFromContext, closeModal: closeModalFromContext } = useContext(modalContext);
   const { loadUser } = useContext(authContext);
-  const [minBuyIn, setMinBuyIn] = useState(1000);
+  const minBuyIn = 1000;
   const maxBuyIn = 30000 - chipsAmount;
 
   const handleAddChips = useCallback(async (amount: number) => {
@@ -65,10 +65,6 @@ const Navbar: React.FC<NavbarProps> = ({
       console.error('Erreur lors de l\'ajout de jetons:', error);
     }
   }, [userId]);
-
-  if (maxBuyIn <= 1000) {
-    setMinBuyIn(maxBuyIn);
-  }
 
   const openShopModal = () =>
     openModalFromContext(
@@ -89,18 +85,8 @@ const Navbar: React.FC<NavbarProps> = ({
     const addChipsInput = document.getElementById('chipsInput') as HTMLInputElement | null;
     const chipsAmountToAdd = addChipsInput ? + addChipsInput.value : 0;
 
-    console.log('Valeurs:', {
-      chipsAmountToAdd,
-      minBuyIn,
-      maxBuyIn,
-      chipsAmount,
-      userId
-    });
-
     if (
-      chipsAmountToAdd &&
-      chipsAmountToAdd >= minBuyIn &&
-      chipsAmountToAdd <= maxBuyIn
+      chipsAmountToAdd && chipsAmountToAdd <= maxBuyIn
     ) {
       console.log('Validation réussie, appel de handleAddChips');
       handleAddChips(chipsAmountToAdd)
@@ -115,12 +101,23 @@ const Navbar: React.FC<NavbarProps> = ({
           closeModalFromContext(); // Fermer la modal même en cas d'erreur
         });
     } else {
-      console.log('Validation échouée');
+      console.log('Validation échouée', {
+        chipsAmountToAdd,
+        maxBuyIn,
+        condition2: chipsAmountToAdd <= maxBuyIn
+      });
     }
   };
 
   const openAddChipsModal = () => {
     console.log('Ouverture du modal d\'ajout de jetons');
+    console.log('Valeurs au moment de l\'ouverture:', { maxBuyIn, minBuyIn, chipsAmount });
+
+    // Calculer le minBuyIn effectif pour l'affichage
+    const effectiveMinBuyIn = maxBuyIn < 1000 ? maxBuyIn : minBuyIn;
+
+    console.log('effectiveMinBuyIn pour le modal:', effectiveMinBuyIn);
+
     openModalFromContext(() => (
       <div>
         <Markdown>
@@ -134,9 +131,9 @@ const Navbar: React.FC<NavbarProps> = ({
             <Input
               id="chipsInput"
               type="number"
-              min={minBuyIn}
+              min={effectiveMinBuyIn}
               max={maxBuyIn}
-              defaultValue={minBuyIn}
+              defaultValue={effectiveMinBuyIn}
             />
           </FormGroup>
           <ButtonGroup>
@@ -158,7 +155,7 @@ const Navbar: React.FC<NavbarProps> = ({
               $fullWidth
               onClick={() => {
                 const input = document.getElementById('chipsInput') as HTMLInputElement;
-                if (input) input.value = minBuyIn.toString();
+                if (input) input.value = effectiveMinBuyIn.toString();
               }}
             >
               {'Min'}
