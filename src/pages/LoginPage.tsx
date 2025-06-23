@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, useEffect } from 'react';
 import Container from '../components/layout/Container';
 import { Redirect, Link } from 'react-router-dom';
 import HeadingWithLogo from '../components/typography/HeadingWithLogo';
@@ -13,16 +13,33 @@ import ShowPasswordButton from '../components/buttons/ShowPasswordButton';
 import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
 import authContext from '../context/auth/authContext';
 import contentContext from '../context/content/contentContext';
+import styled from 'styled-components';
+
+const ErrorMessage = styled.div`
+  color: #dc3545;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: rgba(220, 53, 69, 0.1);
+  text-align: center;
+`;
 // import { TiledBackgroundImage } from '../components/decoration/TiledBackgroundImage';
 
 const LoginPage = () => {
   const { getLocalizedString } = useContext(contentContext);
-  const { login, isLoggedIn } = useContext(authContext);
+  const { login, isLoggedIn, authError, clearAuthError } = useContext(authContext);
 
   useScrollToTopOnPageLoad();
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
+
+  // Nettoyer les erreurs quand le composant est démonté
+  useEffect(() => {
+    return () => {
+      clearAuthError();
+    };
+  }, [clearAuthError]);
 
   if (isLoggedIn) return <Redirect to="/" />;
   return (
@@ -37,23 +54,27 @@ const LoginPage = () => {
         contentCenteredMobile
       >
         <Form
-          onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
             e.preventDefault();
             const email = emailRef.current?.value;
             const password = passwordRef.current?.value;
 
-            console.log('Tentative de connexion avec :', email, password);
-
-            email &&
-              password &&
-              email.length > 0 &&
-              password.length > 0 &&
-              login(email, password);
+            if (email && password && email.length > 0 && password.length > 0) {
+              clearAuthError(); // Nettoyer les erreurs précédentes
+              const success = await login(email, password);
+              if (!success) {
+                // Focus sur le champ email en cas d'échec
+                emailRef.current?.focus();
+              }
+            }
           }}
         >
           <HeadingWithLogo textCentered hideIconOnMobile={false}>
             {getLocalizedString('login_page-header_txt')}
           </HeadingWithLogo>
+
+          {authError && <ErrorMessage>{authError}</ErrorMessage>}
+
           <FormGroup>
             <Label htmlFor="email">
               {getLocalizedString('login_page-email_lbl_txt')}

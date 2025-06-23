@@ -122,7 +122,9 @@ const Navbar: React.FC<NavbarProps> = ({
       <div>
         <Markdown>
           <Text textAlign="center">
-            {'Tu as raison de take plus de jetons'}
+            {'Tu as raison de take plus de jetons,'}
+            <br />
+            {'30 000 jetons maximun total'}
           </Text>
         </Markdown>
 

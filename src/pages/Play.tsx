@@ -13,6 +13,7 @@ import Text from '../components/typography/Text';
 import modalContext from '../context/modal/modalContext';
 import { TableInfoWrapper } from '../components/game/TableInfoWrapper';
 import { InfoPill } from '../components/game/InfoPill';
+import { AutoHideInfoPill } from '../components/game/AutoHideInfoPill';
 import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
 import contentContext from '../context/content/contentContext';
@@ -282,18 +283,20 @@ const Play: React.FC = () => {
             <PositionedUISlot bottom="8%" scale="0.60" origin="bottom center">
               {messages && messages.length > 0 && (
                 <>
-                  <InfoPill>{messages[messages.length - 1]}</InfoPill>
+                  <AutoHideInfoPill autoHide>
+                    {messages[messages.length - 1]}
+                  </AutoHideInfoPill>
                   {!isPlayerSeated && (
                     <InfoPill>Sit down to join the game!</InfoPill>
                   )}
                   {currentTable && currentTable.winMessages.length > 0 && (
-                    <InfoPill>
+                    <AutoHideInfoPill autoHide>
                       {
                         currentTable.winMessages[
                         currentTable.winMessages.length - 1
                         ]
                       }
-                    </InfoPill>
+                    </AutoHideInfoPill>
                   )}
                 </>
               )}

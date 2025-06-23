@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import styled from 'styled-components';
 import contentContext from '../../context/content/contentContext';
-import ChipsAmountPill from './ChipsAmountPill';
+// import ChipsAmountPill from './ChipsAmountPill';
 import { InfoPill } from './InfoPill';
 
 const Wrapper = styled.div`
@@ -22,27 +22,29 @@ export const GameStateInfo = ({ currentTable }: any) => {
       {currentTable.players.length <= 1 || currentTable.handOver ? (
         <InfoPill>{getLocalizedString('game_state-info_wait')}</InfoPill>
       ) : (
-        <InfoPill>
-          {/* {currentTable.board.length === 0 && 'Pre-Flop'}
-          {currentTable.board.length === 3 && 'Flop'}
-          {currentTable.board.length === 4 && 'Turn'}
-          {currentTable.board.length === 5 && 'River'} */}
-          {currentTable.wentToShowdown && 'Showdown'}
-        </InfoPill>
+        <>
+          {currentTable.pot !== 0 ? (
+            <InfoPill>
+              {`Total mises : ${currentTable.pot}`}
+            </InfoPill>
+          ) : (
+            <></>
+          )}
+        </>
       )}
 
-      {!!currentTable.mainPot && (
+      {/* {currentTable.pot && (
         <div style={{ minWidth: '150px' }}>
-          <ChipsAmountPill chipsAmount={currentTable.mainPot} />
+          <ChipsAmountPill chipsAmount={currentTable.pot} />
         </div>
-      )}
+      )} */}
 
-      {currentTable.sidePots > 0 &&
+      {/* {currentTable.sidePots > 0 &&
         currentTable.sidePots.map((sidePot: { amount: number }, idx: number) => (
           <div style={{ minWidth: '150px' }} key={idx}>
             <ChipsAmountPill chipsAmount={sidePot.amount} />
           </div>
-        ))}
+        ))} */}
     </Wrapper>
   );
 };
