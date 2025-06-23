@@ -1,13 +1,11 @@
-import React, { useContext, useCallback } from 'react';
+import React, { useContext, useCallback, useState } from 'react';
 import addChips from '../../helpers/addChips';
 import LogoWithText from '../logo/LogoWithText';
 import globalContext from '../../context/global/globalContext';
 import modalContext from '../../context/modal/modalContext';
 import authContext from '../../context/auth/authContext';
-// import Logo from '../logo/LogoIcon';
 import Container from '../layout/Container';
 import styled from 'styled-components';
-// import { withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Hider from '../layout/Hider';
 import Button from '../buttons/Button';
@@ -18,7 +16,6 @@ import Spacer from '../layout/Spacer';
 import Text from '../typography/Text';
 import contentContext from '../../context/content/contentContext';
 import Markdown from 'react-remarkable';
-import { Form } from '../forms/Form';
 import { FormGroup } from '../forms/FormGroup';
 import { Input } from '../forms/Input';
 import { ButtonGroup } from '../forms/ButtonGroup';
@@ -56,6 +53,8 @@ const Navbar: React.FC<NavbarProps> = ({
   const { id: userId } = useContext(globalContext);
   const { openModal: openModalFromContext, closeModal: closeModalFromContext } = useContext(modalContext);
   const { loadUser } = useContext(authContext);
+  const [minBuyIn, setMinBuyIn] = useState(1000);
+  const maxBuyIn = 30000 - chipsAmount;
 
   const handleAddChips = useCallback(async (amount: number) => {
     console.log('handleAddChips appelé avec:', { userId, amount });
@@ -67,8 +66,9 @@ const Navbar: React.FC<NavbarProps> = ({
     }
   }, [userId]);
 
-  const minBuyIn = 1000;
-  const maxBuyIn = 30000 - chipsAmount;
+  if (maxBuyIn <= 1000) {
+    setMinBuyIn(maxBuyIn);
+  }
 
   const openShopModal = () =>
     openModalFromContext(

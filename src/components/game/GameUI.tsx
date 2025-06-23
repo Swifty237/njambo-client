@@ -50,7 +50,8 @@ export const GameUI: React.FC<GameUIProps> = ({
         {'Jouer'}
       </Button>
 
-      <Button
+      {/* {getLocalizedString('game_ui_check')} */}
+      {/* <Button
         $small
         $secondary
         disabled={
@@ -60,8 +61,7 @@ export const GameUI: React.FC<GameUIProps> = ({
         onClick={check}
       >
         {'Passer'}
-        {/* {getLocalizedString('game_ui_check')} */}
-      </Button>
+      </Button> */}
 
       <Button $small $secondary onClick={standUp}>
         {'Se lever'}
