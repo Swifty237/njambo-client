@@ -32,19 +32,6 @@ export const GameStateInfo = ({ currentTable }: any) => {
           )}
         </>
       )}
-
-      {/* {currentTable.pot && (
-        <div style={{ minWidth: '150px' }}>
-          <ChipsAmountPill chipsAmount={currentTable.pot} />
-        </div>
-      )} */}
-
-      {/* {currentTable.sidePots > 0 &&
-        currentTable.sidePots.map((sidePot: { amount: number }, idx: number) => (
-          <div style={{ minWidth: '150px' }} key={idx}>
-            <ChipsAmountPill chipsAmount={sidePot.amount} />
-          </div>
-        ))} */}
     </Wrapper>
   );
 };

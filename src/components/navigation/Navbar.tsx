@@ -1,4 +1,4 @@
-import React, { useContext, useCallback, useState } from 'react';
+import React, { useContext, useCallback } from 'react';
 import addChips from '../../helpers/addChips';
 import LogoWithText from '../logo/LogoWithText';
 import globalContext from '../../context/global/globalContext';

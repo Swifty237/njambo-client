@@ -10,6 +10,17 @@ export interface CardProps {
     rank: string
 }
 
+export interface ChatMessage {
+    name: string;
+    message: string;
+    seatId: string;
+    createdAt: Date;
+}
+
+export interface ChatRoom {
+    chatMessages: ChatMessage[];
+}
+
 export interface SeatData {
     id: string;
     turn: boolean;
@@ -39,6 +50,7 @@ export interface Table {
     currentRoundCards: CardProps[];
     roundNumber: number;
     link: string;
+    chatRoom: ChatRoom;
 }
 
 export interface SeatProps {

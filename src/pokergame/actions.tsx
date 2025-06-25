@@ -24,3 +24,5 @@ export const PLAYED_CARD = 'PLAYED_CARD';
 export const NO_CARD_PLAYED = 'NO_CARD_PLAYED';
 export const RANDOM_CARD = 'RANDOM_CARD';
 export const SHOW_DOWN = 'SHOW_DOWN';
+export const SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE';
+export const CHAT_MESSAGE_RECEIVED = 'CHAT_MESSAGE_RECEIVED';

@@ -39,6 +39,7 @@ interface GameContextType {
     playOneCard: (card: CardProps, seatNumber: string) => void;
     setElevatedCard: (cardKey: string | null) => void;
     showDown: () => void;
+    sendMessage: (message: string, seatId: string) => void;
 }
 
 const gameContext = createContext<GameContextType>({
@@ -61,7 +62,8 @@ const gameContext = createContext<GameContextType>({
     getHandsPosition: () => ({}),
     playOneCard: () => { },
     setElevatedCard: () => { },
-    showDown: () => { }
+    showDown: () => { },
+    sendMessage: () => { },
 });
 
 export default gameContext;

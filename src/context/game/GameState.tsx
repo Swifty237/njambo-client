@@ -16,6 +16,8 @@ import {
   PLAY_ONE_CARD,
   PLAYED_CARD,
   SHOW_DOWN,
+  SEND_CHAT_MESSAGE,
+  CHAT_MESSAGE_RECEIVED
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
@@ -76,6 +78,39 @@ const GameState = ({ children }: GameStateProps) => {
       socket.on(SHOW_DOWN, ({ tables, tableId }: TableEventPayload) => {
         setCurrentTables(tables);
         setCurrentTable(tables[tableId]);
+      });
+
+      socket.on(CHAT_MESSAGE_RECEIVED, ({ tables, tableId }: TableEventPayload) => {
+        console.log("Message reçu - Mise à jour de la table");
+        console.log("Tables reçues:", JSON.stringify(tables, null, 2));
+        console.log("TableId recherché:", tableId);
+
+        // Si tables est un tableau, chercher la table par ID
+        let targetTable;
+        if (Array.isArray(tables)) {
+          targetTable = tables.find((table: any) => table.id === tableId);
+          console.log("Table trouvée dans le tableau:", JSON.stringify(targetTable, null, 2));
+        } else {
+          targetTable = tables[tableId];
+          console.log("Table trouvée dans l'objet:", JSON.stringify(targetTable, null, 2));
+        }
+
+        console.log("Structure chatRoom:", JSON.stringify(targetTable?.chatRoom, null, 2));
+
+        if (Array.isArray(tables)) {
+          // Convertir le tableau en objet pour setCurrentTables
+          const tablesObj = tables.reduce((acc: any, table: any) => {
+            acc[table.id] = table;
+            return acc;
+          }, {});
+          setCurrentTables(tablesObj);
+        } else {
+          setCurrentTables(tables);
+        }
+
+        if (targetTable) {
+          setCurrentTable(targetTable);
+        }
       });
     }
     return () => leaveTable();
@@ -211,6 +246,17 @@ const GameState = ({ children }: GameStateProps) => {
     }
   };
 
+  const sendMessage = (message: string, seatId: string) => {
+    if (currentTable && message !== "") {
+      console.log("Envoi du message:", { message, seatId, tableId: currentTable.id });
+      socket.emit(SEND_CHAT_MESSAGE, {
+        tableId: currentTable.id,
+        seatId,
+        message,
+      });
+    }
+  }
+
   const showDown = () => {
     if (currentTableRef && currentTableRef.current && seatId) {
       socket.emit(SHOW_DOWN, {
@@ -282,7 +328,8 @@ const GameState = ({ children }: GameStateProps) => {
         getHandsPosition,
         playOneCard,
         setElevatedCard,
-        showDown
+        showDown,
+        sendMessage
       }}
     >
       {children}
