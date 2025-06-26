@@ -22,7 +22,7 @@ const useAuth = () => {
   useEffect(() => {
     setIsLoading(true);
 
-    const token = localStorage.token;
+    const token = localStorage.getItem("token");
     token && loadUser(token);
 
     setIsLoading(false);
@@ -117,6 +117,8 @@ const useAuth = () => {
 
   const loadUser = async (token: string) => {
     try {
+      setAuthToken(token);
+
       const res = await Axios.get(`${SERVER_URI}/api/auth`, {
         headers: {
           'x-auth-token': token,
@@ -135,6 +137,7 @@ const useAuth = () => {
       localStorage.removeItem('token');
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
+      setIsLoggedIn(false);
       console.error('Load user error:', error);
     }
   };

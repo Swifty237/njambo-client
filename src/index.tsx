@@ -48,7 +48,7 @@ if (process.env.REACT_APP_NODE_ENV === 'production' && process.env.REACT_APP_MAI
     setTimeout(() => {
       loadingScreen!.style.display = 'none';
       rootElement!.style.display = 'block';
-      cookieBannerRoot!.style.display = 'block';
+      // cookieBannerRoot!.style.display = 'block';
     }, 1000);
   };
 

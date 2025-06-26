@@ -23,6 +23,8 @@ import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
 import GameContext, { TatamiProps } from './gameContext';
 import { Table, TableUpdatedPayload, TableEventPayload, CardProps } from '../../types/SeatTypesProps';
+import io from 'socket.io-client';
+import config from '../../clientConfig';
 
 interface GameStateProps {
   children: React.ReactNode
@@ -30,8 +32,8 @@ interface GameStateProps {
 
 const GameState = ({ children }: GameStateProps) => {
   const history = useHistory();
-  const { socket } = useContext(socketContext);
-  const { loadUser } = useContext(authContext);
+  const { socket, setSocket } = useContext(socketContext);
+  const { loadUser, isLoggedIn } = useContext(authContext);
 
   const [messages, setMessages] = useState<string[]>([]);
   const [currentTable, setCurrentTable] = useState<Table | null>(null);
@@ -50,8 +52,25 @@ const GameState = ({ children }: GameStateProps) => {
   }, [currentTable]);
 
   useEffect(() => {
+    // Si la socket n'existe pas, on vérifie le localStorage
+    if (!socket) {
+      const storedSocketId = localStorage.getItem('socketId');
+      if (storedSocketId) {
+        // Créer une nouvelle socket avec le socketId stocké
+        const newSocket = io(config.socketURI, {
+          transports: ['websocket'],
+          upgrade: false,
+          auth: { socketId: storedSocketId }
+        });
+        setSocket(newSocket);
+      }
+    }
+
+    const storedLink = localStorage.getItem('storedLink');
+    console.log("storedLink in GameState 1", storedLink);
+
     if (socket) {
-      window.addEventListener('unload', leaveTable);
+      // window.addEventListener('unload', leaveTable);
       window.addEventListener('close', leaveTable);
 
       socket.on(TABLE_UPDATED, ({ table, message }: TableUpdatedPayload) => {
@@ -112,8 +131,47 @@ const GameState = ({ children }: GameStateProps) => {
           setCurrentTable(targetTable);
         }
       });
+
+      // Attendre que la socket soit connectée avant d'essayer de rejoindre une table
+      socket.on('connect', () => {
+        console.log("Socket connectée avec ID:", socket.id);
+
+        if (storedLink && localStorage.token) {
+          try {
+            const decodedData = JSON.parse(atob(storedLink));
+            const tatamiData: TatamiProps = {
+              id: decodedData.id,
+              name: decodedData.name,
+              bet: decodedData.bet,
+              isPrivate: decodedData.isPrivate,
+              createdAt: new Date().toLocaleString(),
+              link: storedLink
+            };
+            console.log("storedLink in gameState 3", storedLink);
+            history.push("/play");
+            // loadUser(localStorage.token);
+            joinTable(tatamiData);
+
+            const storedSeatId = localStorage.getItem("seatId");
+            const storedPlayerSeated = localStorage.getItem("isPlayerSeated");
+
+
+            if (storedPlayerSeated) {
+              if (storedSeatId) {
+                sitDown(tatamiData.id, storedSeatId, parseInt(tatamiData.bet))
+              }
+            }
+          } catch (error) {
+            console.error('Invalid stored table link:', error);
+            history.push('/');
+          }
+        }
+      });
     }
-    return () => leaveTable();
+
+    console.log("isLoggedIn", isLoggedIn);
+    console.log("storedLink in gameState 2", storedLink);
+    // return () => leaveTable();
     // eslint-disable-next-line
   }, [socket]);
 
@@ -194,6 +252,31 @@ const GameState = ({ children }: GameStateProps) => {
 
 
   const joinTable = (tatamiData: TatamiProps) => {
+    if (!socket) {
+      console.error('Cannot join table: socket is null');
+      return;
+    }
+
+    if (!socket.id) {
+      console.error('Cannot join table: socket.id is undefined');
+      return;
+    }
+
+    // Tester si il y a un socketId enregistré dans le localStorage
+    const storedSocketId = localStorage.getItem('socketId');
+
+    // Si oui, est-ce que c'est le même socketId que celui de la socket actuelle ?
+    if (storedSocketId && storedSocketId !== undefined) {
+      // Si les socketIds ne sont pas identiques, on remplace l'ancien par le nouveau
+      if (storedSocketId !== socket.id) {
+        localStorage.setItem('socketId', socket.id);
+      }
+      // Si c'est le même socketId, on ne fait rien
+    } else {
+      // Si pas de socketId stocké, on l'enregistre
+      localStorage.setItem('socketId', socket.id);
+    }
+
     socket.emit(JOIN_TABLE, tatamiData);
   };
 
@@ -210,6 +293,9 @@ const GameState = ({ children }: GameStateProps) => {
     socket.emit(SIT_DOWN, { tableId, seatId, amount });
     setIsPlayerSeated(true);
     setSeatId(seatId);
+
+    localStorage.setItem("isPlayerSeated", "true");
+    localStorage.setItem("seatId", seatId);
   };
 
   // Fonction pour jouer une carte (double clic) - modifiée
@@ -276,6 +362,8 @@ const GameState = ({ children }: GameStateProps) => {
       socket.emit(STAND_UP, currentTableRef.current.id);
     setIsPlayerSeated(false);
     setSeatId(null);
+    localStorage.removeItem("seatId");
+    localStorage.removeItem("isPlayerSeated");
   };
 
   const addMessage = (message: string) => {

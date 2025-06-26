@@ -1,6 +1,6 @@
 import React, { useRef, useContext, useEffect } from 'react';
 import Container from '../components/layout/Container';
-import { Redirect, Link } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import HeadingWithLogo from '../components/typography/HeadingWithLogo';
 import Button from '../components/buttons/Button';
 import { Input } from '../components/forms/Input';
@@ -28,6 +28,7 @@ const ErrorMessage = styled.div`
 const LoginPage = () => {
   const { getLocalizedString } = useContext(contentContext);
   const { login, isLoggedIn, authError, clearAuthError } = useContext(authContext);
+  const history = useHistory();
 
   useScrollToTopOnPageLoad();
 
@@ -41,7 +42,14 @@ const LoginPage = () => {
     };
   }, [clearAuthError]);
 
-  if (isLoggedIn) return <Redirect to="/" />;
+  // Rediriger si l'utilisateur est déjà connecté
+  useEffect(() => {
+    if (isLoggedIn) {
+      history.push('/');
+    }
+  }, [isLoggedIn, history]);
+
+  // if (isLoggedIn) return null; // Éviter le rendu pendant la redirection
   return (
     <RelativeWrapper>
       {/* <TiledBackgroundImage /> */}

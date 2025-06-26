@@ -1,6 +1,6 @@
-import React, { useRef, useContext } from 'react';
+import React, { useRef, useContext, useEffect } from 'react';
 import Container from '../components/layout/Container';
-import { Redirect, Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import HeadingWithLogo from '../components/typography/HeadingWithLogo';
 import Button from '../components/buttons/Button';
 import { Input } from '../components/forms/Input';
@@ -18,6 +18,7 @@ import contentContext from '../context/content/contentContext';
 const RegistrationPage = () => {
   const { getLocalizedString } = useContext(contentContext);
   const { register, isLoggedIn } = useContext(authContext);
+  const history = useHistory();
 
   useScrollToTopOnPageLoad();
 
@@ -25,7 +26,14 @@ const RegistrationPage = () => {
   const passwordRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
   const nicknameRef = useRef<HTMLInputElement>(null);
 
-  if (isLoggedIn) return <Redirect to="/" />;
+  // Rediriger si l'utilisateur est déjà connecté
+  useEffect(() => {
+    if (isLoggedIn) {
+      history.push('/');
+    }
+  }, [isLoggedIn, history]);
+
+  if (isLoggedIn) return null; // Éviter le rendu pendant la redirection
   return (
     <RelativeWrapper>
       {/* <TiledBackgroundImage /> */}

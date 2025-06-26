@@ -18,18 +18,18 @@ const Routes = () => {
       <Route path="/" exact component={HomePage} />
       <Route path="/register" component={RegistrationPage} />
       <Route path="/login" component={LoginPage} />
+      <Route path="/play" component={Play} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
-      {staticPages &&
-        staticPages.map((page) => (
-          <Route
-            key={page.slug}
-            path={`/${page.slug}`}
-            component={() => (
-              <StaticPage title={page.title} content={page.content} />
-            )}
-          />
-        ))}
-      <ProtectedRoute path="/play/:link?" component={Play} />
+      {staticPages && staticPages.map((page) => (
+        <Route
+          key={page.slug}
+          path={`/${page.slug}`}
+          component={() => (
+            <StaticPage title={page.title} content={page.content} />
+          )}
+        />
+      ))}
+      {/* <ProtectedRoute path="/play/:link?" component={Play} /> */}
       <Route component={NotFoundPage} />
     </Switch>
   );

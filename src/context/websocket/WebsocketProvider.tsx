@@ -49,17 +49,20 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     } else {
       cleanUp();
     }
-    return () => cleanUp();
+    return () => {
+      cleanUp()
+    };
     // eslint-disable-next-line
   }, [isLoggedIn]);
 
   function cleanUp() {
     window.socket && window.socket.emit(DISCONNECT);
     window.socket && window.socket.close();
-    setSocket(null);
-    setSocketId(null);
+    // setSocket(null);
+    // setSocketId(null);
     setPlayers([]);
     setTables([]);
+
   }
 
   function connect() {
@@ -92,7 +95,7 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
   }
 
   return (
-    <SocketContext.Provider value={{ socket, socketId, cleanUp }}>
+    <SocketContext.Provider value={{ socket, socketId, setSocket, cleanUp }}>
       {children}
     </SocketContext.Provider>
   );

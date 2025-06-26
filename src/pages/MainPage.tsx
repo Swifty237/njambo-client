@@ -231,7 +231,7 @@ const MainPage: React.FC = () => {
                   <li key={tatamiData.id}>
                     <Link
                       to={{
-                        pathname: `/play/${tatamiData.link}`,
+                        pathname: `/play`,
                         state: {
                           tatamiData: {
                             id: tatamiData.id,
@@ -243,7 +243,14 @@ const MainPage: React.FC = () => {
                           }
                         }
                       }}
-                      onClick={() => joinTable(tatamiData)}
+                      onClick={() => {
+                        const storedLink = localStorage.getItem('storedLink');
+                        // Si le lien stocké est différent du nouveau lien, on met à jour
+                        if (!storedLink || storedLink !== tatamiData.link) {
+                          localStorage.setItem('storedLink', tatamiData.link);
+                        }
+                        joinTable(tatamiData);
+                      }}
                     >
                       <span style={{ textDecoration: 'underline' }}>
                         <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
@@ -275,8 +282,10 @@ const MainPage: React.FC = () => {
                   // Ajouter le nouveau tatami à la liste
                   setTatamiDataList(prevList => [...prevList, newTatamiData]);
 
-                  // Ouvrir dans une nouvelle fenêtre
-                  history.push(`/play/${newTatamiData.link}`);
+                  // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
+                  localStorage.setItem('storedLink', newTatamiData.link);
+                  history.push(`/play`);
+                  joinTable(newTatamiData)
                 }}>
 
                 <FormGroup>
