@@ -25,6 +25,8 @@ import globalContext from '../context/global/globalContext';
 import ChatContent from '../components/game/ChatContent';
 import LoadingScreen from '../components/loading/LoadingScreen';
 import { useHistory } from 'react-router-dom';
+import usePlayerSeated from '../hooks/usePlayerSeated';
+import { Table } from '../types/SeatTypesProps';
 
 
 // interface LocationState {
@@ -45,7 +47,6 @@ const Play: React.FC = () => {
   const {
     messages,
     currentTable,
-    isPlayerSeated,
     seatId,
     leaveTable,
     sitDown,
@@ -56,12 +57,16 @@ const Play: React.FC = () => {
     showDown,
     sendMessage
   } = useContext(gameContext);
+
+  // Utiliser le hook personnalisé pour isPlayerSeated
+  const isPlayerSeated = usePlayerSeated();
   const { getLocalizedString, isLoading: contentIsLoading } = useContext(contentContext);
 
   const [bet, setBet] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [lastReadTime, setLastReadTime] = useState(Date.now());
   const [refresh, setRefresh] = useState(false);
+  const storedSeatId = localStorage.getItem("seatId");
 
   useEffect(() => {
 
@@ -92,7 +97,7 @@ const Play: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTable?.chatRoom?.chatMessages])
 
-  const handleSendMessage = (message: string) => {
+  const handleSendMessage = (table: Table, seatId: string, message: string) => {
     if (!seatId) {
       console.log("Erreur: seatId manquant");
       return;
@@ -100,6 +105,7 @@ const Play: React.FC = () => {
     console.log("handleSendMessage appelé avec:", { message, seatId });
     sendMessage(message, seatId);
     setRefresh(true)
+    sitDown(table.id, seatId, table.seats[seatId].stack)
   };
 
   const markMessagesAsRead = () => {
@@ -118,18 +124,18 @@ const Play: React.FC = () => {
 
     openModal(
       () => <ChatContent
-        messages={currentTable?.chatRoom?.chatMessages || []}
-        onSendMessage={handleSendMessage}
         currentTable={currentTable}
+        onSendMessage={handleSendMessage}
       />,
       'Chat room',
       'Valider',
       () => {
         // Récupérer la valeur de l'input et envoyer le message
         const input = document.querySelector('input[type="text"]') as HTMLInputElement;
-        if (input && input.value.trim()) {
-          handleSendMessage(input.value.trim());
+        if (input && input.value.trim() && currentTable && storedSeatId) {
+          handleSendMessage(currentTable, storedSeatId, input.value.trim());
           input.value = '';
+          // sitDown(currentTable.id, storedSeatId, currentTable.seats[storedSeatId].stack)
         }
       }
     );

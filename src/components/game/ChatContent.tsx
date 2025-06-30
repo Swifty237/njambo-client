@@ -1,17 +1,21 @@
-import React, { ChangeEvent, useEffect, useRef, useState, KeyboardEvent } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState, KeyboardEvent, useContext } from "react";
 import { ChatMessage, Table } from "../../types/SeatTypesProps";
 import { Input } from "../forms/Input";
+import gameContext from "../../context/game/gameContext";
 
 interface ChatContentProps {
-    messages: ChatMessage[];
-    onSendMessage: (message: string) => void;
     currentTable: Table | null;
+    onSendMessage: (table: Table, seatId: string, message: string) => void;
 }
 
-const ChatContent = React.memo(function ChatContent({ messages, onSendMessage, currentTable }: ChatContentProps) {
+const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessage }: ChatContentProps) {
     const [localMessage, setLocalMessage] = useState('');
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const storedSeatId = localStorage.getItem("seatId");
+    const { sitDown } = useContext(gameContext);
+    // Récupérer la valeur de l'input et envoyer le message
+    const input = document.querySelector('input[type="text"]') as HTMLInputElement;
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -34,14 +38,15 @@ const ChatContent = React.memo(function ChatContent({ messages, onSendMessage, c
 
             console.log("Messages adaptés:", adaptedMessages);
             setChatMessages(adaptedMessages);
-        } else {
-            console.log("Pas de messages dans currentTable ou structure manquante", {
-                hasCurrentTable: !!currentTable,
-                hasChatRoom: currentTable?.chatRoom ? 'oui' : 'non',
-                hasChatMessages: currentTable?.chatRoom?.chatMessages ? 'oui' : 'non',
-                chatRoomStructure: currentTable?.chatRoom
-            });
         }
+        // else {
+        //     console.log("Pas de messages dans currentTable ou structure manquante", {
+        //         hasCurrentTable: !!currentTable,
+        //         hasChatRoom: currentTable?.chatRoom ? 'oui' : 'non',
+        //         hasChatMessages: currentTable?.chatRoom?.chatMessages ? 'oui' : 'non',
+        //         chatRoomStructure: currentTable?.chatRoom
+        //     });
+        // }
     }, [currentTable]);
 
     useEffect(() => {
@@ -50,9 +55,10 @@ const ChatContent = React.memo(function ChatContent({ messages, onSendMessage, c
     }, [chatMessages]);
 
     const handleLocalSubmit = () => {
-        if (localMessage.trim()) {
-            onSendMessage(localMessage.trim());
-            setLocalMessage('');
+        if (input && input.value.trim() && currentTable && storedSeatId) {
+            onSendMessage(currentTable, storedSeatId, input.value.trim());
+            input.value = '';
+            // sitDown(currentTable.id, storedSeatId, currentTable.seats[storedSeatId].stack)
         }
     };
 
@@ -97,8 +103,10 @@ const ChatContent = React.memo(function ChatContent({ messages, onSendMessage, c
                 value={localMessage}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setLocalMessage(e.target.value)}
                 onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === 'Enter') {
+                    if (e.key === 'Enter' && currentTable && storedSeatId) {
                         handleLocalSubmit();
+                        setLocalMessage('');
+                        // sitDown(currentTable.id, storedSeatId, currentTable.seats[storedSeatId].stack)
                     }
                 }}
                 placeholder="Écrivez votre message..."
