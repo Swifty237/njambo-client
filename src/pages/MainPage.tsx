@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import Container from '../components/layout/Container';
 import Heading from '../components/typography/Heading';
 import ColoredText from '../components/typography/ColoredText';
 import styled from 'styled-components';
-import { Link, useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
 import globalContext from '../context/global/globalContext';
 import contentContext from '../context/content/contentContext';
@@ -90,9 +90,6 @@ const MainPage: React.FC = () => {
   const { openModal, closeModal } = useContext(modalContext);
   const { tatamiDataList, setTatamiDataList, joinTable } = useContext(gameContext);
 
-  // const [displayTatamiList, setDisplayTatamiList] = useState<Boolean>(true);
-  // const { currentTable } = useContext(gameContext);
-
   useEffect(() => {
     if (tables.length > 0) {
       setTatamiDataList(prevList => {
@@ -143,7 +140,7 @@ const MainPage: React.FC = () => {
   const openCreateTatimiModal = () => {
 
     openModal(
-      () => <TatimiModalContent />,
+      () => <TatimiModalContent onCreateTamtami={joinTable} />,
       'Nouveau Tatami',
       'Annuler',
       () => closeModal()
@@ -203,7 +200,7 @@ const MainPage: React.FC = () => {
                 <li key={tatamiData.id}>
                   <Link
                     to={{
-                      pathname: `/play`,
+                      pathname: `/play/${tatamiData.link}`,
                       state: {
                         tatamiData: {
                           id: tatamiData.id,

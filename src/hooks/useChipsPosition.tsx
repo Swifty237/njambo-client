@@ -43,45 +43,29 @@ export const useChipsPosition = () => {
     }): any => {
 
         if (isMobile && values.mobile !== undefined) {
-            console.log("isMobile : " + isMobile);
-            // console.log(values.mobile);
             return values.mobile;
         }
         if (isMobileLarge && values.mobileLarge !== undefined) {
-            console.log("isMobileLarge : " + isMobileLarge);
-            // console.log(values.mobileLarge);
             return values.mobileLarge;
         }
         if (isTablet && values.tablet !== undefined) {
-            console.log("isTablet : " + isTablet);
-            // console.log(values.tablet);
             return values.tablet;
         }
         if (isDesktop && values.desktop !== undefined) {
-            console.log("isDesktop : " + isDesktop);
-            // console.log(values.desktop);
             return values.desktop;
         }
         if (isDesktopLarge && values.desktopLarge !== undefined) {
-            console.log("isDesktopLarge : " + isDesktopLarge);
-            // console.log(values.desktopLarge);
             return values.desktopLarge;
         }
         if (isUltraWide && values.ultraWide !== undefined) {
-            console.log("isUltraWide : " + isUltraWide);
-            // console.log(values.ultraWide);
             return values.ultraWide;
         }
-        console.log("default : " + values.default);
         return values.default;
     };
 
 
     // Définition des positions pour chaque siège selon le type d'écran
     const getPositionsForSeat = (seatPosition: '1' | '2' | '3' | '4'): ResponsiveChipsPositions => {
-
-        console.log("seatPosition : " + seatPosition);
-
         switch (seatPosition) {
             case '1': // Siège à gauche
                 return {
@@ -184,9 +168,6 @@ export const useChipsPosition = () => {
     const getChipsPosition = (seatPosition: '1' | '2' | '3' | '4'): ChipsPosition => {
         const positions = getPositionsForSeat(seatPosition);
 
-        // console.log("positions : ");
-        // console.log(positions);
-
         const basePosition = getResponsiveValue({
             mobile: positions.mobile,
             mobileLarge: positions.mobileLarge,
@@ -197,8 +178,6 @@ export const useChipsPosition = () => {
             default: positions.desktop,
         });
 
-        console.log("basePosition : ");
-        console.log(basePosition);
         return basePosition;
     };
 

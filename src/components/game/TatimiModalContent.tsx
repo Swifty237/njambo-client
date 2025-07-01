@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 
-import gameContext from "../../context/game/gameContext";
+import gameContext, { TatamiProps } from "../../context/game/gameContext";
 import { Form } from "../forms/Form";
 import { FormGroup } from "../forms/FormGroup";
 import { Label } from "../forms/Label";
@@ -10,14 +10,17 @@ import modalContext from "../../context/modal/modalContext";
 import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from "react-router-dom";
 
+interface TatimiContentProps {
+    onCreateTamtami: (table: TatamiProps) => void;
+}
 
 
-const TatimiModalContent = React.memo(function TatimiModalContent() {
+const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTamtami }: TatimiContentProps) {
     const { closeModal } = useContext(modalContext);
     const [bet, setBet] = useState<string>('25');
     const [isPrivate, setIsPrivate] = useState<boolean>(false);
     const history = useHistory();
-    const { setTatamiDataList, joinTable } = useContext(gameContext);
+    const { setTatamiDataList } = useContext(gameContext);
 
     // Fonction pour générer un ID unique pour le tatami
     const generateTatamiId = () => {
@@ -109,8 +112,8 @@ const TatimiModalContent = React.memo(function TatimiModalContent() {
                         // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
                         localStorage.setItem('storedLink', newTatamiData.link);
                         closeModal();
-                        history.push(`/play`);
-                        joinTable(newTatamiData);
+                        onCreateTamtami(newTatamiData)
+                        history.push(`/play/${newTatamiData.link}`);
                     }}>
                         {'Créer'}
                     </Button>

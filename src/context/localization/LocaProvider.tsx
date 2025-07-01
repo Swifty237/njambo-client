@@ -15,9 +15,6 @@ const LocaProvider: React.FC<LocaProviderProps> = ({ location, children }) => {
   useEffect(() => {
     const lang = new URLSearchParams(location.search).get('lang');
 
-    console.log("langue : " + lang);
-
-
     lang && setLang(lang);
     // eslint-disable-next-line
   }, []);

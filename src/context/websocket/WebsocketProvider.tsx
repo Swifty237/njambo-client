@@ -84,12 +84,10 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     });
 
     socket.on(PLAYERS_UPDATED, (players: Player[]) => {
-      console.log(PLAYERS_UPDATED, players);
       setPlayers(players);
     });
 
     socket.on(TABLES_UPDATED, (tables: Table[]) => {
-      console.log(TABLES_UPDATED, tables);
       setTables(tables);
     });
   }

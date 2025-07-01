@@ -112,7 +112,7 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
       if (suit === currentTable.demandedSuit) {
         playOneCard({ suit, rank }, seatId);
       } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
-        console.log("vous devez jouer la couleur demandée");
+        return;
       } else {
         // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
         playOneCard({ suit, rank }, seatId);
@@ -130,7 +130,7 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
         if (suit === currentTable.demandedSuit) {
           playOneCard({ suit, rank }, seatId);
         } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
-          console.log("vous devez jouer la couleur demandée");
+          return;
         } else {
           // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
           playOneCard({ suit, rank }, seatId);

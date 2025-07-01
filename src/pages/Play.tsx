@@ -69,9 +69,6 @@ const Play: React.FC = () => {
   const storedSeatId = localStorage.getItem("seatId");
 
   useEffect(() => {
-
-    console.log("socket in Play", socket);
-
     // Si on n'a pas de socket, on affiche la modal de déconnexion
     if (!socket) {
 
@@ -86,7 +83,6 @@ const Play: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log("chatMessages :", currentTable?.chatRoom?.chatMessages);
     if (refresh) {
       closeModal();
       setTimeout(() => {
@@ -99,10 +95,8 @@ const Play: React.FC = () => {
 
   const handleSendMessage = (table: Table, seatId: string, message: string) => {
     if (!seatId) {
-      console.log("Erreur: seatId manquant");
       return;
     }
-    console.log("handleSendMessage appelé avec:", { message, seatId });
     sendMessage(message, seatId);
     setRefresh(true)
     sitDown(table.id, seatId, table.seats[seatId].stack)
@@ -115,7 +109,6 @@ const Play: React.FC = () => {
 
   const openChatModal = () => {
     if (!isPlayerSeated) {
-      console.log("L'utilisateur n'est pas assis");
       return;
     }
 

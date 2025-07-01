@@ -78,7 +78,6 @@ const useAuth = () => {
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
-      console.error('Registration error:', error);
     }
     setIsLoading(false);
   };
@@ -109,7 +108,6 @@ const useAuth = () => {
     } catch (error) {
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
-      console.error('Login error:', error);
       setIsLoading(false);
       return false;
     }
@@ -138,7 +136,6 @@ const useAuth = () => {
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
       setIsLoggedIn(false);
-      console.error('Load user error:', error);
     }
   };
 

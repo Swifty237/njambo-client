@@ -22,29 +22,22 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
     };
 
     useEffect(() => {
-        console.log("currentTable mis à jour:", currentTable);
-        console.log("Structure complète de chatRoom:", currentTable?.chatRoom);
-
         if (currentTable && currentTable.chatRoom && currentTable.chatRoom.chatMessages) {
-            console.log("Messages trouvés dans currentTable:", currentTable.chatRoom.chatMessages);
-
             // Adapter la structure des messages du serveur
             const adaptedMessages = currentTable.chatRoom.chatMessages.map((msg: any) => ({
                 // name: msg.seat?.player?.name || 'Anonyme',
-                name: `${msg.seat?.player?.name} ${!msg.seat?.id && "(Observateur)"}`,
+                name: `${msg.seat?.player?.name} ${!msg.seat?.id ? '(Observateur)' : ''}`,
                 message: msg.message,
                 seatId: msg.seat?.id || '',
                 createdAt: msg.createdAt
             }));
 
-            console.log("Messages adaptés:", adaptedMessages);
             setChatMessages(adaptedMessages);
         }
     }, [currentTable]);
 
     useEffect(() => {
         scrollToBottom();
-        console.log("État final des messages:", chatMessages);
     }, [chatMessages]);
 
     const handleLocalSubmit = () => {

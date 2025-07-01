@@ -67,7 +67,6 @@ const GameState = ({ children }: GameStateProps) => {
     }
 
     const storedLink = localStorage.getItem('storedLink');
-    console.log("storedLink in GameState 1", storedLink);
 
     if (socket) {
       // window.addEventListener('unload', leaveTable);
@@ -100,21 +99,13 @@ const GameState = ({ children }: GameStateProps) => {
       });
 
       socket.on(CHAT_MESSAGE_RECEIVED, ({ tables, tableId }: TableEventPayload) => {
-        console.log("Message reçu - Mise à jour de la table");
-        console.log("Tables reçues:", JSON.stringify(tables, null, 2));
-        console.log("TableId recherché:", tableId);
-
         // Si tables est un tableau, chercher la table par ID
         let targetTable;
         if (Array.isArray(tables)) {
           targetTable = tables.find((table: any) => table.id === tableId);
-          console.log("Table trouvée dans le tableau:", JSON.stringify(targetTable, null, 2));
         } else {
           targetTable = tables[tableId];
-          console.log("Table trouvée dans l'objet:", JSON.stringify(targetTable, null, 2));
         }
-
-        console.log("Structure chatRoom:", JSON.stringify(targetTable?.chatRoom, null, 2));
 
         if (Array.isArray(tables)) {
           // Convertir le tableau en objet pour setCurrentTables
@@ -134,8 +125,6 @@ const GameState = ({ children }: GameStateProps) => {
 
       // Attendre que la socket soit connectée avant d'essayer de rejoindre une table
       socket.on('connect', () => {
-        console.log("Socket connectée avec ID:", socket.id);
-
         if (storedLink && localStorage.token) {
           try {
             const decodedData = JSON.parse(atob(storedLink));
@@ -147,7 +136,6 @@ const GameState = ({ children }: GameStateProps) => {
               createdAt: new Date().toLocaleString(),
               link: storedLink
             };
-            console.log("storedLink in gameState 3", storedLink);
             history.push("/play");
             // loadUser(localStorage.token);
             joinTable(tatamiData);
@@ -169,8 +157,6 @@ const GameState = ({ children }: GameStateProps) => {
       });
     }
 
-    console.log("isLoggedIn", isLoggedIn);
-    console.log("storedLink in gameState 2", storedLink);
     // return () => leaveTable();
     // eslint-disable-next-line
   }, [socket]);
@@ -253,12 +239,10 @@ const GameState = ({ children }: GameStateProps) => {
 
   const joinTable = (tatamiData: TatamiProps) => {
     if (!socket) {
-      console.error('Cannot join table: socket is null');
       return;
     }
 
     if (!socket.id) {
-      console.error('Cannot join table: socket.id is undefined');
       return;
     }
 
@@ -310,7 +294,6 @@ const GameState = ({ children }: GameStateProps) => {
         const cardIndex = currentSeat.hand.findIndex((handCard) => handCard.suit === card.suit && handCard.rank === card.rank);
 
         if (cardIndex === -1) {
-          console.warn('Carte non trouvée dans la main du joueur');
           return;
         }
 
@@ -334,7 +317,6 @@ const GameState = ({ children }: GameStateProps) => {
 
   const sendMessage = (message: string, seatId: string) => {
     if (currentTable && message !== "") {
-      console.log("Envoi du message:", { message, seatId, tableId: currentTable.id });
       socket.emit(SEND_CHAT_MESSAGE, {
         tableId: currentTable.id,
         seatId,

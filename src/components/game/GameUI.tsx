@@ -39,8 +39,6 @@ export const GameUI: React.FC<GameUIProps> = ({
         const card: CardProps = { suit, rank };
         playOneCard(card, cardSeatId);
       }
-    } else {
-      console.log("selectionner une carte");
     }
   };
 

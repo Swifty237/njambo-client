@@ -62,20 +62,8 @@ const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount, seatPosi
   // Obtenir la position pour ce siège
   const position = getChipsPosition(seatPosition);
 
-  console.log("position : ");
-  console.log(position);
-
   // Obtenir la taille appropriée pour cet écran
   const { width, height, fontSize } = getChipsSize();
-
-  // Debug pour voir ce qui se passe
-  // console.log('Debug ChipsAmountPill:', {
-  //   seatPosition,
-  //   position,
-  //   fontSize,
-  //   width,
-  //   height
-  // });
 
   return (
     <Wrapper position={position}>

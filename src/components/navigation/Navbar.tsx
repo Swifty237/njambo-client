@@ -57,12 +57,10 @@ const Navbar: React.FC<NavbarProps> = ({
   const maxBuyIn = 30000 - chipsAmount;
 
   const handleAddChips = useCallback(async (amount: number) => {
-    console.log('handleAddChips appelé avec:', { userId, amount });
     try {
       await addChips(userId, amount);
-      console.log('Ajout de jetons réussi');
     } catch (error) {
-      console.error('Erreur lors de l\'ajout de jetons:', error);
+      // Handle error silently
     }
   }, [userId]);
 
@@ -80,43 +78,27 @@ const Navbar: React.FC<NavbarProps> = ({
     );
 
   const submitAddChipsForm = () => {
-    console.log('submitAddChipsForm appelé');
-
     const addChipsInput = document.getElementById('chipsInput') as HTMLInputElement | null;
     const chipsAmountToAdd = addChipsInput ? + addChipsInput.value : 0;
 
     if (
       chipsAmountToAdd && chipsAmountToAdd <= maxBuyIn
     ) {
-      console.log('Validation réussie, appel de handleAddChips');
       handleAddChips(chipsAmountToAdd)
         .then(() => {
-          console.log('handleAddChips terminé avec succès');
           // Recharger les données utilisateur pour mettre à jour l'interface
           loadUser(localStorage.token);
           closeModalFromContext();
         })
-        .catch((error) => {
-          console.error('Erreur dans handleAddChips:', error);
+        .catch(() => {
           closeModalFromContext(); // Fermer la modal même en cas d'erreur
         });
-    } else {
-      console.log('Validation échouée', {
-        chipsAmountToAdd,
-        maxBuyIn,
-        condition2: chipsAmountToAdd <= maxBuyIn
-      });
     }
   };
 
   const openAddChipsModal = () => {
-    console.log('Ouverture du modal d\'ajout de jetons');
-    console.log('Valeurs au moment de l\'ouverture:', { maxBuyIn, minBuyIn, chipsAmount });
-
     // Calculer le minBuyIn effectif pour l'affichage
     const effectiveMinBuyIn = maxBuyIn < 1000 ? maxBuyIn : minBuyIn;
-
-    console.log('effectiveMinBuyIn pour le modal:', effectiveMinBuyIn);
 
     openModalFromContext(() => (
       <div>
