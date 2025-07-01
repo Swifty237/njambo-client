@@ -24,6 +24,7 @@ export interface ChatRoom {
 export interface SeatData {
     id: string;
     turn: boolean;
+    turnStartTime?: number; // timestamp when the turn started
     stack: number;
     sittingOut: boolean;
     player: Player;

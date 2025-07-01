@@ -220,8 +220,25 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           </PositionedUISlot>
 
           <PositionedUISlot>
-            <OccupiedSeat seatNumber={seatNumber} hasTurn={seat?.turn || false} />
+            <OccupiedSeat
+              seatNumber={seatNumber}
+              hasTurn={seat?.turn || false}
+              turnStartTime={seat?.turnStartTime || (seat?.turn ? Number(localStorage.getItem(`turn_start_${seatNumber}`)) || Date.now() : undefined)}
+            />
           </PositionedUISlot>
+          {(() => {
+            if (seat?.turn) {
+              // Save turn start time to localStorage if not already saved
+              const stored = localStorage.getItem(`turn_start_${seatNumber}`);
+              if (!stored) {
+                localStorage.setItem(`turn_start_${seatNumber}`, Date.now().toString());
+              }
+            } else {
+              // Clear localStorage when turn ends
+              localStorage.removeItem(`turn_start_${seatNumber}`);
+            }
+            return null;
+          })()}
 
           <PositionedUISlot
             style={{

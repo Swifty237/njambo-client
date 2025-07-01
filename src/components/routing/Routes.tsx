@@ -18,7 +18,6 @@ const Routes = () => {
       <Route path="/" exact component={HomePage} />
       <Route path="/register" component={RegistrationPage} />
       <Route path="/login" component={LoginPage} />
-      <Route path="/play" component={Play} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
       {staticPages && staticPages.map((page) => (
         <Route
@@ -29,7 +28,7 @@ const Routes = () => {
           )}
         />
       ))}
-      {/* <ProtectedRoute path="/play/:link?" component={Play} /> */}
+      <ProtectedRoute path="/play/:link?" component={Play} />
       <Route component={NotFoundPage} />
     </Switch>
   );
