@@ -186,6 +186,7 @@ const NavMenu = ({
 
           <HorizontalWrapper>
             <ChipsAmount
+              tooltip="Clique ici pour ajouter des jetons fictifs"
               chipsAmount={chipsAmount}
               clickHandler={openShopModal}
             />
@@ -200,6 +201,7 @@ const NavMenu = ({
 
           <HorizontalWrapper>
             <RealChipsAmount
+              tooltip="Clique ici pour ajouter des jetons réels"
               chipsAmount={chipsAmount}
               clickHandler={openShopModal}
             />

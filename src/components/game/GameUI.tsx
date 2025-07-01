@@ -4,6 +4,7 @@ import Button from '../buttons/Button';
 import { UIWrapper } from './UIWrapper';
 import { CardProps } from '../../types/SeatTypesProps';
 import gameContext from '../../context/game/gameContext';
+import { Tooltip } from 'react-tooltip';
 
 type GameUIProps = {
   currentTable: any; // Replace 'any' with the actual type if available
@@ -44,32 +45,27 @@ export const GameUI: React.FC<GameUIProps> = ({
 
   return (
     <UIWrapper>
-      <Button $small $secondary onClick={handlePlayCard}>
-        {'Jouer'}
-      </Button>
+      <>
+        <Button data-tooltip-id="play-tooltip" $small $secondary onClick={handlePlayCard}>
+          {'Jouer'}
+        </Button>
+        <Tooltip id="play-tooltip" content={"Clique ici pour jouer la carte soulevée"} place="left" />
+      </>
 
-      {/* {getLocalizedString('game_ui_check')} */}
-      {/* <Button
-        $small
-        $secondary
-        disabled={
-          currentTable.callAmount !== currentTable.seats[seatId].bet &&
-          currentTable.callAmount > 0
-        }
-        onClick={check}
-      >
-        {'Passer'}
-      </Button> */}
+      <>
+        <Button data-tooltip-id="stand-up-tooltip" $small $secondary onClick={standUp}>
+          {'Se lever'}
+        </Button>
+        <Tooltip id="stand-up-tooltip" content={"Clique ici pour te lever de la table"} place="top" />
+      </>
 
-      <Button $small $secondary onClick={standUp}>
-        {'Se lever'}
-        {/* {getLocalizedString('game_ui_stand-up')} */}
-      </Button>
-
-      <Button $small $secondary onClick={showDown}>
-        {currentTable.seats[seatId].showingCards ? 'Cacher son jeu' : 'Montrer son jeu'}
-        {/* {getLocalizedString('game_ui_showdown')} */}
-      </Button>
+      <>
+        <Button data-tooltip-id="showdown-tooltip" $small $secondary onClick={showDown}>
+          {currentTable.seats[seatId].showingCards ? 'Cacher son jeu' : 'Montrer son jeu'}
+          {/* {getLocalizedString('game_ui_showdown')} */}
+        </Button>
+        <Tooltip id="showdown-tooltip" content={"Clique ici pour montrer ou cacher ton jeu"} place="left" />
+      </>
     </UIWrapper>
   );
 };

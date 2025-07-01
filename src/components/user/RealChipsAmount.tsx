@@ -2,6 +2,7 @@ import React from 'react';
 import RealPokerChip from '../icons/RealPokerChip';
 import { Input } from '../forms/Input';
 import styled from 'styled-components';
+import { Tooltip } from 'react-tooltip';
 // import PropTypes from 'prop-types';
 
 interface WrapperProps {
@@ -12,6 +13,7 @@ interface WrapperProps {
 }
 
 interface ChipsAmountProps {
+    tooltip: string;
     chipsAmount: number;
     clickHandler: () => void;
 };
@@ -38,22 +40,25 @@ const IconWrapper = styled.label`
   top: calc(50% - 40px / 2);
 `;
 
-const RealChipsAmount: React.FC<ChipsAmountProps> = ({ chipsAmount, clickHandler }) => {
+const RealChipsAmount: React.FC<ChipsAmountProps> = ({ tooltip, chipsAmount, clickHandler }) => {
     return (
-        <Wrapper onClick={clickHandler}>
-            <IconWrapper htmlFor="chipsAmount">
-                <RealPokerChip width='70' height='70' />
-            </IconWrapper>
-            <Input
-                disabled
-                type="text"
-                size={10}
-                value={new Intl.NumberFormat(document.documentElement.lang).format(
-                    chipsAmount,
-                )}
-                name="chipsAmount"
-            />
-        </Wrapper>
+        <>
+            <Wrapper data-tooltip-id="real-chips-tooltip" onClick={clickHandler}>
+                <IconWrapper htmlFor="chipsAmount">
+                    <RealPokerChip width='70' height='70' />
+                </IconWrapper>
+                <Input
+                    disabled
+                    type="text"
+                    size={10}
+                    value={new Intl.NumberFormat(document.documentElement.lang).format(
+                        chipsAmount,
+                    )}
+                    name="chipsAmount"
+                />
+            </Wrapper>
+            <Tooltip id="real-chips-tooltip" content={tooltip} place="bottom" />
+        </>
     );
 };
 

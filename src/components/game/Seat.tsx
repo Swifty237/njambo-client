@@ -23,6 +23,7 @@ import { StyledSeat } from './StyledSeat';
 import { PlayedHand } from './PlayedHand';
 import { SeatProps, CardProps } from '../../types/SeatTypesProps'
 import PlayedCard from './PlayedCard';
+import { Tooltip } from 'react-tooltip';
 
 export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
   const { openModal, closeModal } = useContext(modalContext);
@@ -115,54 +116,58 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
       {!seat ? (
         <>
           {!isPlayerSeated ? (
-            <Button
-              $small
-              onClick={() => {
-                openModal(() => (
-                  <Form
-                    onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                      e.preventDefault();
+            <>
+              <Button
+                data-tooltip-id="sitdown-tooltip"
+                $small
+                onClick={() => {
+                  openModal(() => (
+                    <Form
+                      onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+                        e.preventDefault();
 
-                      const amountInput = document.getElementById('amount') as HTMLInputElement | null;
-                      const amount = amountInput ? + amountInput.value : 0;
+                        const amountInput = document.getElementById('amount') as HTMLInputElement | null;
+                        const amount = amountInput ? + amountInput.value : 0;
 
-                      if (
-                        amount &&
-                        amount >= minBuyIn &&
-                        amount <= chipsAmount &&
-                        amount <= maxBuyIn
-                      ) {
-                        sitDown(
-                          currentTable?.id || '',
-                          seatNumber,
-                          amount,
-                        );
-                        closeModal();
-                      }
-                    }}>
-                    <FormGroup>
-                      <Input
-                        id="amount"
-                        type="number"
-                        min={minBuyIn}
-                        max={chipsAmount <= maxBuyIn ? chipsAmount : maxBuyIn}
-                        defaultValue={minBuyIn}
-                      />
-                    </FormGroup>
-                    <ButtonGroup>
-                      <Button $primary type="submit" $fullWidth>
-                        {getLocalizedString('game_buyin-modal_confirm')}
-                      </Button>
-                    </ButtonGroup>
-                  </Form>
-                ),
-                  getLocalizedString('game_buyin-modal_header'),
-                  getLocalizedString('game_buyin-modal_cancel'),
-                );
-              }}
-            >
-              {getLocalizedString('game_sitdown-btn')}
-            </Button>
+                        if (
+                          amount &&
+                          amount >= minBuyIn &&
+                          amount <= chipsAmount &&
+                          amount <= maxBuyIn
+                        ) {
+                          sitDown(
+                            currentTable?.id || '',
+                            seatNumber,
+                            amount,
+                          );
+                          closeModal();
+                        }
+                      }}>
+                      <FormGroup>
+                        <Input
+                          id="amount"
+                          type="number"
+                          min={minBuyIn}
+                          max={chipsAmount <= maxBuyIn ? chipsAmount : maxBuyIn}
+                          defaultValue={minBuyIn}
+                        />
+                      </FormGroup>
+                      <ButtonGroup>
+                        <Button $primary type="submit" $fullWidth>
+                          {getLocalizedString('game_buyin-modal_confirm')}
+                        </Button>
+                      </ButtonGroup>
+                    </Form>
+                  ),
+                    getLocalizedString('game_buyin-modal_header'),
+                    getLocalizedString('game_buyin-modal_cancel'),
+                  );
+                }}
+              >
+                {getLocalizedString('game_sitdown-btn')}
+              </Button>
+              <Tooltip id="sitdown-tooltip" content={"Clique ici pour t'asseoir"} place="bottom" />
+            </>
           ) : (
             <EmptySeat>
               <Markdown>{getLocalizedString('game_table_empty-seat')}</Markdown>
@@ -247,35 +252,46 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             }}
             origin="center right"
           >
-            <Hand hiddenCards={isHiddenCards()}>
-              {seat?.hand && seat.hand.map((card: CardProps, index: number) => (
-                <HandCard
-                  key={`${card.suit}-${card.rank}-${index}`}
-                  card={card}
-                  width="5vw"
-                  maxWidth="60px"
-                  minWidth="30px"
-                />
-              ))}
-            </Hand>
+            <>
+              <Hand
+                data-tooltip-id="hand-card-tooltip"
+                hiddenCards={isHiddenCards()}
+              >
+                {seat?.hand && seat.hand.map((card: CardProps, index: number) => (
+                  <HandCard
+                    key={`${card.suit}-${card.rank}-${index}`}
+                    card={card}
+                    width="5vw"
+                    maxWidth="60px"
+                    minWidth="30px"
+                  />
+                ))}
+              </Hand>
+              <Tooltip id="hand-card-tooltip" content={"Un clic pour soulever une carte ou double clic pour jouer"} place={seatNumber === "1" || "2" ? "right" : "left"} />
+            </>
 
             <div style={{
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
             }}>
-              <PlayedHand>
-                {seat?.playedHand &&
-                  seat.playedHand.map((card: CardProps, index: number) => (
-                    <PlayedCard
-                      key={index}
-                      card={card}
-                      width="5vw"
-                      maxWidth="60px"
-                      minWidth="30px"
-                    />
-                  ))}
-              </PlayedHand>
+              <>
+                <PlayedHand
+                  data-tooltip-id="played-cards-tooltip"
+                >
+                  {seat?.playedHand &&
+                    seat.playedHand.map((card: CardProps, index: number) => (
+                      <PlayedCard
+                        key={index}
+                        card={card}
+                        width="5vw"
+                        maxWidth="60px"
+                        minWidth="30px"
+                      />
+                    ))}
+                </PlayedHand>
+                <Tooltip id="played-cards-tooltip" content={`Carte(s) jouée(s) par ${seat.player.name}`} place={seatNumber === "1" || "2" ? "left" : "right"} />
+              </>
             </div>
           </PositionedUISlot>
 

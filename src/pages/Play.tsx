@@ -27,6 +27,7 @@ import LoadingScreen from '../components/loading/LoadingScreen';
 import { useHistory } from 'react-router-dom';
 import usePlayerSeated from '../hooks/usePlayerSeated';
 import { Table } from '../types/SeatTypesProps';
+import { Tooltip } from 'react-tooltip';
 
 
 // interface LocationState {
@@ -151,51 +152,59 @@ const Play: React.FC = () => {
                   style={{ zIndex: '50' }}
                 >
                   <Spacer>
-                    <Button $small $secondary onClick={() => {
-                      leaveTable();
-                      // Supprimer le socketId et le storedLink du localStorage
-                      localStorage.removeItem('socketId');
-                      localStorage.removeItem('storedLink');
-                      localStorage.removeItem("seatId");
-                      localStorage.removeItem("isPlayerSeated");
-                    }}>
-                      {getLocalizedString('game_leave-table-btn')}
-                    </Button>
+                    <>
+                      <Button data-tooltip-id="leave-table-tooltip" $small $secondary onClick={() => {
+                        leaveTable();
+                        // Supprimer le socketId et le storedLink du localStorage
+                        localStorage.removeItem('socketId');
+                        localStorage.removeItem('storedLink');
+                        localStorage.removeItem("seatId");
+                        localStorage.removeItem("isPlayerSeated");
+                      }}>
+                        {getLocalizedString('game_leave-table-btn')}
+                      </Button>
+                      <Tooltip id="leave-table-tooltip" content={"Clique ici pour quitter la table"} place="top" />
+                    </>
 
-                    <div style={{
-                      display: 'flex',
-                    }}>
+                    <>
                       <div
+                        data-tooltip-id="open-chat-tooltip"
                         style={{
-                          cursor: "pointer"
-                        }}
-                        onClick={() => openChatModal()}
-                      >
-                        <span style={{ color: "hsl(162, 100%, 28%)" }}>
-                          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-chat" viewBox="0 0 16 16">
-                            <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
-                          </svg>
-                        </span>
-                      </div>
-
-                      {unreadMessages > 0 && (
+                          display: 'flex',
+                        }}>
                         <div
                           style={{
-                            color: 'white',
-                            background: 'hsl(0, 100%, 46%)',
-                            width: '20px',
-                            height: '20px',
-                            borderRadius: '20px',
-                            display: 'flex',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginLeft: '-10px',
+                            cursor: "pointer"
                           }}
+                          onClick={() => openChatModal()}
                         >
-                          <span style={{ padding: '2px' }}>{unreadMessages}</span>
+                          <span style={{ color: "hsl(162, 100%, 28%)" }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-chat" viewBox="0 0 16 16">
+                              <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
+                            </svg>
+                          </span>
                         </div>
-                      )}
-                    </div>
+
+                        {unreadMessages > 0 && (
+                          <div
+                            style={{
+                              color: 'white',
+                              background: 'hsl(0, 100%, 46%)',
+                              width: '20px',
+                              height: '20px',
+                              borderRadius: '20px',
+                              display: 'flex',
+                              justifyContent: 'center',
+                              alignItems: 'center',
+                              marginLeft: '-10px',
+                            }}
+                          >
+                            <span style={{ padding: '2px' }}>{unreadMessages}</span>
+                          </div>
+                        )}
+                      </div>
+                      <Tooltip id="open-chat-tooltip" content={"Clique ici pour ouvrir le chat"} place="top" />
+                    </>
                   </Spacer>
                 </PositionedUISlot>
 

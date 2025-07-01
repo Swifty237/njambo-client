@@ -191,6 +191,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
             <Hider hideOnMobile>
               <ChipsAmount
+                tooltip="Clique ici pour ajouter des jetons fictifs"
                 chipsAmount={chipsAmount}
                 clickHandler={openAddChipsModal}
               />
@@ -204,6 +205,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
             <Hider hideOnMobile>
               <RealChipsAmount
+                tooltip="Clique ici pour ajouter des jetons réels"
                 chipsAmount={chipsAmount}
                 clickHandler={openShopModal}
               />

@@ -7,15 +7,12 @@ import { Link } from 'react-router-dom';
 import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
 import globalContext from '../context/global/globalContext';
 import contentContext from '../context/content/contentContext';
-// import modalContext from '../context/modal/modalContext';
 import Button from '../components/buttons/Button';
 import { ThemeProps } from '../styles/theme';
 import '../assets/css/switch_theme.css';
 import gameContext, { TatamiProps } from '../context/game/gameContext';
 import TatimiModalContent from '../components/game/TatimiModalContent';
 import modalContext from '../context/modal/modalContext';
-import Spacer from '../components/layout/Spacer';
-import Text from '../components/typography/Text';
 
 interface MainMenuCardProps {
   theme: ThemeProps;
@@ -165,7 +162,13 @@ const MainPage: React.FC = () => {
       <p style={{
         fontSize: '1.5rem',
         marginBottom: '2rem',
-      }}>Tu peux créer un nouveau tatami, ou tu peux aussi cliquer sur un lien pour rejoindre un tatami
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}>
+        <span>Tu peux créer un nouveau tatami,</span>
+        <span>ou tu peux aussi cliquer sur un lien pour rejoindre un tatami</span>
       </p>
 
       <MainMenuWrapper>
