@@ -72,10 +72,10 @@ const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTamt
                             id="select-bet"
                             onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBet(e.target.value)}
                         >
-                            <option value="25">25 F CFA</option>
-                            <option value="50">50 F CFA</option>
-                            <option value="100">100 F CFA</option>
-                            <option value="200">200 F CFA</option>
+                            <option value="25">25 XAF</option>
+                            <option value="50">50 XAF</option>
+                            <option value="100">100 XAF</option>
+                            <option value="200">200 XAF</option>
                         </Select>
                     </FormGroup>
 

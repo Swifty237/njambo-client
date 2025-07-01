@@ -211,7 +211,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                           document.documentElement.lang,
                         ).format(seat?.stack || 0)}
                       </ColoredText>
-                      <ColoredText secondary>{'F CFA'}</ColoredText>
+                      <ColoredText secondary>{'XAF'}</ColoredText>
                     </div>
                   </div>
                 )}

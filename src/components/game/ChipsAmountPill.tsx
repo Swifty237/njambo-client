@@ -80,7 +80,7 @@ const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount, seatPosi
         <ColoredText primary>
           {new Intl.NumberFormat(document.documentElement.lang).format(chipsAmount)}
           <CurrencySpan fontSize={`calc(${fontSize} * 0.8)`}>
-            {" F CFA"}
+            {" XAF"}
           </CurrencySpan>
         </ColoredText>
       </TextWrapper>

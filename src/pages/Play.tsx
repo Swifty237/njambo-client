@@ -218,7 +218,7 @@ const Play: React.FC = () => {
                         {' '}
                         {new Intl.NumberFormat(
                           document.documentElement.lang,
-                        ).format(currentTable.bet)} {' '} {'F'}
+                        ).format(currentTable.bet)} {' '} {'XAF'}
                         {' '} | {' '}
 
                         {/* <strong>

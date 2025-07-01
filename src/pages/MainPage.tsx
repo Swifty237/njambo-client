@@ -14,6 +14,8 @@ import '../assets/css/switch_theme.css';
 import gameContext, { TatamiProps } from '../context/game/gameContext';
 import TatimiModalContent from '../components/game/TatimiModalContent';
 import modalContext from '../context/modal/modalContext';
+import Spacer from '../components/layout/Spacer';
+import Text from '../components/typography/Text';
 
 interface MainMenuCardProps {
   theme: ThemeProps;
@@ -160,6 +162,12 @@ const MainPage: React.FC = () => {
         <ColoredText>{userName}!</ColoredText>
       </WelcomeHeading>
 
+      <p style={{
+        fontSize: '1.5rem',
+        marginBottom: '2rem',
+      }}>Tu peux créer un nouveau tatami, ou tu peux aussi cliquer sur un lien pour rejoindre un tatami
+      </p>
+
       <MainMenuWrapper>
         <ResponsiveFlexDiv>
 
@@ -190,7 +198,7 @@ const MainPage: React.FC = () => {
             {tatamiDataList.length === 0 ? (
               <li style={{
                 textAlign: 'center',
-                color: '#666',
+                color: '#665',
                 fontStyle: 'italic'
               }}>
                 Aucun tatami créé. Cliquez sur "Nouveau tatami" pour commencer.
@@ -222,7 +230,7 @@ const MainPage: React.FC = () => {
                     }}
                   >
                     <span style={{ textDecoration: 'underline' }}>
-                      <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
+                      <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} XAF - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
                     </span>
                   </Link>
                 </li>
