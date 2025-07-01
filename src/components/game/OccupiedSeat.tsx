@@ -95,6 +95,9 @@ export const OccupiedSeat = ({ hasTurn, seatNumber, turnStartTime }: OccupiedSea
       return;
     }
 
+    // Remettre à zéro immédiatement quand un nouveau tour commence
+    setElapsed(0);
+
     const update = () => {
       const now = Date.now();
       const newElapsed = now - turnStartTime;

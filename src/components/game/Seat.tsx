@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import Button from '../buttons/Button';
 import modalContext from '../../context/modal/modalContext';
 import globalContext from '../../context/global/globalContext';
@@ -31,6 +31,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   const { standUp, rebuy, getHandsPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
   const storedSeatId = localStorage.getItem("seatId");
+  const turnStartTimeRef = useRef<number | undefined>(undefined);
 
   const seat = currentTable?.seats?.[seatNumber];
   const minBuyIn = (currentTable?.bet || 0) * 10;
@@ -111,6 +112,19 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
     }
     // eslint-disable-next-line
   }, [currentTable]);
+
+  // Gérer le turnStartTime pour éviter les re-renders inutiles
+  useEffect(() => {
+    if (seat?.turn) {
+      // Si c'est un nouveau tour (pas encore de turnStartTime ou le serveur a un nouveau turnStartTime)
+      if (!turnStartTimeRef.current || (seat.turnStartTime && seat.turnStartTime !== turnStartTimeRef.current)) {
+        turnStartTimeRef.current = seat.turnStartTime || Date.now();
+      }
+    } else {
+      // Réinitialiser quand ce n'est plus le tour du joueur
+      turnStartTimeRef.current = undefined;
+    }
+  }, [seat?.turn, seat?.turnStartTime]);
 
   // useEffect(() => {
   //   setTimeout(() => {
@@ -246,22 +260,9 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             <OccupiedSeat
               seatNumber={seatNumber}
               hasTurn={seat?.turn || false}
-              turnStartTime={seat?.turnStartTime || (seat?.turn ? Number(localStorage.getItem(`turn_start_${seatNumber}`)) || Date.now() : undefined)}
+              turnStartTime={turnStartTimeRef.current}
             />
           </PositionedUISlot>
-          {(() => {
-            if (seat?.turn) {
-              // Save turn start time to localStorage if not already saved
-              const stored = localStorage.getItem(`turn_start_${seatNumber}`);
-              if (!stored) {
-                localStorage.setItem(`turn_start_${seatNumber}`, Date.now().toString());
-              }
-            } else {
-              // Clear localStorage when turn ends
-              localStorage.removeItem(`turn_start_${seatNumber}`);
-            }
-            return null;
-          })()}
 
           <PositionedUISlot
             style={{
