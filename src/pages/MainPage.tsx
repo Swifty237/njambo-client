@@ -10,13 +10,10 @@ import contentContext from '../context/content/contentContext';
 // import modalContext from '../context/modal/modalContext';
 import Button from '../components/buttons/Button';
 import { ThemeProps } from '../styles/theme';
-import { Form } from '../components/forms/Form';
-import { FormGroup } from '../components/forms/FormGroup';
-import { Label } from '../components/forms/Label';
-import { Select } from '../components/forms/Select';
 import '../assets/css/switch_theme.css';
-import { v4 as uuidv4 } from 'uuid';
 import gameContext, { TatamiProps } from '../context/game/gameContext';
+import TatimiModalContent from '../components/game/TatimiModalContent';
+import modalContext from '../context/modal/modalContext';
 
 interface MainMenuCardProps {
   theme: ThemeProps;
@@ -88,15 +85,12 @@ const PartiesListWrapper = styled.div`
 `
 
 const MainPage: React.FC = () => {
-  const history = useHistory();
   const { userName, tables } = useContext(globalContext);
   const { getLocalizedString } = useContext(contentContext);
-  // const { openModal, closeModal } = useContext(modalContext);
-  const { joinTable } = useContext(gameContext);
-  const [bet, setBet] = useState<string>('25');
-  const [isPrivate, setIsPrivate] = useState<boolean>(false)
-  const [tatamiDataList, setTatamiDataList] = useState<TatamiProps[]>([])
-  const [displayTatamiList, setDisplayTatamiList] = useState<Boolean>(true);
+  const { openModal, closeModal } = useContext(modalContext);
+  const { tatamiDataList, setTatamiDataList, joinTable } = useContext(gameContext);
+
+  // const [displayTatamiList, setDisplayTatamiList] = useState<Boolean>(true);
   // const { currentTable } = useContext(gameContext);
 
   useEffect(() => {
@@ -145,36 +139,15 @@ const MainPage: React.FC = () => {
 
   useScrollToTopOnPageLoad();
 
-  // Fonction pour générer un ID unique pour le tatami
-  const generateTatamiId = () => {
-    return Math.random().toString(36).slice(2, 6).toUpperCase();
-  };
 
-  // Fonction pour créer un lien tatami
-  const createTatamiData = (bet: string, isPrivate: boolean) => {
-    const id = uuidv4();
-    const tatamiNameId = generateTatamiId();
-    const tatamiName = `tatami-${tatamiNameId}`;
+  const openCreateTatimiModal = () => {
 
-    // Create an object with the required info
-    const tatamiInfo = {
-      id: id,
-      name: tatamiName,
-      bet: bet,
-      isPrivate: isPrivate
-    };
-
-    // Encode the object as base64 string to use as unique link
-    const tatamiLink = btoa(JSON.stringify(tatamiInfo));
-
-    return {
-      id: id,
-      name: tatamiName,
-      bet: bet,
-      isPrivate: isPrivate,
-      createdAt: new Date().toLocaleString(),
-      link: tatamiLink
-    };
+    openModal(
+      () => <TatimiModalContent />,
+      'Nouveau Tatami',
+      'Annuler',
+      () => closeModal()
+    );
   };
 
   return (
@@ -200,7 +173,7 @@ const MainPage: React.FC = () => {
             Argent fictif
           </h5>
 
-          <Button onClick={() => displayTatamiList && setDisplayTatamiList(false)}
+          <Button onClick={openCreateTatimiModal}
             $large
             $primary
             $fullWidth
@@ -216,123 +189,49 @@ const MainPage: React.FC = () => {
         </ResponsiveFlexDiv>
 
         <PartiesListWrapper>
-          {displayTatamiList ? (
-            <ul>
-              {tatamiDataList.length === 0 ? (
-                <li style={{
-                  textAlign: 'center',
-                  color: '#666',
-                  fontStyle: 'italic'
-                }}>
-                  Aucun tatami créé. Cliquez sur "Nouveau tatami" pour commencer.
-                </li>
-              ) : (
-                tatamiDataList.map((tatamiData) => (
-                  <li key={tatamiData.id}>
-                    <Link
-                      to={{
-                        pathname: `/play`,
-                        state: {
-                          tatamiData: {
-                            id: tatamiData.id,
-                            name: tatamiData.name,
-                            bet: tatamiData.bet,
-                            isPrivate: tatamiData.isPrivate,
-                            createdAt: tatamiData.createdAt,
-                            link: tatamiData.link
-                          }
+          <ul>
+            {tatamiDataList.length === 0 ? (
+              <li style={{
+                textAlign: 'center',
+                color: '#666',
+                fontStyle: 'italic'
+              }}>
+                Aucun tatami créé. Cliquez sur "Nouveau tatami" pour commencer.
+              </li>
+            ) : (
+              tatamiDataList.map((tatamiData) => (
+                <li key={tatamiData.id}>
+                  <Link
+                    to={{
+                      pathname: `/play`,
+                      state: {
+                        tatamiData: {
+                          id: tatamiData.id,
+                          name: tatamiData.name,
+                          bet: tatamiData.bet,
+                          isPrivate: tatamiData.isPrivate,
+                          createdAt: tatamiData.createdAt,
+                          link: tatamiData.link
                         }
-                      }}
-                      onClick={() => {
-                        const storedLink = localStorage.getItem('storedLink');
-                        // Si le lien stocké est différent du nouveau lien, on met à jour
-                        if (!storedLink || storedLink !== tatamiData.link) {
-                          localStorage.setItem('storedLink', tatamiData.link);
-                        }
-                        joinTable(tatamiData);
-                      }}
-                    >
-                      <span style={{ textDecoration: 'underline' }}>
-                        <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
-                      </span>
-                    </Link>
-                  </li>
-                ))
-              )}
-            </ul>
-          ) : (
-            <div style={{
-              paddingTop: "7vh",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-            }}>
-
-
-              <Form
-                onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
-                  e.preventDefault();
-
-                  // Créer le nouveau lien tatami
-                  const newTatamiData = createTatamiData(bet, isPrivate);
-
-                  setDisplayTatamiList(true);
-
-                  // Ajouter le nouveau tatami à la liste
-                  setTatamiDataList(prevList => [...prevList, newTatamiData]);
-
-                  // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
-                  localStorage.setItem('storedLink', newTatamiData.link);
-                  history.push(`/play`);
-                  joinTable(newTatamiData)
-                }}>
-
-                <FormGroup>
-                  <Label>{'Tarif / coup'}</Label>
-                  <Select
-                    id="select-price"
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setBet(e.target.value)}
+                      }
+                    }}
+                    onClick={() => {
+                      const storedLink = localStorage.getItem('storedLink');
+                      // Si le lien stocké est différent du nouveau lien, on met à jour
+                      if (!storedLink || storedLink !== tatamiData.link) {
+                        localStorage.setItem('storedLink', tatamiData.link);
+                      }
+                      joinTable(tatamiData);
+                    }}
                   >
-                    <option value="25">25 F CFA</option>
-                    <option value="50">50 F CFA</option>
-                    <option value="100">100 F CFA</option>
-                    <option value="200">200 F CFA</option>
-                  </Select>
-                </FormGroup>
-
-                <FormGroup>
-                  <Label>{'Tatami privé ?'}</Label>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      margin: '5px 0 10px 0',
-                    }}>
-
-                    <label className="switch">
-                      <input type="checkbox" onChange={() => setIsPrivate(!isPrivate)} />
-                      <span className="slider"></span>
-                    </label>
-
-                    <span>{isPrivate ? "Oui" : "Non"}</span>
-                  </div>
-                </FormGroup>
-
-                <Button $small $primary type="submit" $fullWidth>
-                  {'Créer'}
-                </Button>
-              </Form>
-
-              <Button style={{ marginTop: "5vh" }} $small $secondary onClick={() => setDisplayTatamiList(true)}>
-                {'Annuler'}
-              </Button>
-
-            </div>
-          )
-          }
-
+                    <span style={{ textDecoration: 'underline' }}>
+                      <strong>{tatamiData.name}</strong> - Tarif / coup : {tatamiData.bet} F CFA - Accès : {tatamiData.isPrivate ? 'privé' : 'ouvert'}
+                    </span>
+                  </Link>
+                </li>
+              ))
+            )}
+          </ul>
 
         </PartiesListWrapper>
       </MainMenuWrapper>

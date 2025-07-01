@@ -34,7 +34,7 @@ const GameState = ({ children }: GameStateProps) => {
   const history = useHistory();
   const { socket, setSocket } = useContext(socketContext);
   const { loadUser, isLoggedIn } = useContext(authContext);
-
+  const [tatamiDataList, setTatamiDataList] = useState<TatamiProps[]>([])
   const [messages, setMessages] = useState<string[]>([]);
   const [currentTable, setCurrentTable] = useState<Table | null>(null);
   const [currentTables, setCurrentTables] = useState<{ [key: string]: Table } | null>(null);
@@ -402,6 +402,8 @@ const GameState = ({ children }: GameStateProps) => {
         isPlayerSeated,
         seatId,
         elevatedCard,
+        tatamiDataList,
+        setTatamiDataList,
         joinTable,
         leaveTable,
         sitDown,

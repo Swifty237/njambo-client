@@ -30,7 +30,8 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
 
             // Adapter la structure des messages du serveur
             const adaptedMessages = currentTable.chatRoom.chatMessages.map((msg: any) => ({
-                name: msg.seat?.player?.name || 'Anonyme',
+                // name: msg.seat?.player?.name || 'Anonyme',
+                name: `${msg.seat?.player?.name} ${!msg.seat?.id && "(Observateur)"}`,
                 message: msg.message,
                 seatId: msg.seat?.id || '',
                 createdAt: msg.createdAt
@@ -39,14 +40,6 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
             console.log("Messages adaptés:", adaptedMessages);
             setChatMessages(adaptedMessages);
         }
-        // else {
-        //     console.log("Pas de messages dans currentTable ou structure manquante", {
-        //         hasCurrentTable: !!currentTable,
-        //         hasChatRoom: currentTable?.chatRoom ? 'oui' : 'non',
-        //         hasChatMessages: currentTable?.chatRoom?.chatMessages ? 'oui' : 'non',
-        //         chatRoomStructure: currentTable?.chatRoom
-        //     });
-        // }
     }, [currentTable]);
 
     useEffect(() => {
@@ -58,7 +51,6 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
         if (input && input.value.trim() && currentTable && storedSeatId) {
             onSendMessage(currentTable, storedSeatId, input.value.trim());
             input.value = '';
-            // sitDown(currentTable.id, storedSeatId, currentTable.seats[storedSeatId].stack)
         }
     };
 
@@ -106,7 +98,6 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
                     if (e.key === 'Enter' && currentTable && storedSeatId) {
                         handleLocalSubmit();
                         setLocalMessage('');
-                        // sitDown(currentTable.id, storedSeatId, currentTable.seats[storedSeatId].stack)
                     }
                 }}
                 placeholder="Écrivez votre message..."

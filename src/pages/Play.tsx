@@ -135,7 +135,6 @@ const Play: React.FC = () => {
         if (input && input.value.trim() && currentTable && storedSeatId) {
           handleSendMessage(currentTable, storedSeatId, input.value.trim());
           input.value = '';
-          // sitDown(currentTable.id, storedSeatId, currentTable.seats[storedSeatId].stack)
         }
       }
     );
