@@ -41,7 +41,7 @@ const ChipsAmount: React.FC<ChipsAmountProps> = ({ chipsAmount, clickHandler }) 
   return (
     <Wrapper onClick={clickHandler}>
       <IconWrapper htmlFor="chipsAmount">
-        <PokerChip />
+        <PokerChip width='70' height='70' />
       </IconWrapper>
       <Input
         disabled
