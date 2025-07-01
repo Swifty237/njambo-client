@@ -16,7 +16,7 @@ import { AutoHideInfoPill } from '../components/game/AutoHideInfoPill';
 import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
 import contentContext from '../context/content/contentContext';
-// import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
 // import { TatamiProps } from '../context/game/gameContext'
 import ChipsAmountPill from '../components/game/ChipsAmountPill';
@@ -24,24 +24,25 @@ import Spacer from '../components/layout/Spacer';
 import globalContext from '../context/global/globalContext';
 import ChatContent from '../components/game/ChatContent';
 import LoadingScreen from '../components/loading/LoadingScreen';
-import { useHistory } from 'react-router-dom';
 import usePlayerSeated from '../hooks/usePlayerSeated';
 import { Table } from '../types/SeatTypesProps';
 import { Tooltip } from 'react-tooltip';
+import authContext from '../context/auth/authContext';
 
 
 // interface LocationState {
 //   tatamiData?: TatamiProps;
 // }
 
-// interface RouteParams {
-//   link?: string;
-// }
+interface RouteParams {
+  link?: string;
+}
 
 const Play: React.FC = () => {
   const history = useHistory();
   // const location = useLocation<LocationState>();
-  // const { link } = useParams<RouteParams>();
+  const { link } = useParams<RouteParams>();
+  const { loadUser } = useContext(authContext);
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
   const { openModal, closeModal } = useContext(modalContext);
@@ -67,7 +68,16 @@ const Play: React.FC = () => {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [lastReadTime, setLastReadTime] = useState(Date.now());
   const [refresh, setRefresh] = useState(false);
-  const storedSeatId = localStorage.getItem("seatId");
+  const [storedSeatId, setStoredSeatId] = useState<string | null>(localStorage.getItem("seatId"));
+
+  useEffect(() => {
+    // Mettre à jour storedSeatId quand il change dans le localStorage
+    const handleStorageChange = () => {
+      setStoredSeatId(localStorage.getItem("seatId"));
+    };
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   useEffect(() => {
     // Si on n'a pas de socket, on affiche la modal de déconnexion
@@ -81,6 +91,30 @@ const Play: React.FC = () => {
       return;
     }
 
+  }, []);
+
+  useEffect(() => {
+    // Empêcher le refresh de la page Play
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = '';
+      return '';
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Empêcher F5 et Ctrl+R
+      if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
   useEffect(() => {

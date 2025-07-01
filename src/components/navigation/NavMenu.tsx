@@ -185,33 +185,49 @@ const NavMenu = ({
 
 
           <HorizontalWrapper>
-            <ChipsAmount
-              tooltip="Clique ici pour ajouter des jetons fictifs"
-              chipsAmount={chipsAmount}
-              clickHandler={openShopModal}
-            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'end',
+              }}
+            >
+              <ChipsAmount
+                tooltip="Clique ici pour ajouter des jetons fictifs"
+                chipsAmount={chipsAmount}
+                clickHandler={openShopModal}
+              />
 
-            <span style={{
-              marginLeft: '3px',
-              color: 'hsl(162, 100%, 28%)'
-            }}>
-              Argent fictif
-            </span>
+              <span style={{
+                marginLeft: '5px',
+                color: 'hsl(162, 100%, 28%)'
+              }}>
+                Argent fictif
+              </span>
+            </div>
           </HorizontalWrapper>
 
           <HorizontalWrapper>
-            <RealChipsAmount
-              tooltip="Clique ici pour ajouter des jetons réels"
-              chipsAmount={chipsAmount}
-              clickHandler={openShopModal}
-            />
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'end',
+              }}
+            >
+              <RealChipsAmount
+                tooltip="Clique ici pour ajouter des jetons réels"
+                chipsAmount={chipsAmount}
+                clickHandler={openShopModal}
+              />
 
-            <span style={{
-              marginLeft: '3px',
-              color: 'hsl(0, 100%, 46%)'
-            }}>
-              Argent réel
-            </span>
+              <span style={{
+                marginLeft: '5px',
+                color: 'hsl(0, 100%, 46%)'
+              }}>
+                Argent réel
+              </span>
+            </div>
           </HorizontalWrapper>
 
 

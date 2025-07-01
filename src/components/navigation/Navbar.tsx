@@ -187,34 +187,58 @@ const Navbar: React.FC<NavbarProps> = ({
             <LogoWithText />
           </Link>
 
-          <Spacer>
+          <Spacer
+            style={{
+              width: "55%",
+            }}
+          >
 
             <Hider hideOnMobile>
-              <ChipsAmount
-                tooltip="Clique ici pour ajouter des jetons fictifs"
-                chipsAmount={chipsAmount}
-                clickHandler={openAddChipsModal}
-              />
-              <span style={{
-                marginLeft: '3px',
-                color: 'hsl(162, 100%, 28%)'
-              }}>
-                Argent fictif
-              </span>
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'end',
+                }}
+              >
+                <ChipsAmount
+                  tooltip="Clique ici pour ajouter des jetons fictifs"
+                  chipsAmount={chipsAmount}
+                  clickHandler={openAddChipsModal}
+                />
+
+                <span style={{
+                  marginLeft: '',
+                  color: 'hsl(162, 100%, 28%)'
+                }}>
+                  Argent fictif
+                </span>
+              </div>
             </Hider>
 
             <Hider hideOnMobile>
-              <RealChipsAmount
-                tooltip="Clique ici pour ajouter des jetons réels"
-                chipsAmount={chipsAmount}
-                clickHandler={openShopModal}
-              />
-              <span style={{
-                marginLeft: '3px',
-                color: 'hsl(0, 100%, 46%)'
-              }}>
-                Argent réel
-              </span>
+
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'end',
+                }}
+              >
+                <RealChipsAmount
+                  tooltip="Clique ici pour ajouter des jetons réels"
+                  chipsAmount={chipsAmount}
+                  clickHandler={openShopModal}
+                />
+
+                <span style={{
+                  marginLeft: '',
+                  color: 'hsl(0, 100%, 46%)'
+                }}>
+                  Argent réel
+                </span>
+              </div>
+
             </Hider>
 
             <HamburgerButton clickHandler={openNavMenu} />

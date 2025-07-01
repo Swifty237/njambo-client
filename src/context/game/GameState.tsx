@@ -33,7 +33,7 @@ interface GameStateProps {
 const GameState = ({ children }: GameStateProps) => {
   const history = useHistory();
   const { socket, setSocket } = useContext(socketContext);
-  const { loadUser, isLoggedIn } = useContext(authContext);
+  const { loadUser } = useContext(authContext);
   const [tatamiDataList, setTatamiDataList] = useState<TatamiProps[]>([])
   const [messages, setMessages] = useState<string[]>([]);
   const [currentTable, setCurrentTable] = useState<Table | null>(null);
@@ -146,7 +146,8 @@ const GameState = ({ children }: GameStateProps) => {
 
             if (storedPlayerSeated) {
               if (storedSeatId) {
-                sitDown(tatamiData.id, storedSeatId, parseInt(tatamiData.bet))
+                const currentSeat = currentTable?.seats[storedSeatId];
+                currentSeat && sitDown(tatamiData.id, storedSeatId, currentSeat.stack)
               }
             }
           } catch (error) {

@@ -28,6 +28,7 @@ const Wrapper = styled.div`
     border-radius: ${(props: WrapperProps) => props.theme.other.stdBorderRadius};
     border: 1px solid ${(props: WrapperProps) => props.theme.colors.dangerColor};
     color: ${(props: WrapperProps) => props.theme.colors.dangerColor};
+    width: 130%;
   }
 `;
 

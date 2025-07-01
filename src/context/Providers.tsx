@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import OfflineProvider from './offline/OfflineProvider';
 import WebSocketProvider from './websocket/WebsocketProvider';
 import GameState from './game/GameState';
+import ResizeObserverProvider from '../utils/ResizeObserverProvider';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -21,27 +22,30 @@ const Providers = ({ children }: ProvidersProps) => {
   const location = useLocation();
 
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalState>
-        <LocaProvider location={location}>
-          <ContentProvider>
-            <AuthProvider>
-              <ModalProvider>
-                <OfflineProvider>
-                  <WebSocketProvider>
-                    <GameState>
-                      <Normalize />
-                      <GlobalStyles />
-                      {children}
-                    </GameState>
-                  </WebSocketProvider>
-                </OfflineProvider>
-              </ModalProvider>
-            </AuthProvider>
-          </ContentProvider>
-        </LocaProvider>
-      </GlobalState>
-    </ThemeProvider>
+    <ResizeObserverProvider>
+      <ThemeProvider theme={theme}>
+        <GlobalState>
+          <LocaProvider location={location}>
+            <ContentProvider>
+              <AuthProvider>
+                <ModalProvider>
+                  <OfflineProvider>
+                    <WebSocketProvider>
+                      <GameState>
+                        <Normalize />
+                        <GlobalStyles />
+                        {children}
+                      </GameState>
+                    </WebSocketProvider>
+                  </OfflineProvider>
+                </ModalProvider>
+              </AuthProvider>
+            </ContentProvider>
+          </LocaProvider>
+        </GlobalState>
+      </ThemeProvider>
+    </ResizeObserverProvider>
   );
-}
+};
+
 export default Providers;

@@ -30,6 +30,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
   const { chipsAmount } = useContext(globalContext);
   const { standUp, rebuy, getHandsPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
+  const storedSeatId = localStorage.getItem("seatId");
 
   const seat = currentTable?.seats?.[seatNumber];
   const minBuyIn = (currentTable?.bet || 0) * 10;
@@ -110,6 +111,23 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
     }
     // eslint-disable-next-line
   }, [currentTable]);
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     // Reconnexion automatique après refresh de page
+  //     if (currentTable && storedSeatId && !isPlayerSeated) {
+  //       const storedPlayerSeated = localStorage.getItem("isPlayerSeated");
+  //       if (storedPlayerSeated === "true" && currentTable.seats[storedSeatId]) {
+
+  //         const currentSeat = currentTable.seats[storedSeatId];
+  //         if (currentSeat && currentSeat.stack) {
+  //           sitDown(currentTable.id, storedSeatId, currentSeat.stack);
+  //         }
+
+  //       }
+  //     }
+  //   }, 200); // Délai pour s'assurer que tout est chargé
+  // }, [currentTable, storedSeatId, isPlayerSeated, sitDown]);
 
   return (
     <StyledSeat>

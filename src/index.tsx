@@ -14,13 +14,11 @@ declare global {
   }
 }
 
-
 const rootElement = document.getElementById('root');
 const cookieBannerRoot = document.getElementById('cookie-banner');
 const loadingScreen = document.getElementById('loading-screen');
 
 if (process.env.REACT_APP_NODE_ENV === 'production' && process.env.REACT_APP_MAINTENANCE_MODE === 'true') {
-
   // Show maintenance mode content if proper env vars are set
   const template = `
     <div style="width: 100%; padding: 0 1.5rem; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; overflow: hidden; background-color: hsl(43, 40%, 86%);">
