@@ -139,7 +139,7 @@ const MainPage: React.FC = () => {
   const openCreateTatimiModal = () => {
 
     openModal(
-      () => <TatimiModalContent onCreateTamtami={joinTable} />,
+      () => <TatimiModalContent onCreateTatami={joinTable} />,
       'Nouveau Tatami',
       'Annuler',
       () => closeModal()

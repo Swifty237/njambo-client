@@ -17,7 +17,9 @@ import {
   PLAYED_CARD,
   SHOW_DOWN,
   SEND_CHAT_MESSAGE,
-  CHAT_MESSAGE_RECEIVED
+  CHAT_MESSAGE_RECEIVED,
+  PLAYER_RECONNECTED,
+  RECONNECT_PLAYER
 } from '../../pokergame/actions';
 import authContext from '../auth/authContext';
 import socketContext from '../websocket/socketContext';
@@ -41,8 +43,12 @@ const GameState = ({ children }: GameStateProps) => {
   const [isPlayerSeated, setIsPlayerSeated] = useState(false);
   const [seatId, setSeatId] = useState<string | null>(null);
   const [elevatedCard, setElevatedCard] = useState<string | null>(null);
+  const [bet, setBet] = useState<string>('25');
+  const [isPrivate, setIsPrivate] = useState<boolean>(false);
   const currentTableRef = React.useRef(currentTable);
   const currentTablesRef = React.useRef(currentTables);
+  const [refresh, setRefresh] = useState(false);
+
 
   useEffect(() => {
     currentTableRef.current = currentTable;
@@ -123,6 +129,17 @@ const GameState = ({ children }: GameStateProps) => {
         }
       });
 
+      // Écouter la réponse de reconnexion du serveur
+      socket.on(PLAYER_RECONNECTED, ({ table, seatId }: { table: Table, seatId: string }) => {
+        setCurrentTable(table);
+
+        // Faire le sitDown avec les données récupérées du serveur
+        const currentSeat = table.seats[seatId];
+        if (currentSeat) {
+          sitDown(table.id, seatId, currentSeat.stack);
+        }
+      });
+
       // Attendre que la socket soit connectée avant d'essayer de rejoindre une table
       socket.on('connect', () => {
         if (storedLink && localStorage.token) {
@@ -136,13 +153,12 @@ const GameState = ({ children }: GameStateProps) => {
               createdAt: new Date().toLocaleString(),
               link: storedLink
             };
-            history.push("/play");
+            history.push(`/play/${storedLink}`);
             // loadUser(localStorage.token);
             joinTable(tatamiData);
 
             const storedSeatId = localStorage.getItem("seatId");
             const storedPlayerSeated = localStorage.getItem("isPlayerSeated");
-
 
             if (storedPlayerSeated) {
               if (storedSeatId) {
@@ -150,6 +166,7 @@ const GameState = ({ children }: GameStateProps) => {
                 currentSeat && sitDown(tatamiData.id, storedSeatId, currentSeat.stack)
               }
             }
+
           } catch (error) {
             console.error('Invalid stored table link:', error);
             history.push('/');
@@ -165,38 +182,36 @@ const GameState = ({ children }: GameStateProps) => {
 
   // Fonction de test
   const injectDebugHand = (seatNumber: string) => {
-    setCurrentTable((prevTable) => {
-      if (!prevTable) return null;
+    if (!currentTable) return;
 
-      // Copie profonde pour éviter mutation
-      const updatedSeats = {
-        ...prevTable.seats,
-        [seatNumber]: {
-          ...prevTable.seats[seatNumber],
-          hand: [
-            { suit: 'h', rank: '8' },
-            { suit: 's', rank: '10' },
-            { suit: 'c', rank: '10' },
-            { suit: 'd', rank: '5' },
-            { suit: 's', rank: '3' },
-          ],
-          playedHand: [
-            { suit: 'h', rank: '8' },
-            { suit: 's', rank: '10' },
-            { suit: 'c', rank: '10' },
-            { suit: 'd', rank: '5' },
-            { suit: 's', rank: '3' },
-          ],
-        },
-      };
+    // Copie profonde pour éviter mutation
+    const updatedSeats = {
+      ...currentTable.seats,
+      [seatNumber]: {
+        ...currentTable.seats[seatNumber],
+        hand: [
+          { suit: 'h', rank: '8' },
+          { suit: 's', rank: '10' },
+          { suit: 'c', rank: '10' },
+          { suit: 'd', rank: '5' },
+          { suit: 's', rank: '3' },
+        ],
+        playedHand: [
+          { suit: 'h', rank: '8' },
+          { suit: 's', rank: '10' },
+          { suit: 'c', rank: '10' },
+          { suit: 'd', rank: '5' },
+          { suit: 's', rank: '3' },
+        ],
+      },
+    };
 
-      const updatedTable: Table = {
-        ...prevTable,
-        seats: updatedSeats,
-      };
+    const updatedTable: Table = {
+      ...currentTable,
+      seats: updatedSeats,
+    };
 
-      return updatedTable;
-    });
+    setCurrentTable(updatedTable);
   };
 
   // Fonction pour abaisser toutes les cartes
@@ -316,11 +331,11 @@ const GameState = ({ children }: GameStateProps) => {
     }
   };
 
-  const sendMessage = (message: string, seatId: string) => {
+  const sendMessage = (message: string, seatId: string | null) => {
     if (currentTable && message !== "") {
       socket.emit(SEND_CHAT_MESSAGE, {
         tableId: currentTable.id,
-        seatId,
+        seatId: seatId || null, // Envoyer null pour les observateurs
         message,
       });
     }
@@ -386,6 +401,8 @@ const GameState = ({ children }: GameStateProps) => {
         seatId,
         elevatedCard,
         tatamiDataList,
+        refresh,
+        setRefresh,
         setTatamiDataList,
         joinTable,
         leaveTable,

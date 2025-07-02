@@ -18,7 +18,7 @@ import { GameStateInfo } from '../components/game/GameStateInfo';
 import contentContext from '../context/content/contentContext';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
-// import { TatamiProps } from '../context/game/gameContext'
+import { TatamiProps } from '../context/game/gameContext'
 import ChipsAmountPill from '../components/game/ChipsAmountPill';
 import Spacer from '../components/layout/Spacer';
 import globalContext from '../context/global/globalContext';
@@ -28,6 +28,7 @@ import usePlayerSeated from '../hooks/usePlayerSeated';
 import { Table } from '../types/SeatTypesProps';
 import { Tooltip } from 'react-tooltip';
 import authContext from '../context/auth/authContext';
+import { v4 as uuidv4 } from 'uuid';
 
 
 // interface LocationState {
@@ -41,7 +42,7 @@ interface RouteParams {
 const Play: React.FC = () => {
   const history = useHistory();
   // const location = useLocation<LocationState>();
-  const { link } = useParams<RouteParams>();
+  // const { link } = useParams<RouteParams>();
   const { loadUser } = useContext(authContext);
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
@@ -50,24 +51,26 @@ const Play: React.FC = () => {
     messages,
     currentTable,
     seatId,
+    refresh,
+    setRefresh,
+    joinTable,
     leaveTable,
     sitDown,
     standUp,
-    check,
     // injectDebugHand,
     playOneCard,
     showDown,
-    sendMessage
+    sendMessage,
+    setTatamiDataList
   } = useContext(gameContext);
+  const [localRefresh, setLocalRefresh] = useState(refresh);
 
   // Utiliser le hook personnalisé pour isPlayerSeated
   const isPlayerSeated = usePlayerSeated();
   const { getLocalizedString, isLoading: contentIsLoading } = useContext(contentContext);
 
-  const [bet, setBet] = useState(0);
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [lastReadTime, setLastReadTime] = useState(Date.now());
-  const [refresh, setRefresh] = useState(false);
   const [storedSeatId, setStoredSeatId] = useState<string | null>(localStorage.getItem("seatId"));
 
   useEffect(() => {
@@ -93,48 +96,56 @@ const Play: React.FC = () => {
 
   }, []);
 
+  // useEffect(() => {
+  //   // Empêcher le refresh de la page Play
+  //   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+  //     event.preventDefault();
+  //     event.returnValue = '';
+  //     return '';
+  //   };
+
+  //   const handleKeyDown = (event: KeyboardEvent) => {
+  //     // Empêcher F5 et Ctrl+R
+  //     if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
+  //       event.preventDefault();
+  //     }
+  //   };
+
+  //   window.addEventListener('beforeunload', handleBeforeUnload);
+  //   window.addEventListener('keydown', handleKeyDown);
+
+  //   return () => {
+  //     window.removeEventListener('beforeunload', handleBeforeUnload);
+  //     window.removeEventListener('keydown', handleKeyDown);
+  //   };
+  // }, []);
+
   useEffect(() => {
-    // Empêcher le refresh de la page Play
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = '';
-      return '';
-    };
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      // Empêcher F5 et Ctrl+R
-      if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
-        event.preventDefault();
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+    setLocalRefresh(refresh)
+  }, [refresh])
 
   useEffect(() => {
-    if (refresh) {
+    if (localRefresh) {
       closeModal();
       setTimeout(() => {
         openChatModal()
-        setRefresh(false)
+        setRefresh(false);
       }, 5)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTable?.chatRoom?.chatMessages])
 
-  const handleSendMessage = (table: Table, seatId: string, message: string) => {
-    if (!seatId) {
-      return;
-    }
+  const handleSendMessage = (table: Table, seatId: string | null, message: string) => {
+    // Envoyer le message même si le joueur n'est pas assis
     sendMessage(message, seatId);
-    setRefresh(true)
-    sitDown(table.id, seatId, table.seats[seatId].stack)
+
+    // Déclencher le refresh pour mettre à jour l'affichage
+    setRefresh(true);
+
+    // Ne faire le sitDown que si le joueur est assis
+    if (seatId && table.seats[seatId]) {
+      sitDown(table.id, seatId, table.seats[seatId].stack);
+    }
   };
 
   const markMessagesAsRead = () => {
@@ -143,9 +154,6 @@ const Play: React.FC = () => {
   };
 
   const openChatModal = () => {
-    if (!isPlayerSeated) {
-      return;
-    }
 
     // Marquer les messages comme lus quand on ouvre la modal
     markMessagesAsRead();
@@ -160,7 +168,7 @@ const Play: React.FC = () => {
       () => {
         // Récupérer la valeur de l'input et envoyer le message
         const input = document.querySelector('input[type="text"]') as HTMLInputElement;
-        if (input && input.value.trim() && currentTable && storedSeatId) {
+        if (input && input.value.trim() && currentTable) {
           handleSendMessage(currentTable, storedSeatId, input.value.trim());
           input.value = '';
         }
@@ -206,18 +214,17 @@ const Play: React.FC = () => {
                         style={{
                           display: 'flex',
                         }}>
-                        <button
-                          style={{
-                            cursor: "pointer"
-                          }}
+                        <Button
+                          $small
+                          $primary
                           onClick={() => openChatModal()}
                         >
-                          <span style={{ color: "hsl(162, 100%, 28%)" }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" fill="currentColor" className="bi bi-chat" viewBox="0 0 16 16">
+                          <span style={{ color: "hsl(0, 0.00%, 100.00%)" }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" className="bi bi-chat" viewBox="0 0 16 16">
                               <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105" />
                             </svg>
                           </span>
-                        </button>
+                        </Button>
 
                         {unreadMessages > 0 && (
                           <div
@@ -447,10 +454,7 @@ const Play: React.FC = () => {
                 <GameUI
                   currentTable={currentTable}
                   seatId={seatId}
-                  bet={bet}
-                  setBet={setBet}
                   standUp={standUp}
-                  check={check}
                   playOneCard={playOneCard}
                   showDown={showDown}
                 />

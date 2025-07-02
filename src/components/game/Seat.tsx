@@ -126,23 +126,6 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
     }
   }, [seat?.turn, seat?.turnStartTime]);
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     // Reconnexion automatique après refresh de page
-  //     if (currentTable && storedSeatId && !isPlayerSeated) {
-  //       const storedPlayerSeated = localStorage.getItem("isPlayerSeated");
-  //       if (storedPlayerSeated === "true" && currentTable.seats[storedSeatId]) {
-
-  //         const currentSeat = currentTable.seats[storedSeatId];
-  //         if (currentSeat && currentSeat.stack) {
-  //           sitDown(currentTable.id, storedSeatId, currentSeat.stack);
-  //         }
-
-  //       }
-  //     }
-  //   }, 200); // Délai pour s'assurer que tout est chargé
-  // }, [currentTable, storedSeatId, isPlayerSeated, sitDown]);
-
   return (
     <StyledSeat>
       {!seat ? (

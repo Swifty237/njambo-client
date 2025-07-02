@@ -189,7 +189,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
           <Spacer
             style={{
-              width: "55%",
+              width: "50%",
             }}
           >
 

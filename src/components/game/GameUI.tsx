@@ -9,10 +9,8 @@ import { Tooltip } from 'react-tooltip';
 type GameUIProps = {
   currentTable: any; // Replace 'any' with the actual type if available
   seatId: string;
-  bet: number;
-  setBet: (bet: number) => void;
+
   standUp: () => void;
-  check: () => void;
   playOneCard: (cards: CardProps, seatNumber: string) => void;
   showDown: () => void
 };
@@ -20,10 +18,7 @@ type GameUIProps = {
 export const GameUI: React.FC<GameUIProps> = ({
   currentTable,
   seatId,
-  bet,
-  setBet,
   standUp,
-  check,
   playOneCard,
   showDown
 }) => {

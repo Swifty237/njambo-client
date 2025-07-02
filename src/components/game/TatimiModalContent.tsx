@@ -11,11 +11,11 @@ import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from "react-router-dom";
 
 interface TatimiContentProps {
-    onCreateTamtami: (table: TatamiProps) => void;
+    onCreateTatami: (table: TatamiProps) => void;
 }
 
 
-const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTamtami }: TatimiContentProps) {
+const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTatami }: TatimiContentProps) {
     const { closeModal } = useContext(modalContext);
     const [bet, setBet] = useState<string>('25');
     const [isPrivate, setIsPrivate] = useState<boolean>(false);
@@ -112,7 +112,7 @@ const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTamt
                         // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
                         localStorage.setItem('storedLink', newTatamiData.link);
                         closeModal();
-                        onCreateTamtami(newTatamiData)
+                        onCreateTatami(newTatamiData)
                         history.push(`/play/${newTatamiData.link}`);
                     }}>
                         {'Créer'}

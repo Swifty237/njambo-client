@@ -25,6 +25,8 @@ interface GameContextType {
     seatId: string | null,
     elevatedCard: string | null,
     tatamiDataList: TatamiProps[],
+    refresh: boolean,
+    setRefresh: (value: React.SetStateAction<boolean>) => void,
     setTatamiDataList: (value: React.SetStateAction<TatamiProps[]>) => void,
     joinTable: (tatamiData: TatamiProps) => void,
     leaveTable: () => void,
@@ -41,7 +43,7 @@ interface GameContextType {
     playOneCard: (card: CardProps, seatNumber: string) => void;
     setElevatedCard: (cardKey: string | null) => void;
     showDown: () => void;
-    sendMessage: (message: string, seatId: string) => void;
+    sendMessage: (message: string, seatId: string | null) => void;
 }
 
 const gameContext = createContext<GameContextType>({
@@ -51,6 +53,8 @@ const gameContext = createContext<GameContextType>({
     seatId: '',
     elevatedCard: null,
     tatamiDataList: [],
+    refresh: false,
+    setRefresh: () => { },
     setTatamiDataList: () => { },
     joinTable: () => { },
     leaveTable: () => { },

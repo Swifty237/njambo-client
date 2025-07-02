@@ -5,7 +5,7 @@ import gameContext from "../../context/game/gameContext";
 
 interface ChatContentProps {
     currentTable: Table | null;
-    onSendMessage: (table: Table, seatId: string, message: string) => void;
+    onSendMessage: (table: Table, seatId: string | null, message: string) => void;
 }
 
 const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessage }: ChatContentProps) {
@@ -41,7 +41,8 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
     }, [chatMessages]);
 
     const handleLocalSubmit = () => {
-        if (input && input.value.trim() && currentTable && storedSeatId) {
+        if (input && input.value.trim() && currentTable) {
+            // Passer storedSeatId même s'il est null (pour les observateurs)
             onSendMessage(currentTable, storedSeatId, input.value.trim());
             input.value = '';
         }
@@ -88,7 +89,7 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
                 value={localMessage}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => setLocalMessage(e.target.value)}
                 onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
-                    if (e.key === 'Enter' && currentTable && storedSeatId) {
+                    if (e.key === 'Enter' && currentTable) {
                         handleLocalSubmit();
                         setLocalMessage('');
                     }
