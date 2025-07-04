@@ -15,7 +15,7 @@ interface TableModalProps {
 }
 
 
-const TableModalCreator = React.memo(function TatimiModalContent({ onCreateTable }: TableModalProps) {
+const TableModalCreator = React.memo(function TableModalContent({ onCreateTable }: TableModalProps) {
     const { closeModal } = useContext(modalContext);
     const [bet, setBet] = useState<string>('25');
     const [isPrivate, setIsPrivate] = useState<boolean>(false);

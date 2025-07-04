@@ -109,18 +109,12 @@ const Play: React.FC = () => {
 
           // Attendre que la socket soit disponible avec un délai plus long
           if (socket) {
+
+            console.log("tableInfo.id", tableInfo.id);
+
             console.log('✅ [Play] Socket disponible, connexion à la table...');
             joinTable(tableInfo);
             console.log('✅ [Play] Connexion à la table réussie');
-
-            // Attendre que currentTable soit disponible avec un timeout
-            // let attempts = 0;
-            // const maxAttempts = 10; // 5 secondes max
-            // while (!currentTable && attempts < maxAttempts) {
-            //   console.log(`⏳ [Play] Attente currentTable (tentative ${attempts + 1}/${maxAttempts})...`);
-            //   await new Promise(resolve => setTimeout(resolve, 500));
-            //   attempts++;
-            // }
 
             if (currentTable) {
               console.log('✅ [Play] currentTable disponible');
@@ -304,6 +298,13 @@ const Play: React.FC = () => {
                   <Spacer>
                     <>
                       <Button data-tooltip-id="leave-table-tooltip" $small $secondary onClick={() => {
+                        console.log('🚪 [Play] Bouton quitter table cliqué - nettoyage localStorage');
+                        console.log('🔍 [Play] localStorage avant nettoyage:', {
+                          seatId: localStorage.getItem('seatId'),
+                          isPlayerSeated: localStorage.getItem('isPlayerSeated'),
+                          storedLink: localStorage.getItem('storedLink')
+                        });
+
                         leaveTable();
                         leaveTableRequest(); // Mettre à jour l'état de table
                         // Supprimer le socketId et le storedLink du localStorage
@@ -311,6 +312,12 @@ const Play: React.FC = () => {
                         localStorage.removeItem('storedLink');
                         localStorage.removeItem("seatId");
                         localStorage.removeItem("isPlayerSeated");
+
+                        console.log('🧹 [Play] localStorage après nettoyage:', {
+                          seatId: localStorage.getItem('seatId'),
+                          isPlayerSeated: localStorage.getItem('isPlayerSeated'),
+                          storedLink: localStorage.getItem('storedLink')
+                        });
                       }}>
                         {getLocalizedString('game_leave-table-btn')}
                       </Button>

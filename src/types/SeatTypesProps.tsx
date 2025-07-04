@@ -80,3 +80,7 @@ export interface TableEventPayload {
     tables: { [key: string]: Table };
     tableId: string;
 }
+
+export interface TablesUpdatedPayload {
+    tables: { [key: string]: Table };
+}

@@ -82,7 +82,10 @@ const useTable = () => {
     }, []);
 
     const createTable = async (table: Table): Promise<boolean> => {
-        console.log('🚀 [useTable] Création de table avec:', table);
+        console.log('🚀 [useTable] REQUÊTE HTTP - createTable appelée avec:', table);
+        console.log('🔍 [useTable] REQUÊTE HTTP - Stack trace:', new Error().stack);
+        console.log('⚠️ [useTable] REQUÊTE HTTP - ATTENTION: Une requête POST va être envoyée vers /api/play');
+
         setIsLoading(true);
         setTableError(null);
 
@@ -95,26 +98,28 @@ const useTable = () => {
                 createdAt: table.createdAt,
                 link: table.link
             };
-            console.log('📤 [useTable] Envoi POST /api/play avec:', payload);
+            console.log('📤 [useTable] REQUÊTE HTTP - Envoi POST /api/play avec payload:', payload);
+            console.log('🌐 [useTable] REQUÊTE HTTP - URL complète:', `${SERVER_URI}/api/play`);
 
             const res = await Axios.post(`${SERVER_URI}/api/play`, payload);
-            console.log('📥 [useTable] Réponse serveur:', res.data);
+            console.log('📥 [useTable] REQUÊTE HTTP - Réponse serveur reçue:', res.data);
+            console.log('📊 [useTable] REQUÊTE HTTP - Status:', res.status);
 
             const tableInfo = res.data;
 
             if (tableInfo) {
-                console.log('✅ [useTable] Connexion réussie, mise à jour des états...');
+                console.log('✅ [useTable] REQUÊTE HTTP - Connexion réussie, mise à jour des états...');
                 setIsOnTable(true);
                 localStorage.setItem('storedLink', table.link);
-                console.log('💾 [useTable] Lien sauvé dans localStorage');
+                console.log('💾 [useTable] REQUÊTE HTTP - Lien sauvé dans localStorage');
                 setIsLoading(false);
                 return true;
             }
-            console.log('❌ [useTable] Pas de données de table dans la réponse');
+            console.log('❌ [useTable] REQUÊTE HTTP - Pas de données de table dans la réponse');
             setIsLoading(false);
             return false;
         } catch (error) {
-            console.error('❌ [useTable] Erreur lors de la création:', error);
+            console.error('❌ [useTable] REQUÊTE HTTP - Erreur lors de la création:', error);
             const errorMessage = getErrorMessage(error);
             setTableError(errorMessage);
             setIsLoading(false);
@@ -123,28 +128,34 @@ const useTable = () => {
     };
 
     const joinTableByLink = async (link: string): Promise<boolean> => {
-        console.log('🔗 [useTable] Validation du lien:', link);
+        console.log('🔗 [useTable] REQUÊTE HTTP - joinTableByLink appelée avec lien:', link);
+        console.log('🔍 [useTable] REQUÊTE HTTP - Stack trace:', new Error().stack);
+        console.log('⚠️ [useTable] REQUÊTE HTTP - ATTENTION: Cette fonction pourrait faire une requête HTTP');
+
         setIsLoading(true);
         setTableError(null);
 
         try {
             // Valider et décoder le lien
             const decodedData = JSON.parse(atob(link));
+            console.log('📋 [useTable] REQUÊTE HTTP - Données décodées:', decodedData);
 
             // Validation basique des données
             if (!decodedData.id || !decodedData.name) {
                 throw new Error('Lien de table invalide');
             }
 
+            console.log('✅ [useTable] REQUÊTE HTTP - Validation locale uniquement, AUCUNE requête HTTP envoyée');
+
             // Sauvegarder le lien et mettre à jour l'état
             localStorage.setItem('storedLink', link);
             setIsOnTable(true);
             setIsLoading(false);
 
-            console.log('✅ [useTable] Lien validé et sauvé');
+            console.log('✅ [useTable] REQUÊTE HTTP - Lien validé et sauvé (traitement local seulement)');
             return true;
         } catch (error) {
-            console.error('❌ [useTable] Erreur lors de la validation du lien:', error);
+            console.error('❌ [useTable] REQUÊTE HTTP - Erreur lors de la validation du lien:', error);
             const errorMessage = getErrorMessage(error);
             setTableError(errorMessage);
             setIsLoading(false);
