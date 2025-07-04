@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 
-import gameContext, { TatamiProps } from "../../context/game/gameContext";
+import gameContext from "../../context/game/gameContext";
 import { Form } from "../forms/Form";
 import { FormGroup } from "../forms/FormGroup";
 import { Label } from "../forms/Label";
@@ -8,49 +8,59 @@ import { Select } from "../forms/Select";
 import Button from "../buttons/Button";
 import modalContext from "../../context/modal/modalContext";
 import { v4 as uuidv4 } from 'uuid';
-import { useHistory } from "react-router-dom";
+import { Table } from "../../types/SeatTypesProps";
 
-interface TatimiContentProps {
-    onCreateTatami: (table: TatamiProps) => void;
+interface TableModalProps {
+    onCreateTable: (table: Table) => void;
 }
 
 
-const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTatami }: TatimiContentProps) {
+const TableModalCreator = React.memo(function TatimiModalContent({ onCreateTable }: TableModalProps) {
     const { closeModal } = useContext(modalContext);
     const [bet, setBet] = useState<string>('25');
     const [isPrivate, setIsPrivate] = useState<boolean>(false);
-    const history = useHistory();
-    const { setTatamiDataList } = useContext(gameContext);
 
     // Fonction pour générer un ID unique pour le tatami
     const generateTatamiId = () => {
         return Math.random().toString(36).slice(2, 6).toUpperCase();
     };
 
-    // Fonction pour créer un lien tatami
-    const createTatamiData = (bet: string, isPrivate: boolean) => {
+    // Fonction pour créer une table complète
+    const createNewTable = (bet: string, isPrivate: boolean): Table => {
         const id = uuidv4();
         const tatamiNameId = generateTatamiId();
         const tatamiName = `tatami-${tatamiNameId}`;
 
-        // Create an object with the required info
+        // Create an object with the required info for the link
         const tatamiInfo = {
             id: id,
             name: tatamiName,
-            bet: bet,
+            bet: parseInt(bet),
+            createdAt: new Date().toISOString(),
             isPrivate: isPrivate
         };
 
         // Encode the object as base64 string to use as unique link
         const tatamiLink = btoa(JSON.stringify(tatamiInfo));
 
+        // Return a complete Table object with all required properties
         return {
             id: id,
             name: tatamiName,
-            bet: bet,
+            bet: parseInt(bet),
             isPrivate: isPrivate,
-            createdAt: new Date().toLocaleString(),
-            link: tatamiLink
+            createdAt: tatamiInfo.createdAt,
+            link: tatamiLink,
+            seats: {},
+            callAmount: 0,
+            pot: 0,
+            winMessages: '',
+            button: '',
+            handOver: false,
+            demandedSuit: '',
+            currentRoundCards: [],
+            roundNumber: 0,
+            chatRoom: { chatMessages: [] }
         };
     };
 
@@ -64,6 +74,16 @@ const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTata
                 <Form
                     onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
+
+                        // Créer le nouveau lien tatami
+                        const newTable = createNewTable(bet, isPrivate);
+
+                        // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
+                        localStorage.setItem('storedLink', newTable.link);
+                        closeModal();
+
+                        // Laisser handleJoinTable dans MainPage gérer la redirection
+                        onCreateTable(newTable);
                     }}>
 
                     <FormGroup>
@@ -100,21 +120,7 @@ const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTata
                         </div>
                     </FormGroup>
 
-                    <Button $small $primary type="submit" $fullWidth onClick={() => {
-                        setIsPrivate(isPrivate);
-
-                        // Créer le nouveau lien tatami
-                        const newTatamiData = createTatamiData(bet, isPrivate);
-
-                        // Ajouter le nouveau tatami à la liste
-                        setTatamiDataList(prevList => [...prevList, newTatamiData]);
-
-                        // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
-                        localStorage.setItem('storedLink', newTatamiData.link);
-                        closeModal();
-                        onCreateTatami(newTatamiData)
-                        history.push(`/play/${newTatamiData.link}`);
-                    }}>
+                    <Button $small $primary type="submit" $fullWidth>
                         {'Créer'}
                     </Button>
                 </Form>
@@ -123,4 +129,4 @@ const TatimiModalContent = React.memo(function TatimiModalContent({ onCreateTata
     );
 });
 
-export default TatimiModalContent;
+export default TableModalCreator;

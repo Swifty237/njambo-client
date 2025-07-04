@@ -13,6 +13,7 @@ import OfflineProvider from './offline/OfflineProvider';
 import WebSocketProvider from './websocket/WebsocketProvider';
 import GameState from './game/GameState';
 import ResizeObserverProvider from '../utils/ResizeObserverProvider';
+import TableProvider from './table/TableProvider';
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -28,17 +29,19 @@ const Providers = ({ children }: ProvidersProps) => {
           <LocaProvider location={location}>
             <ContentProvider>
               <AuthProvider>
-                <ModalProvider>
-                  <OfflineProvider>
-                    <WebSocketProvider>
-                      <GameState>
-                        <Normalize />
-                        <GlobalStyles />
-                        {children}
-                      </GameState>
-                    </WebSocketProvider>
-                  </OfflineProvider>
-                </ModalProvider>
+                <TableProvider>
+                  <ModalProvider>
+                    <OfflineProvider>
+                      <WebSocketProvider>
+                        <GameState>
+                          <Normalize />
+                          <GlobalStyles />
+                          {children}
+                        </GameState>
+                      </WebSocketProvider>
+                    </OfflineProvider>
+                  </ModalProvider>
+                </TableProvider>
               </AuthProvider>
             </ContentProvider>
           </LocaProvider>

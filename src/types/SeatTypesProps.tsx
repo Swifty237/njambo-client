@@ -21,7 +21,7 @@ export interface ChatRoom {
     chatMessages: ChatMessage[];
 }
 
-export interface SeatData {
+export interface Seat {
     id: string;
     turn: boolean;
     turnStartTime?: number; // timestamp when the turn started
@@ -35,10 +35,19 @@ export interface SeatData {
     showingCards?: boolean;
 }
 
+export interface JoinTableProps {
+    id: string;
+    name: string;
+    bet: number;
+    isPrivate?: boolean;
+    createdAt?: Date;
+    link: string;
+}
+
 export interface Table {
     id: string;
     name: string;
-    seats: { [seatId: string]: SeatData };
+    seats: { [seatId: string]: Seat };
     bet: number;
     callAmount: number;
     pot: number;

@@ -16,52 +16,46 @@ import { AutoHideInfoPill } from '../components/game/AutoHideInfoPill';
 import { GameUI } from '../components/game/GameUI';
 import { GameStateInfo } from '../components/game/GameStateInfo';
 import contentContext from '../context/content/contentContext';
-import { useHistory, useLocation, useParams } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
-import { TatamiProps } from '../context/game/gameContext'
+// import { TatamiProps } from '../context/game/gameContext'
 import ChipsAmountPill from '../components/game/ChipsAmountPill';
 import Spacer from '../components/layout/Spacer';
 import globalContext from '../context/global/globalContext';
 import ChatContent from '../components/game/ChatContent';
 import LoadingScreen from '../components/loading/LoadingScreen';
 import usePlayerSeated from '../hooks/usePlayerSeated';
-import { Table } from '../types/SeatTypesProps';
+import { JoinTableProps, Table } from '../types/SeatTypesProps';
 import { Tooltip } from 'react-tooltip';
-import authContext from '../context/auth/authContext';
-import { v4 as uuidv4 } from 'uuid';
+// import authContext from '../context/auth/authContext';
+import tableContext from '../context/table/tableContext';
 
-
-// interface LocationState {
-//   tatamiData?: TatamiProps;
+// interface RouteParams {
+//   link?: string;
 // }
-
-interface RouteParams {
-  link?: string;
-}
 
 const Play: React.FC = () => {
   const history = useHistory();
   // const location = useLocation<LocationState>();
   // const { link } = useParams<RouteParams>();
-  const { loadUser } = useContext(authContext);
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
   const { openModal, closeModal } = useContext(modalContext);
+  const { isOnTable, leaveTableRequest } = useContext(tableContext);
   const {
     messages,
     currentTable,
     seatId,
     refresh,
     setRefresh,
-    joinTable,
     leaveTable,
     sitDown,
     standUp,
+    joinTable,
     // injectDebugHand,
     playOneCard,
     showDown,
     sendMessage,
-    setTatamiDataList
   } = useContext(gameContext);
   const [localRefresh, setLocalRefresh] = useState(refresh);
 
@@ -72,6 +66,12 @@ const Play: React.FC = () => {
   const [unreadMessages, setUnreadMessages] = useState(0);
   const [lastReadTime, setLastReadTime] = useState(Date.now());
   const [storedSeatId, setStoredSeatId] = useState<string | null>(localStorage.getItem("seatId"));
+  const storedLink = localStorage.getItem("storedLink");
+
+  // État pour gérer l'initialisation complète
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
+
 
   useEffect(() => {
     // Mettre à jour storedSeatId quand il change dans le localStorage
@@ -82,43 +82,136 @@ const Play: React.FC = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
+  // Effet pour l'initialisation
   useEffect(() => {
-    // Si on n'a pas de socket, on affiche la modal de déconnexion
-    if (!socket) {
+    console.log('🔄 [Play] Initialisation - socket:', !!socket, 'storedLink:', !!storedLink, 'isInitialized:', isInitialized, 'isInitializing:', isInitializing);
 
-      openModal(() => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
-        getLocalizedString('game_lost-connection-modal_header'),
-        getLocalizedString('game_lost-connection-modal_btn-txt'),
-        () => history.push('/'),
-      );
+    // Ne rien faire si déjà initialisé ou en cours d'initialisation
+    if (isInitialized || isInitializing) return;
+
+    const initializeTable = async () => {
+      setIsInitializing(true);
+      try {
+        if (storedLink) {
+          console.log('🔗 [Play] Lien trouvé, décodage...');
+          // Décoder le lien pour obtenir les informations de la table
+          const decodedData = JSON.parse(atob(storedLink));
+          const tableInfo: JoinTableProps = {
+            id: decodedData.id,
+            name: decodedData.name,
+            bet: decodedData.bet,
+            isPrivate: decodedData.isPrivate,
+            createdAt: decodedData.createdAt,
+            link: storedLink,
+          };
+
+          console.log('📋 [Play] Données de table décodées:', tableInfo);
+
+          // Attendre que la socket soit disponible avec un délai plus long
+          if (socket) {
+            console.log('✅ [Play] Socket disponible, connexion à la table...');
+            joinTable(tableInfo);
+            console.log('✅ [Play] Connexion à la table réussie');
+
+            // Attendre que currentTable soit disponible avec un timeout
+            // let attempts = 0;
+            // const maxAttempts = 10; // 5 secondes max
+            // while (!currentTable && attempts < maxAttempts) {
+            //   console.log(`⏳ [Play] Attente currentTable (tentative ${attempts + 1}/${maxAttempts})...`);
+            //   await new Promise(resolve => setTimeout(resolve, 500));
+            //   attempts++;
+            // }
+
+            if (currentTable) {
+              console.log('✅ [Play] currentTable disponible');
+            } else {
+              console.log('⚠️ [Play] currentTable toujours indisponible après timeout');
+            }
+          } else {
+            console.log('⏳ [Play] En attente de la socket...');
+            setIsInitializing(false);
+            return; // Attendre la socket
+          }
+        } else {
+          console.log('❌ [Play] Pas de lien stocké');
+        }
+
+        // Ne marquer comme initialisé que si currentTable est disponible
+        if (currentTable) {
+          console.log('✅ [Play] Initialisation terminée avec currentTable');
+          setIsInitialized(true);
+          setIsInitializing(false);
+        } else {
+          console.log('⏳ [Play] Attente de currentTable avant de finaliser l\'initialisation');
+          // Garder isInitializing à true pour continuer d'afficher l'écran de chargement
+        }
+      } catch (error) {
+        console.error('❌ [Play] Erreur lors de l\'initialisation:', error);
+        // En cas d'erreur, on marque quand même comme initialisé pour éviter de bloquer
+        setIsInitialized(true);
+        setIsInitializing(false);
+      }
+    };
+
+    // Ajouter un délai initial pour laisser le temps aux contextes de s'initialiser
+    const timeoutId = setTimeout(() => {
+      initializeTable();
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [socket, storedLink, isInitialized, isInitializing, currentTable]);
+
+  // Effet pour finaliser l'initialisation quand currentTable devient disponible
+  useEffect(() => {
+    if (isInitializing && !isInitialized && currentTable && storedLink) {
+      console.log('✅ [Play] currentTable détectée, finalisation de l\'initialisation');
+      setIsInitialized(true);
+      setIsInitializing(false);
+    }
+  }, [currentTable, isInitializing, isInitialized, storedLink]);
+
+  // Effet pour la navigation - seulement après initialisation
+  useEffect(() => {
+    if (!isInitialized) {
+      console.log('⏳ [Play] En attente de l\'initialisation...');
       return;
     }
 
-  }, []);
+    console.log('🔍 [Play] Vérification navigation - socket:', !!socket, 'isOnTable:', isOnTable, 'storedLink:', !!storedLink, 'currentTable:', !!currentTable);
 
-  // useEffect(() => {
-  //   // Empêcher le refresh de la page Play
-  //   const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-  //     event.preventDefault();
-  //     event.returnValue = '';
-  //     return '';
-  //   };
+    // Délai plus long pour laisser le temps aux contextes de se mettre à jour
+    const timeoutId = setTimeout(() => {
+      if (!socket) {
+        console.log('❌ [Play] Pas de socket après initialisation, redirection...');
+        openModal(
+          () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
+          getLocalizedString('game_lost-connection-modal_header'),
+          getLocalizedString('game_lost-connection-modal_btn-txt'),
+          () => history.push('/'),
+        );
+        return;
+      }
 
-  //   const handleKeyDown = (event: KeyboardEvent) => {
-  //     // Empêcher F5 et Ctrl+R
-  //     if (event.key === 'F5' || (event.ctrlKey && event.key === 'r')) {
-  //       event.preventDefault();
-  //     }
-  //   };
+      if (!isOnTable && !storedLink) {
+        console.log('❌ [Play] Pas connecté à une table et pas de lien, redirection vers MainPage...');
+        history.push('/');
+        return;
+      }
 
-  //   window.addEventListener('beforeunload', handleBeforeUnload);
-  //   window.addEventListener('keydown', handleKeyDown);
+      // Vérifier si currentTable est disponible
+      if (storedLink && !currentTable) {
+        console.log('⚠️ [Play] Lien présent mais currentTable manquante, attente...');
+        // Ne pas rediriger, laisser plus de temps
+        return;
+      }
 
-  //   return () => {
-  //     window.removeEventListener('beforeunload', handleBeforeUnload);
-  //     window.removeEventListener('keydown', handleKeyDown);
-  //   };
-  // }, []);
+      console.log('✅ [Play] Vérifications de navigation réussies');
+    }, 500); // Augmenter le délai à 500ms
+
+    return () => clearTimeout(timeoutId);
+  }, [socket, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
 
   useEffect(() => {
     setLocalRefresh(refresh)
@@ -178,8 +271,23 @@ const Play: React.FC = () => {
 
   return (
     <>
-      {isLoading || contentIsLoading ? (
-        <LoadingScreen />
+      {isLoading || contentIsLoading || !isInitialized || isInitializing ? (
+        <>
+          <LoadingScreen />
+          {isInitializing && (
+            <div style={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              color: 'white',
+              textAlign: 'center',
+              zIndex: 1000
+            }}>
+              <Text>Reconnexion à la table en cours...</Text>
+            </div>
+          )}
+        </>
       ) : (
         <>
           <RotateDevicePrompt />
@@ -197,6 +305,7 @@ const Play: React.FC = () => {
                     <>
                       <Button data-tooltip-id="leave-table-tooltip" $small $secondary onClick={() => {
                         leaveTable();
+                        leaveTableRequest(); // Mettre à jour l'état de table
                         // Supprimer le socketId et le storedLink du localStorage
                         localStorage.removeItem('socketId');
                         localStorage.removeItem('storedLink');

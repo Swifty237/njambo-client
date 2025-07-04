@@ -1,6 +1,5 @@
 import { createContext } from 'react';
-import { CardProps, Table } from '../../types/SeatTypesProps';
-
+import { CardProps, JoinTableProps, Table } from '../../types/SeatTypesProps';
 
 // interface PositionProps {
 //     top?: string;
@@ -9,26 +8,18 @@ import { CardProps, Table } from '../../types/SeatTypesProps';
 //     left?: string
 // }
 
-export interface TatamiProps {
-    id: string;
-    name: string;
-    bet: string;
-    isPrivate: boolean;
-    createdAt: string;
-    link: string;
-}
-
 interface GameContextType {
     messages: string[],
     currentTable: Table | null,
     isPlayerSeated: boolean,
     seatId: string | null,
     elevatedCard: string | null,
-    tatamiDataList: TatamiProps[],
+    tablesList: Table[],
     refresh: boolean,
     setRefresh: (value: React.SetStateAction<boolean>) => void,
-    setTatamiDataList: (value: React.SetStateAction<TatamiProps[]>) => void,
-    joinTable: (tatamiData: TatamiProps) => void,
+    setTablesList: (value: React.SetStateAction<Table[]>) => void,
+    joinTable: (table: JoinTableProps) => void,
+    joinTableByLink: (link: string) => Promise<boolean>,
     leaveTable: () => void,
     sitDown: (tableId: string, seatId: string, amount: number) => void,
     standUp: () => void,
@@ -52,11 +43,12 @@ const gameContext = createContext<GameContextType>({
     isPlayerSeated: false,
     seatId: '',
     elevatedCard: null,
-    tatamiDataList: [],
+    tablesList: [],
     refresh: false,
     setRefresh: () => { },
-    setTatamiDataList: () => { },
+    setTablesList: () => { },
     joinTable: () => { },
+    joinTableByLink: async () => false,
     leaveTable: () => { },
     sitDown: () => { },
     standUp: () => { },
