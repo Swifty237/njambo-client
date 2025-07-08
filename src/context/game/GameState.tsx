@@ -29,7 +29,6 @@ const GameState = ({ children }: GameStateProps) => {
         let foundPlayerTurn = false;
 
         if (table.seats) {
-            console.log(`🎮 [GameState] Vérification des sièges (${context})`);
             Object.keys(table.seats).forEach(currentSeatId => {
                 const seat = table.seats[currentSeatId];
                 if (seat && seat.player) {
@@ -40,17 +39,9 @@ const GameState = ({ children }: GameStateProps) => {
                         foundPlayerSeat = true;
                         foundPlayerTurn = seat.turn || false;
 
-                        console.log(`👤 [GameState] Siège trouvé pour le joueur (${context}):`, {
-                            seatId: currentSeatId,
-                            hasTurn: foundPlayerTurn,
-                            isPlayerSeated: true
-                        });
-
-                        // Mettre à jour l'état du siège
                         setSeatId(currentSeatId);
                         setIsPlayerSeated(true);
 
-                        // Mettre à jour le localStorage
                         localStorage.setItem('seatId', currentSeatId);
                         localStorage.setItem('isPlayerSeated', 'true');
                     }
@@ -58,21 +49,16 @@ const GameState = ({ children }: GameStateProps) => {
             });
         }
 
-        // Si le joueur n'est plus assis, réinitialiser son état
         if (!foundPlayerSeat && (isPlayerSeated || localStorage.getItem('isPlayerSeated'))) {
-            console.log(`🚶 [GameState] Joueur n'est plus assis (${context})`);
-
-            // Réinitialiser l'état
             setIsPlayerSeated(false);
             setSeatId(null);
-
-            // Nettoyer le localStorage
             localStorage.removeItem('seatId');
             localStorage.removeItem('isPlayerSeated');
         }
 
         return { foundPlayerSeat, foundPlayerTurn };
     };
+
     const [messages, setMessages] = useState<string[]>([]);
     const [currentTable, setCurrentTable] = useState<Table | null>(() => {
         const savedTable = localStorage.getItem('currentTable');
@@ -80,7 +66,6 @@ const GameState = ({ children }: GameStateProps) => {
             try {
                 return JSON.parse(savedTable);
             } catch (error) {
-                console.error('Erreur lors du parsing de currentTable:', error);
                 localStorage.removeItem('currentTable');
                 return null;
             }
@@ -101,16 +86,6 @@ const GameState = ({ children }: GameStateProps) => {
 
         if (currentTable) {
             localStorage.setItem('currentTable', JSON.stringify(currentTable));
-
-            // Vérifier si le joueur a le tour
-            if (currentTable.seats && seatId && currentTable.seats[seatId]) {
-                const currentSeat = currentTable.seats[seatId];
-                console.log('🎲 [GameState] Vérification du tour:', {
-                    seatId,
-                    hasTurn: currentSeat.turn,
-                    isPlayerSeated
-                });
-            }
         } else {
             localStorage.removeItem('currentTable');
         }
@@ -120,31 +95,14 @@ const GameState = ({ children }: GameStateProps) => {
         if (!socket || !userId) return;
 
         const cleanup = () => {
-            console.log("cleanup");
             window.removeEventListener('beforeunload', leaveTable);
         };
 
         const handleTableUpdated = ({ table, message }: TableUpdatedPayload) => {
-            console.log('🔄 [GameState] Mise à jour de la table reçue:', table);
-
             const { foundPlayerSeat, foundPlayerTurn } = updatePlayerSeatStatus(table, 'table update');
-
-            console.log('💫 [GameState] Mise à jour de la table:', {
-                hasSeats: !!table.seats,
-                foundPlayerSeat,
-                foundPlayerTurn,
-                currentSeatId: seatId,
-                isPlayerSeated
-            });
-
             setCurrentTable(table);
             localStorage.setItem('currentTable', JSON.stringify(table));
             message && addMessage(message);
-
-            // Si le joueur est assis et c'est son tour, s'assurer que l'interface est mise à jour
-            if (foundPlayerSeat && foundPlayerTurn) {
-                console.log('🎲 [GameState] Tour du joueur détecté dans handleTableUpdated');
-            }
         };
 
         const handleTableJoined = (payload: any) => {
@@ -200,22 +158,16 @@ const GameState = ({ children }: GameStateProps) => {
             loadUser(localStorage.token);
             setMessages([]);
 
-            // Mettre à jour la liste des tables
             setTablesList(prevList => prevList.filter(table =>
                 table.id !== currentTableRef.current?.id
             ));
         };
 
         const handlePlayedCard = ({ tables, tableId }: TableEventPayload) => {
-            console.log('🎴 [GameState] Carte jouée, mise à jour de la table');
-
-            // Vérification de sécurité pour tables et tableId
             if (!tables || !tableId) {
-                console.error('❌ [GameState] Données de table invalides après carte jouée:', { tables, tableId });
                 return;
             }
 
-            // Si tables est un tableau, le convertir en objet
             let tablesObj = Array.isArray(tables)
                 ? tables.reduce((acc: any, table: any) => {
                     if (table && table.id) {
@@ -225,9 +177,7 @@ const GameState = ({ children }: GameStateProps) => {
                 }, {})
                 : tables;
 
-            // Vérifier si la table existe dans l'objet
             if (!tablesObj[tableId]) {
-                console.error('❌ [GameState] Table non trouvée:', { tableId, availableTables: Object.keys(tablesObj) });
                 return;
             }
 
@@ -243,9 +193,7 @@ const GameState = ({ children }: GameStateProps) => {
         };
 
         const handleShowDown = ({ tables, tableId }: TableEventPayload) => {
-            console.log('🃏 [GameState] ShowDown, mise à jour de la table');
             if (!tables || !tableId || !tables[tableId]) {
-                console.error('❌ [GameState] Données de table invalides après showdown');
                 return;
             }
 
@@ -253,11 +201,7 @@ const GameState = ({ children }: GameStateProps) => {
             const updatedTable = tables[tableId];
 
             if (updatedTable?.seats) {
-                const { foundPlayerSeat, foundPlayerTurn } = updatePlayerSeatStatus(updatedTable, 'showdown');
-                console.log('🎲 [GameState] État après showdown:', {
-                    foundPlayerSeat,
-                    foundPlayerTurn
-                });
+                updatePlayerSeatStatus(updatedTable, 'showdown');
             }
 
             setCurrentTable(updatedTable);
@@ -265,8 +209,6 @@ const GameState = ({ children }: GameStateProps) => {
         };
 
         const handleChatMessage = ({ tables, tableId }: TableEventPayload) => {
-            console.log('💬 [GameState] Message reçu, mise à jour de la table');
-
             let targetTable;
             if (Array.isArray(tables)) {
                 targetTable = tables.find((table: any) => table.id === tableId);
@@ -298,21 +240,12 @@ const GameState = ({ children }: GameStateProps) => {
 
     const joinTable = (table: JoinTableProps) => {
         if (!socket || !socket.id) {
-            console.log('❌ [GameState] joinTable - pas de socket ou socket.id');
             return;
         }
-
-        console.log('💾 [GameState] joinTable - état actuel:', {
-            isPlayerSeated,
-            seatId
-        });
-
-        console.log('📤 [GameState] joinTable - émission JOIN_TABLE avec:', table);
         socket.emit(JOIN_TABLE, table);
     };
 
     const leaveTable = () => {
-        console.log('🚪 [GameState] leaveTable appelé');
         localStorage.removeItem('currentTable');
         localStorage.removeItem('isOnTable');
         localStorage.removeItem('storedLink');
@@ -392,18 +325,14 @@ const GameState = ({ children }: GameStateProps) => {
     };
 
     const joinTableByLink = async (link: string): Promise<boolean> => {
-        console.log('🔗 [GameState] Validation du lien de table:', link);
-
         try {
             const decodedData = JSON.parse(atob(link));
             if (!decodedData.id || !decodedData.name) {
-                console.error('❌ [GameState] Lien invalide - données manquantes');
                 return false;
             }
             localStorage.setItem('storedLink', link);
             return true;
         } catch (error) {
-            console.error('❌ [GameState] Erreur lors de la validation du lien:', error);
             return false;
         }
     };

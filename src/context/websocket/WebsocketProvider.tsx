@@ -13,7 +13,6 @@ import globalContext from '../global/globalContext';
 import config from '../../clientConfig';
 import { Player, Table } from '../../types/SeatTypesProps';
 
-// Extend the Window interface to include the socket property
 declare global {
     interface Window {
         socket?: Socket;
@@ -33,7 +32,6 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketId, setSocketId] = useState<string | null>(null);
 
-    // Helper pour filtrer les tables actives (avec des joueurs)
     const filterActiveTables = (tables: Table[]) => {
         return tables.filter(table => {
             const seats = table.seats || {};
@@ -49,23 +47,18 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
                 const tableStillExists = tables.some(table => table.id === decodedData.id);
 
                 if (!tableStillExists) {
-                    console.log('🗑️ [WebSocket] Table supprimée, nettoyage du localStorage');
                     localStorage.removeItem('storedLink');
                     localStorage.removeItem('seatId');
                     localStorage.removeItem('isPlayerSeated');
                 }
             } catch (error) {
-                console.error('❌ [WebSocket] Erreur lors du décodage du lien:', error);
                 localStorage.removeItem('storedLink');
             }
         }
     };
 
     useEffect(() => {
-        // window.addEventListener('beforeunload', cleanUp);
         window.addEventListener('beforeclose', cleanUp);
-        // return () => cleanUp();
-        // eslint-disable-next-line
     }, []);
 
     useEffect(() => {
@@ -75,18 +68,14 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
             token && webSocket && webSocket.emit(FETCH_LOBBY_INFO, token);
         } else {
-            // Ne pas nettoyer immédiatement lors du rechargement
-            // Vérifier s'il y a un token dans localStorage
             const token = localStorage.getItem('token');
             if (!token) {
                 cleanUp();
             }
         }
-        // eslint-disable-next-line
     }, [isLoggedIn, userId]);
 
     function cleanUp() {
-        console.log('🧹 [WebSocket] Nettoyage de la socket...');
         if (window.socket) {
             window.socket.emit(DISCONNECT);
             window.socket.close();
@@ -99,10 +88,6 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     function connect() {
-        console.log('🔌 [WebSocket] Connexion à la socket avec userId:',
-            localStorage.getItem('userId'), 'userName:', localStorage.getItem('userName'));
-
-        // Créer la socket avec l'ID utilisateur dans l'auth
         const socket = io(config.socketURI, {
             transports: ['websocket'],
             upgrade: false,
@@ -114,14 +99,6 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
             }
         });
 
-        socket.on('connect', () => {
-            console.log('✅ [WebSocket] Socket connectée avec ID:', socket.id, 'pour utilisateur:', userId);
-        });
-
-        socket.on('disconnect', () => {
-            console.log('❌ [WebSocket] Socket déconnectée pour utilisateur:', userId);
-        });
-
         registerCallbacks(socket);
         setSocket(socket);
         window.socket = socket;
@@ -129,41 +106,22 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     function registerCallbacks(socket: Socket) {
-        console.log('📝 [WebSocket] Enregistrement des callbacks...');
-
         socket.on(RECEIVE_LOBBY_INFO, ({ tables, players, socketId }: LobbyInfo) => {
-            console.log('📨 [WebSocket] RECEIVE_LOBBY_INFO reçu:', { socketId, tablesCount: tables.length, playersCount: players.length });
             checkStoredTableExists(tables);
-
             const activeTables = filterActiveTables(tables);
-            console.log('🎮 [WebSocket] Tables actives:', { activeTablesCount: activeTables.length });
-
             setSocketId(socketId);
             setTables(activeTables);
             setPlayers(players);
         });
 
         socket.on(PLAYERS_UPDATED, (players: Player[]) => {
-            console.log('👥 [WebSocket] PLAYERS_UPDATED reçu:', { playersCount: players.length });
             setPlayers(players);
         });
 
         socket.on(TABLES_UPDATED, (tables: Table[]) => {
-            console.log('🎲 [WebSocket] TABLES_UPDATED reçu:', { tablesCount: tables.length });
             checkStoredTableExists(tables);
-
             const activeTables = filterActiveTables(tables);
-            console.log('🎮 [WebSocket] Tables actives:', { activeTablesCount: activeTables.length });
-
             setTables(activeTables);
-        });
-
-        socket.on('error', (error: Error) => {
-            console.error('❌ [WebSocket] Erreur socket:', error);
-        });
-
-        socket.on('connect_error', (error: Error) => {
-            console.error('❌ [WebSocket] Erreur de connexion:', error);
         });
     }
 

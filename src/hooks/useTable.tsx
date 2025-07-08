@@ -10,11 +10,11 @@ const useTable = () => {
         return storedIsOnTable === 'true';
     });
 
-    // Wrapper pour mettre à jour isOnTable et localStorage en même temps
     const updateIsOnTable = (value: boolean) => {
         setIsOnTable(value);
         localStorage.setItem('isOnTable', value.toString());
     };
+
     const { currentTable, joinTable } = useContext(gameContext);
     const [tableError, setTableError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -41,49 +41,35 @@ const useTable = () => {
     };
 
     const leaveTable = async () => {
-        console.log('🚪 [useTable] Déconnexion de la table...');
-
         try {
             const storedLink = localStorage.getItem('storedLink');
             const storedSeatId = localStorage.getItem('seatId');
 
             if (storedLink && storedSeatId) {
-                // Décoder le lien pour obtenir l'ID de la table
                 const decodedData = JSON.parse(atob(storedLink));
-                console.log('👋 [useTable] Déconnexion - Table:', decodedData.id, 'Siège:', storedSeatId);
-
-                // Envoyer une requête POST pour déconnecter le joueur avec l'ID de la table et du siège
                 const payload = {
                     tableId: decodedData.id,
                     seatId: storedSeatId
                 };
-
                 await Axios.post(`${SERVER_URI}/api/play/leave`, payload);
-                console.log('✅ [useTable] Joueur déconnecté du serveur');
             }
         } catch (error) {
-            console.error('❌ [useTable] Erreur lors de la déconnexion:', error);
-            // Continuer même en cas d'erreur pour nettoyer le state local
+            // Continue even if error to clean local state
         }
 
-        // Nettoyer le state local
         updateIsOnTable(false);
         setTableError(null);
         localStorage.removeItem('storedLink');
         localStorage.removeItem('seatId');
-        console.log('🧹 [useTable] État local nettoyé');
     };
 
-    // Vérifier la validité du lien au démarrage
     useEffect(() => {
         const storedLink = localStorage.getItem('storedLink');
         if (storedLink) {
             try {
-                // Vérifier si le lien peut être décodé
                 JSON.parse(atob(storedLink));
                 updateIsOnTable(true);
             } catch (error) {
-                // Lien invalide, nettoyer
                 localStorage.removeItem('storedLink');
                 updateIsOnTable(false);
             }
@@ -91,10 +77,6 @@ const useTable = () => {
     }, []);
 
     const createTable = async (table: Table): Promise<boolean> => {
-        console.log('🚀 [useTable] REQUÊTE HTTP - createTable appelée avec:', table);
-        console.log('🔍 [useTable] REQUÊTE HTTP - Stack trace:', new Error().stack);
-        console.log('⚠️ [useTable] REQUÊTE HTTP - ATTENTION: Une requête POST va être envoyée vers /api/play');
-
         setIsLoading(true);
         setTableError(null);
 
@@ -107,28 +89,20 @@ const useTable = () => {
                 createdAt: table.createdAt,
                 link: table.link
             };
-            console.log('📤 [useTable] REQUÊTE HTTP - Envoi POST /api/play avec payload:', payload);
-            console.log('🌐 [useTable] REQUÊTE HTTP - URL complète:', `${SERVER_URI}/api/play`);
 
             const res = await Axios.post(`${SERVER_URI}/api/play`, payload);
-            console.log('📥 [useTable] REQUÊTE HTTP - Réponse serveur reçue:', res.data);
-            console.log('📊 [useTable] REQUÊTE HTTP - Status:', res.status);
-
             const tableInfo = res.data;
 
             if (tableInfo) {
-                console.log('✅ [useTable] REQUÊTE HTTP - Connexion réussie, mise à jour des états...');
                 updateIsOnTable(true);
                 localStorage.setItem('storedLink', table.link);
-                console.log('💾 [useTable] REQUÊTE HTTP - Lien sauvé dans localStorage');
                 setIsLoading(false);
                 return true;
             }
-            console.log('❌ [useTable] REQUÊTE HTTP - Pas de données de table dans la réponse');
+
             setIsLoading(false);
             return false;
         } catch (error) {
-            console.error('❌ [useTable] REQUÊTE HTTP - Erreur lors de la création:', error);
             const errorMessage = getErrorMessage(error);
             setTableError(errorMessage);
             setIsLoading(false);
@@ -137,17 +111,14 @@ const useTable = () => {
     };
 
     const joinTableByLink = async (): Promise<boolean> => {
-
         setIsLoading(true);
         setTableError(null);
 
         try {
             updateIsOnTable(true);
             setIsLoading(false);
-
             return true;
         } catch (error) {
-            console.error('❌ [useTable] - Erreur lors de la validation du lien:', error);
             const errorMessage = getErrorMessage(error);
             setTableError(errorMessage);
             setIsLoading(false);

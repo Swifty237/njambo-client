@@ -57,12 +57,10 @@ const Play: React.FC = () => {
   const [storedSeatId, setStoredSeatId] = useState<string | null>(localStorage.getItem("seatId"));
   const storedLink = localStorage.getItem("storedLink");
 
-  // État pour gérer l'initialisation complète
   const [isInitialized, setIsInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
 
   useEffect(() => {
-    // Mettre à jour storedSeatId quand il change dans le localStorage
     const handleStorageChange = () => {
       setStoredSeatId(localStorage.getItem("seatId"));
     };
@@ -70,19 +68,13 @@ const Play: React.FC = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  // Effet pour l'initialisation
   useEffect(() => {
-    console.log('🔄 [Play] Initialisation - socket:', !!socket, 'storedLink:', !!storedLink, 'isInitialized:', isInitialized, 'isInitializing:', isInitializing);
-
-    // Ne rien faire si déjà initialisé ou en cours d'initialisation
     if (isInitialized || isInitializing) return;
 
     const initializeTable = async () => {
       setIsInitializing(true);
       try {
         if (storedLink) {
-          console.log('🔗 [Play] Lien trouvé, décodage...');
-          // Décoder le lien pour obtenir les informations de la table
           const decodedData = JSON.parse(atob(storedLink));
           const tableInfo: JoinTableProps = {
             id: decodedData.id,
@@ -93,47 +85,24 @@ const Play: React.FC = () => {
             link: storedLink,
           };
 
-          console.log('📋 [Play] Données de table décodées:', tableInfo);
-
-          // Attendre que la socket soit disponible avec un délai plus long
           if (socket) {
-            console.log("tableInfo.id", tableInfo.id);
-            console.log('✅ [Play] Socket disponible, connexion à la table...');
             joinTable(tableInfo);
-            console.log('✅ [Play] Connexion à la table réussie');
-
-            if (currentTable) {
-              console.log('✅ [Play] currentTable disponible');
-            } else {
-              console.log('⚠️ [Play] currentTable toujours indisponible après timeout');
-            }
           } else {
-            console.log('⏳ [Play] En attente de la socket...');
             setIsInitializing(false);
-            return; // Attendre la socket
+            return;
           }
-        } else {
-          console.log('❌ [Play] Pas de lien stocké');
         }
 
-        // Ne marquer comme initialisé que si currentTable est disponible
         if (currentTable) {
-          console.log('✅ [Play] Initialisation terminée avec currentTable');
           setIsInitialized(true);
           setIsInitializing(false);
-        } else {
-          console.log('⏳ [Play] Attente de currentTable avant de finaliser l\'initialisation');
-          // Garder isInitializing à true pour continuer d'afficher l'écran de chargement
         }
       } catch (error) {
-        console.error('❌ [Play] Erreur lors de l\'initialisation:', error);
-        // En cas d'erreur, on marque quand même comme initialisé pour éviter de bloquer
         setIsInitialized(true);
         setIsInitializing(false);
       }
     };
 
-    // Ajouter un délai initial pour laisser le temps aux contextes de s'initialiser
     const timeoutId = setTimeout(() => {
       initializeTable();
     }, 500);
@@ -141,26 +110,19 @@ const Play: React.FC = () => {
     return () => clearTimeout(timeoutId);
   }, [socket, storedLink, isInitialized, isInitializing, currentTable, joinTable]);
 
-  // Effet pour finaliser l'initialisation quand currentTable devient disponible
   useEffect(() => {
     if (isInitializing && !isInitialized && currentTable && storedLink) {
-      console.log('✅ [Play] currentTable détectée, finalisation de l\'initialisation');
       setIsInitialized(true);
       setIsInitializing(false);
     }
   }, [currentTable, isInitializing, isInitialized, storedLink]);
 
-  // Effet pour la navigation - seulement après initialisation
   useEffect(() => {
     if (!isInitialized) {
-      console.log('⏳ [Play] En attente de l\'initialisation...');
       return;
     }
 
-    console.log('🔍 [Play] Vérification navigation - socket:', !!socket, 'isOnTable:', isOnTable, 'storedLink:', !!storedLink, 'currentTable:', !!currentTable);
-
     if (!socket) {
-      console.log('❌ [Play] Pas de socket après initialisation, redirection...');
       openModal(
         () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
         getLocalizedString('game_lost-connection-modal_header'),
@@ -171,34 +133,10 @@ const Play: React.FC = () => {
     }
 
     if (!isOnTable && !storedLink) {
-      console.log('❌ [Play] Pas connecté à une table et pas de lien, redirection vers MainPage...');
       history.push('/');
       return;
     }
-
-    // Vérifier si currentTable est disponible
-    if (storedLink && !currentTable) {
-      console.log('⚠️ [Play] Lien présent mais currentTable manquante, attente...');
-      // Ne pas rediriger, laisser plus de temps
-      return;
-    }
-
-    console.log('✅ [Play] Vérifications de navigation réussies');
-
   }, [socket, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
-
-  // Surveiller les changements de tour
-  useEffect(() => {
-    if (currentTable?.seats && seatId) {
-      const currentSeat = currentTable.seats[seatId];
-      console.log('👀 [Play] Changement détecté dans le siège:', {
-        seatId,
-        hasTurn: currentSeat?.turn,
-        isPlayerSeated,
-        currentTable: !!currentTable
-      });
-    }
-  }, [currentTable?.seats, seatId, isPlayerSeated]);
 
   useEffect(() => {
     setLocalRefresh(refresh)
@@ -212,17 +150,11 @@ const Play: React.FC = () => {
         setRefresh(false);
       }, 5)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTable?.chatRoom?.chatMessages])
 
   const handleSendMessage = (table: Table, seatId: string | null, message: string) => {
-    // Envoyer le message même si le joueur n'est pas assis
     sendMessage(message, seatId);
-
-    // Déclencher le refresh pour mettre à jour l'affichage
     setRefresh(true);
-
-    // Ne faire le sitDown que si le joueur est assis
     if (seatId && table.seats[seatId]) {
       sitDown(table.id, seatId, table.seats[seatId].stack);
     }
@@ -234,7 +166,6 @@ const Play: React.FC = () => {
   };
 
   const openChatModal = () => {
-    // Marquer les messages comme lus quand on ouvre la modal
     markMessagesAsRead();
 
     openModal(
@@ -245,13 +176,46 @@ const Play: React.FC = () => {
       'Chat room',
       'Valider',
       () => {
-        // Récupérer la valeur de l'input et envoyer le message
         const input = document.querySelector('input[type="text"]') as HTMLInputElement;
         if (input && input.value.trim() && currentTable) {
           handleSendMessage(currentTable, storedSeatId, input.value.trim());
           input.value = '';
         }
       }
+    );
+  };
+
+  const handleLeaveTable = () => {
+    leaveTable();
+    leaveTableRequest();
+    localStorage.removeItem('socketId');
+    localStorage.removeItem('storedLink');
+    localStorage.removeItem("seatId");
+    localStorage.removeItem("isPlayerSeated");
+  };
+
+  const renderGameUI = () => {
+    if (!currentTable || !isPlayerSeated || !seatId) {
+      return null;
+    }
+
+    const currentSeat = currentTable.seats?.[seatId];
+    if (!currentSeat) {
+      return null;
+    }
+
+    if (!currentSeat.turn) {
+      return null;
+    }
+
+    return (
+      <GameUI
+        currentTable={currentTable}
+        seatId={seatId}
+        standUp={standUp}
+        playOneCard={playOneCard}
+        showDown={showDown}
+      />
     );
   };
 
@@ -274,28 +238,12 @@ const Play: React.FC = () => {
                 >
                   <Spacer>
                     <>
-                      <Button data-tooltip-id="leave-table-tooltip" $small $secondary onClick={() => {
-                        console.log('🚪 [Play] Bouton quitter table cliqué - nettoyage localStorage');
-                        console.log('🔍 [Play] localStorage avant nettoyage:', {
-                          seatId: localStorage.getItem('seatId'),
-                          isPlayerSeated: localStorage.getItem('isPlayerSeated'),
-                          storedLink: localStorage.getItem('storedLink')
-                        });
-
-                        leaveTable();
-                        leaveTableRequest(); // Mettre à jour l'état de table
-                        // Supprimer le socketId et le storedLink du localStorage
-                        localStorage.removeItem('socketId');
-                        localStorage.removeItem('storedLink');
-                        localStorage.removeItem("seatId");
-                        localStorage.removeItem("isPlayerSeated");
-
-                        console.log('🧹 [Play] localStorage après nettoyage:', {
-                          seatId: localStorage.getItem('seatId'),
-                          isPlayerSeated: localStorage.getItem('isPlayerSeated'),
-                          storedLink: localStorage.getItem('storedLink')
-                        });
-                      }}>
+                      <Button
+                        data-tooltip-id="leave-table-tooltip"
+                        $small
+                        $secondary
+                        onClick={handleLeaveTable}
+                      >
                         {getLocalizedString('game_leave-table-btn')}
                       </Button>
                       <Tooltip id="leave-table-tooltip" content={"Clique ici pour quitter la table"} place="top" />
@@ -375,7 +323,6 @@ const Play: React.FC = () => {
               <>
                 {currentTable && (
                   <ResponsiveTable>
-                    {/* Gauche */}
                     <PositionedUISeat top="50%">
                       <Seat
                         seatNumber={'1'}
@@ -397,7 +344,6 @@ const Play: React.FC = () => {
                       )}
                     </PositionedUISeat>
 
-                    {/* Haut */}
                     <PositionedUISeat left="50%">
                       <Seat
                         seatNumber={'2'}
@@ -418,7 +364,6 @@ const Play: React.FC = () => {
                       </PositionedUISlot>
                     </PositionedUISeat>
 
-                    {/* Droite */}
                     <PositionedUISeat top="50%" left="100%">
                       <Seat
                         seatNumber={'3'}
@@ -440,7 +385,6 @@ const Play: React.FC = () => {
                       </PositionedUISlot>
                     </PositionedUISeat>
 
-                    {/* Bas */}
                     <PositionedUISeat left="50%" top="100%">
                       <Seat
                         seatNumber={'4'}
@@ -507,43 +451,7 @@ const Play: React.FC = () => {
               </>
             </PokerTableWrapper>
 
-            {(() => {
-              if (!currentTable || !isPlayerSeated || !seatId) {
-                console.log('🎮 [Play] GameUI non affiché - conditions de base non remplies:', {
-                  hasCurrentTable: !!currentTable,
-                  isPlayerSeated,
-                  hasSeatId: !!seatId
-                });
-                return null;
-              }
-
-              const currentSeat = currentTable.seats?.[seatId];
-              if (!currentSeat) {
-                console.log('🎮 [Play] GameUI non affiché - siège non trouvé:', { seatId });
-                return null;
-              }
-
-              console.log('🎮 [Play] État du siège:', {
-                seatId,
-                hasTurn: currentSeat.turn,
-                isPlayerSeated
-              });
-
-              if (!currentSeat.turn) {
-                console.log('🎮 [Play] GameUI non affiché - pas le tour du joueur');
-                return null;
-              }
-
-              return (
-                <GameUI
-                  currentTable={currentTable}
-                  seatId={seatId}
-                  standUp={standUp}
-                  playOneCard={playOneCard}
-                  showDown={showDown}
-                />
-              );
-            })()}
+            {renderGameUI()}
           </Container>
         </>
       )}
