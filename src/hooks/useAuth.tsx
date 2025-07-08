@@ -2,7 +2,6 @@ import { useEffect, useState, useContext } from 'react';
 import Axios from 'axios';
 import setAuthToken from '../helpers/setAuthToken';
 import globalContext from '../context/global/globalContext';
-
 const useAuth = () => {
   localStorage.token && setAuthToken(localStorage.token);
 
@@ -20,11 +19,11 @@ const useAuth = () => {
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
+    // const isOnTable = localStorage.getItem('isOnTable') === 'true';
     setIsLoading(true);
 
     const token = localStorage.getItem("token");
     token && loadUser(token);
-
     setIsLoading(false);
     // eslint-disable-next-line
   }, []);
@@ -126,13 +125,22 @@ const useAuth = () => {
       const { _id, name, email, chipsAmount } = res.data;
 
       setIsLoggedIn(true);
+      // Mettre à jour le state
       setId(_id);
       setUserName(name);
       setEmail(email);
       setChipsAmount(chipsAmount);
       setAuthError(null); // Clear any previous errors on successful load
+
+      // Synchroniser avec localStorage
+      localStorage.setItem('userId', _id);
+      localStorage.setItem('userName', name);
+      localStorage.setItem('chipsAmount', chipsAmount.toString());
     } catch (error) {
       localStorage.removeItem('token');
+      localStorage.removeItem('userId');
+      localStorage.removeItem('userName');
+      localStorage.removeItem('chipsAmount');
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
       setIsLoggedIn(false);
@@ -140,7 +148,13 @@ const useAuth = () => {
   };
 
   const logout = () => {
+    // Nettoyer le localStorage
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('chipsAmount');
+
+    // Réinitialiser l'état
     setIsLoggedIn(false);
     setId('');
     setUserName('');

@@ -7,7 +7,7 @@ interface TableContextType {
     tableError: string | null;
     isLoading: boolean;
     createTableRequest: (table: Table) => Promise<boolean>;
-    joinTableByLinkRequest: (link: string) => Promise<boolean>;
+    joinTableByLinkRequest: () => Promise<boolean>;
     leaveTableRequest: () => Promise<void>;
     clearTableError: () => void;
 }

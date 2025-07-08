@@ -33,10 +33,38 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketId, setSocketId] = useState<string | null>(null);
 
+    // Helper pour filtrer les tables actives (avec des joueurs)
+    const filterActiveTables = (tables: Table[]) => {
+        return tables.filter(table => {
+            const seats = table.seats || {};
+            return Object.values(seats).some(seat => seat && seat.player);
+        });
+    };
+
+    const checkStoredTableExists = (tables: Table[]) => {
+        const storedLink = localStorage.getItem('storedLink');
+        if (storedLink) {
+            try {
+                const decodedData = JSON.parse(atob(storedLink));
+                const tableStillExists = tables.some(table => table.id === decodedData.id);
+
+                if (!tableStillExists) {
+                    console.log('🗑️ [WebSocket] Table supprimée, nettoyage du localStorage');
+                    localStorage.removeItem('storedLink');
+                    localStorage.removeItem('seatId');
+                    localStorage.removeItem('isPlayerSeated');
+                }
+            } catch (error) {
+                console.error('❌ [WebSocket] Erreur lors du décodage du lien:', error);
+                localStorage.removeItem('storedLink');
+            }
+        }
+    };
+
     useEffect(() => {
-        window.addEventListener('beforeunload', cleanUp);
+        // window.addEventListener('beforeunload', cleanUp);
         window.addEventListener('beforeclose', cleanUp);
-        return () => cleanUp();
+        // return () => cleanUp();
         // eslint-disable-next-line
     }, []);
 
@@ -71,26 +99,23 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     }
 
     function connect() {
-        console.log('🔌 [WebSocket] Connexion à la socket avec userId:', userId, 'userName:', userName);
+        console.log('🔌 [WebSocket] Connexion à la socket avec userId:',
+            localStorage.getItem('userId'), 'userName:', localStorage.getItem('userName'));
 
         // Créer la socket avec l'ID utilisateur dans l'auth
         const socket = io(config.socketURI, {
             transports: ['websocket'],
             upgrade: false,
             auth: {
-                userId,
-                userName,
-                chipsAmount,
+                userId: localStorage.getItem('userId'),
+                userName: localStorage.getItem('userName'),
+                chipsAmount: Number(localStorage.getItem('chipsAmount')),
                 token: localStorage.getItem('token')
             }
         });
 
         socket.on('connect', () => {
             console.log('✅ [WebSocket] Socket connectée avec ID:', socket.id, 'pour utilisateur:', userId);
-
-            // Sauvegarder l'ID utilisateur et le nom dans localStorage pour la restauration
-            if (userId) localStorage.setItem('userId', userId);
-            if (userName) localStorage.setItem('userName', userName);
         });
 
         socket.on('disconnect', () => {
@@ -108,8 +133,13 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
         socket.on(RECEIVE_LOBBY_INFO, ({ tables, players, socketId }: LobbyInfo) => {
             console.log('📨 [WebSocket] RECEIVE_LOBBY_INFO reçu:', { socketId, tablesCount: tables.length, playersCount: players.length });
+            checkStoredTableExists(tables);
+
+            const activeTables = filterActiveTables(tables);
+            console.log('🎮 [WebSocket] Tables actives:', { activeTablesCount: activeTables.length });
+
             setSocketId(socketId);
-            setTables(tables);
+            setTables(activeTables);
             setPlayers(players);
         });
 
@@ -120,7 +150,12 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
         socket.on(TABLES_UPDATED, (tables: Table[]) => {
             console.log('🎲 [WebSocket] TABLES_UPDATED reçu:', { tablesCount: tables.length });
-            setTables(tables);
+            checkStoredTableExists(tables);
+
+            const activeTables = filterActiveTables(tables);
+            console.log('🎮 [WebSocket] Tables actives:', { activeTablesCount: activeTables.length });
+
+            setTables(activeTables);
         });
 
         socket.on('error', (error: Error) => {

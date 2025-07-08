@@ -104,9 +104,9 @@ const MainPage: React.FC = () => {
     }
   };
 
-  const handleJoinTableByLink = async (link: string) => {
+  const handleJoinTableByLink = async () => {
     clearTableError();
-    const success = await joinTableByLinkRequest(link);
+    const success = await joinTableByLinkRequest();
     if (success) {
       history.push(`/play`);
     }
@@ -201,12 +201,15 @@ const MainPage: React.FC = () => {
                       }
                     }}
                     onClick={() => {
-                      const storedLink = localStorage.getItem('storedLink');
-                      // Si le lien stocké est différent du nouveau lien, on met à jour
-                      if (!storedLink || storedLink !== table.link) {
+                      // Vérifier si la table existe toujours dans la liste
+                      const tableExists = tables.some(t => t.id === table.id);
+                      if (tableExists) {
                         localStorage.setItem('storedLink', table.link);
+                        handleJoinTableByLink();
+                      } else {
+                        // La table n'existe plus, la retirer de la liste locale
+                        setTablesList(prev => prev.filter(t => t.id !== table.id));
                       }
-                      handleJoinTableByLink(table.link);
                     }}
                   >
                     <span style={{ textDecoration: 'underline' }}>

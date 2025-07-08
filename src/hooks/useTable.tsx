@@ -5,7 +5,16 @@ import gameContext from '../context/game/gameContext';
 
 const useTable = () => {
     const SERVER_URI = process.env.REACT_APP_SERVER_URI;
-    const [isOnTable, setIsOnTable] = useState(false);
+    const [isOnTable, setIsOnTable] = useState(() => {
+        const storedIsOnTable = localStorage.getItem('isOnTable');
+        return storedIsOnTable === 'true';
+    });
+
+    // Wrapper pour mettre à jour isOnTable et localStorage en même temps
+    const updateIsOnTable = (value: boolean) => {
+        setIsOnTable(value);
+        localStorage.setItem('isOnTable', value.toString());
+    };
     const { currentTable, joinTable } = useContext(gameContext);
     const [tableError, setTableError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -58,7 +67,7 @@ const useTable = () => {
         }
 
         // Nettoyer le state local
-        setIsOnTable(false);
+        updateIsOnTable(false);
         setTableError(null);
         localStorage.removeItem('storedLink');
         localStorage.removeItem('seatId');
@@ -72,11 +81,11 @@ const useTable = () => {
             try {
                 // Vérifier si le lien peut être décodé
                 JSON.parse(atob(storedLink));
-                setIsOnTable(true);
+                updateIsOnTable(true);
             } catch (error) {
                 // Lien invalide, nettoyer
                 localStorage.removeItem('storedLink');
-                setIsOnTable(false);
+                updateIsOnTable(false);
             }
         }
     }, []);
@@ -109,7 +118,7 @@ const useTable = () => {
 
             if (tableInfo) {
                 console.log('✅ [useTable] REQUÊTE HTTP - Connexion réussie, mise à jour des états...');
-                setIsOnTable(true);
+                updateIsOnTable(true);
                 localStorage.setItem('storedLink', table.link);
                 console.log('💾 [useTable] REQUÊTE HTTP - Lien sauvé dans localStorage');
                 setIsLoading(false);
@@ -127,35 +136,18 @@ const useTable = () => {
         }
     };
 
-    const joinTableByLink = async (link: string): Promise<boolean> => {
-        console.log('🔗 [useTable] REQUÊTE HTTP - joinTableByLink appelée avec lien:', link);
-        console.log('🔍 [useTable] REQUÊTE HTTP - Stack trace:', new Error().stack);
-        console.log('⚠️ [useTable] REQUÊTE HTTP - ATTENTION: Cette fonction pourrait faire une requête HTTP');
+    const joinTableByLink = async (): Promise<boolean> => {
 
         setIsLoading(true);
         setTableError(null);
 
         try {
-            // Valider et décoder le lien
-            const decodedData = JSON.parse(atob(link));
-            console.log('📋 [useTable] REQUÊTE HTTP - Données décodées:', decodedData);
-
-            // Validation basique des données
-            if (!decodedData.id || !decodedData.name) {
-                throw new Error('Lien de table invalide');
-            }
-
-            console.log('✅ [useTable] REQUÊTE HTTP - Validation locale uniquement, AUCUNE requête HTTP envoyée');
-
-            // Sauvegarder le lien et mettre à jour l'état
-            localStorage.setItem('storedLink', link);
-            setIsOnTable(true);
+            updateIsOnTable(true);
             setIsLoading(false);
 
-            console.log('✅ [useTable] REQUÊTE HTTP - Lien validé et sauvé (traitement local seulement)');
             return true;
         } catch (error) {
-            console.error('❌ [useTable] REQUÊTE HTTP - Erreur lors de la validation du lien:', error);
+            console.error('❌ [useTable] - Erreur lors de la validation du lien:', error);
             const errorMessage = getErrorMessage(error);
             setTableError(errorMessage);
             setIsLoading(false);

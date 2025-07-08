@@ -18,26 +18,17 @@ import { GameStateInfo } from '../components/game/GameStateInfo';
 import contentContext from '../context/content/contentContext';
 import { useHistory } from 'react-router-dom';
 import { ResponsiveTable } from '../components/layout/ResponsiveTable';
-// import { TatamiProps } from '../context/game/gameContext'
 import ChipsAmountPill from '../components/game/ChipsAmountPill';
 import Spacer from '../components/layout/Spacer';
 import globalContext from '../context/global/globalContext';
 import ChatContent from '../components/game/ChatContent';
 import LoadingScreen from '../components/loading/LoadingScreen';
-import usePlayerSeated from '../hooks/usePlayerSeated';
 import { JoinTableProps, Table } from '../types/SeatTypesProps';
 import { Tooltip } from 'react-tooltip';
-// import authContext from '../context/auth/authContext';
 import tableContext from '../context/table/tableContext';
-
-// interface RouteParams {
-//   link?: string;
-// }
 
 const Play: React.FC = () => {
   const history = useHistory();
-  // const location = useLocation<LocationState>();
-  // const { link } = useParams<RouteParams>();
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
   const { openModal, closeModal } = useContext(modalContext);
@@ -52,15 +43,13 @@ const Play: React.FC = () => {
     sitDown,
     standUp,
     joinTable,
-    // injectDebugHand,
     playOneCard,
     showDown,
     sendMessage,
+    isPlayerSeated
   } = useContext(gameContext);
-  const [localRefresh, setLocalRefresh] = useState(refresh);
 
-  // Utiliser le hook personnalisé pour isPlayerSeated
-  const isPlayerSeated = usePlayerSeated();
+  const [localRefresh, setLocalRefresh] = useState(refresh);
   const { getLocalizedString, isLoading: contentIsLoading } = useContext(contentContext);
 
   const [unreadMessages, setUnreadMessages] = useState(0);
@@ -71,7 +60,6 @@ const Play: React.FC = () => {
   // État pour gérer l'initialisation complète
   const [isInitialized, setIsInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
-
 
   useEffect(() => {
     // Mettre à jour storedSeatId quand il change dans le localStorage
@@ -109,9 +97,7 @@ const Play: React.FC = () => {
 
           // Attendre que la socket soit disponible avec un délai plus long
           if (socket) {
-
             console.log("tableInfo.id", tableInfo.id);
-
             console.log('✅ [Play] Socket disponible, connexion à la table...');
             joinTable(tableInfo);
             console.log('✅ [Play] Connexion à la table réussie');
@@ -153,9 +139,7 @@ const Play: React.FC = () => {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [socket, storedLink, isInitialized, isInitializing, currentTable]);
+  }, [socket, storedLink, isInitialized, isInitializing, currentTable, joinTable]);
 
   // Effet pour finaliser l'initialisation quand currentTable devient disponible
   useEffect(() => {
@@ -175,41 +159,50 @@ const Play: React.FC = () => {
 
     console.log('🔍 [Play] Vérification navigation - socket:', !!socket, 'isOnTable:', isOnTable, 'storedLink:', !!storedLink, 'currentTable:', !!currentTable);
 
-    // Délai plus long pour laisser le temps aux contextes de se mettre à jour
-    const timeoutId = setTimeout(() => {
-      if (!socket) {
-        console.log('❌ [Play] Pas de socket après initialisation, redirection...');
-        openModal(
-          () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
-          getLocalizedString('game_lost-connection-modal_header'),
-          getLocalizedString('game_lost-connection-modal_btn-txt'),
-          () => history.push('/'),
-        );
-        return;
-      }
+    if (!socket) {
+      console.log('❌ [Play] Pas de socket après initialisation, redirection...');
+      openModal(
+        () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
+        getLocalizedString('game_lost-connection-modal_header'),
+        getLocalizedString('game_lost-connection-modal_btn-txt'),
+        () => history.push('/'),
+      );
+      return;
+    }
 
-      if (!isOnTable && !storedLink) {
-        console.log('❌ [Play] Pas connecté à une table et pas de lien, redirection vers MainPage...');
-        history.push('/');
-        return;
-      }
+    if (!isOnTable && !storedLink) {
+      console.log('❌ [Play] Pas connecté à une table et pas de lien, redirection vers MainPage...');
+      history.push('/');
+      return;
+    }
 
-      // Vérifier si currentTable est disponible
-      if (storedLink && !currentTable) {
-        console.log('⚠️ [Play] Lien présent mais currentTable manquante, attente...');
-        // Ne pas rediriger, laisser plus de temps
-        return;
-      }
+    // Vérifier si currentTable est disponible
+    if (storedLink && !currentTable) {
+      console.log('⚠️ [Play] Lien présent mais currentTable manquante, attente...');
+      // Ne pas rediriger, laisser plus de temps
+      return;
+    }
 
-      console.log('✅ [Play] Vérifications de navigation réussies');
-    }, 500); // Augmenter le délai à 500ms
+    console.log('✅ [Play] Vérifications de navigation réussies');
 
-    return () => clearTimeout(timeoutId);
   }, [socket, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
+
+  // Surveiller les changements de tour
+  useEffect(() => {
+    if (currentTable?.seats && seatId) {
+      const currentSeat = currentTable.seats[seatId];
+      console.log('👀 [Play] Changement détecté dans le siège:', {
+        seatId,
+        hasTurn: currentSeat?.turn,
+        isPlayerSeated,
+        currentTable: !!currentTable
+      });
+    }
+  }, [currentTable?.seats, seatId, isPlayerSeated]);
 
   useEffect(() => {
     setLocalRefresh(refresh)
-  }, [refresh])
+  }, [refresh]);
 
   useEffect(() => {
     if (localRefresh) {
@@ -241,7 +234,6 @@ const Play: React.FC = () => {
   };
 
   const openChatModal = () => {
-
     // Marquer les messages comme lus quand on ouvre la modal
     markMessagesAsRead();
 
@@ -266,22 +258,7 @@ const Play: React.FC = () => {
   return (
     <>
       {isLoading || contentIsLoading || !isInitialized || isInitializing ? (
-        <>
-          <LoadingScreen />
-          {isInitializing && (
-            <div style={{
-              position: 'fixed',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              color: 'white',
-              textAlign: 'center',
-              zIndex: 1000
-            }}>
-              <Text>Reconnexion à la table en cours...</Text>
-            </div>
-          )}
-        </>
+        <LoadingScreen />
       ) : (
         <>
           <RotateDevicePrompt />
@@ -378,7 +355,6 @@ const Play: React.FC = () => {
                         <strong>{currentTable.name}</strong> |{' '}
 
                         <strong>
-                          {/* {getLocalizedString('game_info_limit-lbl')}:{' '} */}
                           Tarif/coup :
                         </strong>
                         {' '}
@@ -387,17 +363,7 @@ const Play: React.FC = () => {
                         ).format(currentTable.bet)} {' '} {'XAF'}
                         {' '} | {' '}
 
-                        {/* <strong>
-                      {'Statut du tatami : '}
-                    </strong> */}
-
                         {currentTable.isPrivate ? 'Privé' : 'Ouvert'}
-
-                        {/* <strong>
-                      {'Date d\'ouverture : '}
-                    </strong>
-
-                    {currentTable.createdAt} */}
                       </Text>
                     </TableInfoWrapper>
                   </PositionedUISlot>
@@ -406,24 +372,8 @@ const Play: React.FC = () => {
             )}
 
             <PokerTableWrapper>
-
-              {/* <Button
-            $small
-            onClick={() => {
-              injectDebugHand(seatId!);
-            }}
-            style={{
-              position: "absolute",
-              top: "-3vw",
-              left: "-10vw",
-            }}
-          >
-            Injecter des cartes
-          </Button> */}
-
               <>
                 {currentTable && (
-
                   <ResponsiveTable>
                     {/* Gauche */}
                     <PositionedUISeat top="50%">
@@ -444,7 +394,6 @@ const Play: React.FC = () => {
                             seatPosition='1'
                           />
                         </PositionedUISlot>
-
                       )}
                     </PositionedUISeat>
 
@@ -467,11 +416,9 @@ const Play: React.FC = () => {
                           />
                         )}
                       </PositionedUISlot>
-
                     </PositionedUISeat>
 
                     {/* Droite */}
-
                     <PositionedUISeat top="50%" left="100%">
                       <Seat
                         seatNumber={'3'}
@@ -513,7 +460,6 @@ const Play: React.FC = () => {
                           />
                         )}
                       </PositionedUISlot>
-
                     </PositionedUISeat>
                   </ResponsiveTable>
                 )}
@@ -561,12 +507,34 @@ const Play: React.FC = () => {
               </>
             </PokerTableWrapper>
 
-            {currentTable &&
-              isPlayerSeated &&
-              seatId &&
-              currentTable.seats &&
-              currentTable.seats[seatId] &&
-              currentTable.seats[seatId].turn && (
+            {(() => {
+              if (!currentTable || !isPlayerSeated || !seatId) {
+                console.log('🎮 [Play] GameUI non affiché - conditions de base non remplies:', {
+                  hasCurrentTable: !!currentTable,
+                  isPlayerSeated,
+                  hasSeatId: !!seatId
+                });
+                return null;
+              }
+
+              const currentSeat = currentTable.seats?.[seatId];
+              if (!currentSeat) {
+                console.log('🎮 [Play] GameUI non affiché - siège non trouvé:', { seatId });
+                return null;
+              }
+
+              console.log('🎮 [Play] État du siège:', {
+                seatId,
+                hasTurn: currentSeat.turn,
+                isPlayerSeated
+              });
+
+              if (!currentSeat.turn) {
+                console.log('🎮 [Play] GameUI non affiché - pas le tour du joueur');
+                return null;
+              }
+
+              return (
                 <GameUI
                   currentTable={currentTable}
                   seatId={seatId}
@@ -574,7 +542,8 @@ const Play: React.FC = () => {
                   playOneCard={playOneCard}
                   showDown={showDown}
                 />
-              )}
+              );
+            })()}
           </Container>
         </>
       )}
