@@ -5,17 +5,9 @@ import gameContext from '../context/game/gameContext';
 
 const useTable = () => {
     const SERVER_URI = process.env.REACT_APP_SERVER_URI;
-    const [isOnTable, setIsOnTable] = useState(() => {
-        const storedIsOnTable = localStorage.getItem('isOnTable');
-        return storedIsOnTable === 'true';
-    });
+    const [isOnTable, setIsOnTable] = useState(false);
 
-    const updateIsOnTable = (value: boolean) => {
-        setIsOnTable(value);
-        localStorage.setItem('isOnTable', value.toString());
-    };
-
-    const { currentTable } = useContext(gameContext);
+    const { currentTable, seatId } = useContext(gameContext);
     const [tableError, setTableError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -43,13 +35,12 @@ const useTable = () => {
     const leaveTable = async () => {
         try {
             const storedLink = localStorage.getItem('storedLink');
-            const storedSeatId = localStorage.getItem('seatId');
 
-            if (storedLink && storedSeatId) {
+            if (storedLink && seatId) {
                 const decodedData = JSON.parse(atob(storedLink));
                 const payload = {
                     tableId: decodedData.id,
-                    seatId: storedSeatId
+                    seatId: seatId
                 };
                 await Axios.post(`${SERVER_URI}/api/play/leave`, payload);
             }
@@ -57,10 +48,9 @@ const useTable = () => {
             // Continue even if error to clean local state
         }
 
-        updateIsOnTable(false);
+        setIsOnTable(false);
         setTableError(null);
         localStorage.removeItem('storedLink');
-        localStorage.removeItem('seatId');
     };
 
     useEffect(() => {
@@ -68,10 +58,10 @@ const useTable = () => {
         if (storedLink) {
             try {
                 JSON.parse(atob(storedLink));
-                updateIsOnTable(true);
+                setIsOnTable(true);
             } catch (error) {
                 localStorage.removeItem('storedLink');
-                updateIsOnTable(false);
+                setIsOnTable(false);
             }
         }
     }, []);
@@ -94,7 +84,7 @@ const useTable = () => {
             const tableInfo = res.data;
 
             if (tableInfo) {
-                updateIsOnTable(true);
+                setIsOnTable(true);
                 localStorage.setItem('storedLink', table.link);
                 setIsLoading(false);
                 return true;
@@ -115,7 +105,7 @@ const useTable = () => {
         setTableError(null);
 
         try {
-            updateIsOnTable(true);
+            setIsOnTable(true);
             setIsLoading(false);
             return true;
         } catch (error) {

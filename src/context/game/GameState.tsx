@@ -109,7 +109,7 @@ const GameState = ({ children }: GameStateProps) => {
         if (message.trim() === '') return;
         socket.emit(SEND_CHAT_MESSAGE, {
             tableId: currentTableRef.current.id,
-            seatId: seatId || null,
+            seatId: seatId,
             message,
         });
     };
@@ -302,38 +302,6 @@ const GameState = ({ children }: GameStateProps) => {
             addMessage(message);
         }
     };
-
-    // Similarly to the original code, checks if user is actually seated
-    // const updatePlayerSeatStatus = (table: Table) => {
-    //     let foundPlayerSeat = false;
-    //     let foundPlayerTurn = false;
-
-    //     if (table.seats) {
-    //         for (const currentSeatId in table.seats) {
-    //             const seat = table.seats[currentSeatId];
-    //             if (!seat?.player) continue;
-
-    //             const isOurUser =
-    //                 seat.player.userId === userId ||
-    //                 (seat.player.name === userName && !seat.player.userId);
-
-    //             if (isOurUser) {
-    //                 foundPlayerSeat = true;
-    //                 foundPlayerTurn = !!seat.turn;
-    //                 setSeatId(currentSeatId);
-    //                 setIsPlayerSeated(true);
-    //                 break;
-    //             }
-    //         }
-    //     }
-
-    //     if (!foundPlayerSeat && isPlayerSeated) {
-    //         setIsPlayerSeated(false);
-    //         setSeatId(null);
-    //     }
-
-    //     return { foundPlayerSeat, foundPlayerTurn };
-    // };
 
     // The missing functions from the original GameContext
     const joinTableByLink = async (_link: string): Promise<boolean> => {

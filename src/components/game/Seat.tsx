@@ -127,7 +127,6 @@ export const Seat: React.FC<SeatProps> = ({
 
   // Gérer le turnStartTime pour éviter les re-renders inutiles
   useEffect(() => {
-    console.log("[Seat.tsx] seatNumber:", seatNumber, "seat?.turn:", seat?.turn);
     if (seat?.turn) {
       // Si c'est un nouveau tour (pas encore de turnStartTime ou le serveur a un nouveau turnStartTime)
       if (
@@ -169,7 +168,6 @@ export const Seat: React.FC<SeatProps> = ({
                           amount <= chipsAmount &&
                           amount <= maxBuyIn
                         ) {
-                          // Removed references to localStorage
                           sitDown(
                             currentTable?.id || '',
                             seatNumber,

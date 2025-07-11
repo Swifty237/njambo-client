@@ -115,15 +115,17 @@ const Play: React.FC = () => {
       return;
     }
 
-    if (!socket) {
-      openModal(
-        () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
-        getLocalizedString('game_lost-connection-modal_header'),
-        getLocalizedString('game_lost-connection-modal_btn-txt'),
-        () => history.push('/'),
-      );
-      return;
-    }
+    setTimeout(() => {
+      if (!socket) {
+        openModal(
+          () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
+          getLocalizedString('game_lost-connection-modal_header'),
+          getLocalizedString('game_lost-connection-modal_btn-txt'),
+          () => history.push('/'),
+        );
+        return;
+      }
+    }, 500)
 
     if (!isOnTable && !storedLink) {
       history.push('/');
@@ -149,9 +151,9 @@ const Play: React.FC = () => {
   const handleSendMessage = (table: Table, seatId: string | null, message: string) => {
     sendMessage(message, seatId);
     setRefresh(true);
-    if (seatId && table.seats[seatId]) {
-      sitDown(table.id, seatId, table.seats[seatId].stack);
-    }
+    // if (seatId && table.seats[seatId]) {
+    //   sitDown(table.id, seatId, table.seats[seatId].stack);
+    // }
   };
 
   const markMessagesAsRead = () => {
@@ -165,6 +167,7 @@ const Play: React.FC = () => {
     openModal(
       () => <ChatContent
         currentTable={currentTable}
+        seatId={seatId}
         onSendMessage={handleSendMessage}
       />,
       'Chat room',
@@ -182,37 +185,26 @@ const Play: React.FC = () => {
   const handleLeaveTable = () => {
     leaveTable();
     leaveTableRequest();
-    localStorage.removeItem('socketId');
     localStorage.removeItem('storedLink');
-    localStorage.removeItem("seatNumber");
-    localStorage.removeItem("isPlayerSeated");
   };
 
   const renderGameUI = () => {
-    console.log("*** renderGameUI called ***");
-    console.log("currentTable:", currentTable);
-    console.log("isPlayerSeated:", isPlayerSeated);
-    console.log("seatId:", seatId);
+
 
     if (!currentTable || !seatId) {
-      console.log("renderGameUI => returning null: missing table, or user not seated, or seatId null");
       return null;
     }
 
     const currentSeat = currentTable.seats?.[seatId];
-    console.log("currentSeat:", currentSeat);
 
     if (!currentSeat) {
-      console.log("renderGameUI => returning null: seat not found in currentTable.seats");
       return null;
     }
 
     if (!currentSeat.turn) {
-      console.log("renderGameUI => returning null: seat.turn is false");
       return null;
     }
 
-    console.log("renderGameUI => returning <GameUI /> because seat.turn is true");
     return (
       <GameUI
         currentTable={currentTable}

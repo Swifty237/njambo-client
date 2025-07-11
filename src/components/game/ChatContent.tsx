@@ -5,15 +5,14 @@ import gameContext from "../../context/game/gameContext";
 
 interface ChatContentProps {
     currentTable: Table | null;
+    seatId: string | null;
     onSendMessage: (table: Table, seatId: string | null, message: string) => void;
 }
 
-const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessage }: ChatContentProps) {
+const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSendMessage }: ChatContentProps) {
     const [localMessage, setLocalMessage] = useState('');
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const storedSeatId = localStorage.getItem("seatId");
-    const { sitDown } = useContext(gameContext);
     // Récupérer la valeur de l'input et envoyer le message
     const input = document.querySelector('input[type="text"]') as HTMLInputElement;
 
@@ -24,17 +23,20 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
     useEffect(() => {
         if (currentTable && currentTable.chatRoom && currentTable.chatRoom.chatMessages) {
             // Adapter la structure des messages du serveur
-            const adaptedMessages = currentTable.chatRoom.chatMessages.map((msg: any) => ({
+            const adaptedMessages = currentTable.chatRoom.chatMessages.map((msg: ChatMessage) => ({
                 // name: msg.seat?.player?.name || 'Anonyme',
-                name: `${msg.seat?.player?.name} ${!msg.seat?.id ? '(Observateur)' : ''}`,
+                name: `${!msg.seatId ? '(Observateur)' : msg.name}`,
                 message: msg.message,
-                seatId: msg.seat?.id || '',
+                seatId: msg.seatId,
                 createdAt: msg.createdAt
             }));
 
+            console.log("[useEffect] - chatMessages", adaptedMessages);
+
             setChatMessages(adaptedMessages);
         }
-    }, [currentTable]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentTable?.chatRoom.chatMessages]);
 
     useEffect(() => {
         scrollToBottom();
@@ -43,7 +45,8 @@ const ChatContent = React.memo(function ChatContent({ currentTable, onSendMessag
     const handleLocalSubmit = () => {
         if (input && input.value.trim() && currentTable) {
             // Passer storedSeatId même s'il est null (pour les observateurs)
-            onSendMessage(currentTable, storedSeatId, input.value.trim());
+            console.log("[handleLocalSubmit] - seatId", seatId);
+            onSendMessage(currentTable, seatId ? seatId : '', input.value.trim());
             input.value = '';
         }
     };
