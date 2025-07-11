@@ -27,7 +27,7 @@ interface LobbyInfo {
 
 const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { isLoggedIn } = useContext(authContext);
-    const { setTables, setPlayers, id: userId, userName, chipsAmount } = useContext(globalContext);
+    const { setTables, setPlayers, id: userId } = useContext(globalContext);
 
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketId, setSocketId] = useState<string | null>(null);
@@ -59,6 +59,8 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
     useEffect(() => {
         window.addEventListener('beforeclose', cleanUp);
+
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -73,6 +75,7 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
                 cleanUp();
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isLoggedIn, userId]);
 
     function cleanUp() {

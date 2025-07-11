@@ -15,7 +15,7 @@ const useTable = () => {
         localStorage.setItem('isOnTable', value.toString());
     };
 
-    const { currentTable, joinTable } = useContext(gameContext);
+    const { currentTable } = useContext(gameContext);
     const [tableError, setTableError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
 

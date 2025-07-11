@@ -6,8 +6,103 @@ import { EmptySeat } from './EmptySeat';
 interface OccupiedSeatProps {
   seatNumber: string;
   hasTurn: boolean;
-  turnStartTime?: number; // timestamp in ms when the turn started
+  turnStartTime?: number;
 }
+
+const FULL_DURATION = 30000; // 30 seconds in ms
+
+export const OccupiedSeat = ({ hasTurn, seatNumber, turnStartTime }: OccupiedSeatProps) => {
+  const [elapsed, setElapsed] = useState(0);
+  const requestRef = useRef<number>();
+  const previousStartTimeRef = useRef<number>();
+
+  useEffect(() => {
+    // Toujours réinitialiser quand turnStartTime change
+    if (turnStartTime !== previousStartTimeRef.current) {
+      setElapsed(0);
+      previousStartTimeRef.current = turnStartTime;
+    }
+
+    if (!hasTurn || !turnStartTime) {
+      setElapsed(0);
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+      return;
+    }
+
+    const update = () => {
+      const now = Date.now();
+      const newElapsed = now - turnStartTime;
+
+      if (newElapsed >= FULL_DURATION) {
+        setElapsed(FULL_DURATION);
+        if (requestRef.current) {
+          cancelAnimationFrame(requestRef.current);
+        }
+        return;
+      }
+
+      setElapsed(newElapsed);
+      requestRef.current = requestAnimationFrame(update);
+    };
+
+    requestRef.current = requestAnimationFrame(update);
+
+    return () => {
+      if (requestRef.current) {
+        cancelAnimationFrame(requestRef.current);
+      }
+    };
+  }, [hasTurn, turnStartTime]);
+
+  const radius = 60;
+  const circumference = 2 * Math.PI * radius;
+  const progress = Math.min(elapsed / FULL_DURATION, 1);
+  const strokeDashoffset = circumference * (1 - progress);
+
+  return (
+    <StyledOccupiedSeat
+      hasTurn={hasTurn}
+      seatNumber={seatNumber}
+      className={hasTurn ? 'hasTurn' : ''}
+    >
+      {hasTurn && (
+        <div className="circle-timer" aria-label="Turn timer">
+          <svg
+            width="130"
+            height="130"
+            viewBox="0 0 130 130"
+            style={{ transform: 'rotate(-90deg)' }}
+          >
+            <circle
+              cx="65"
+              cy="65"
+              r={radius}
+              stroke="#E0E0E0"
+              strokeWidth="10"
+              fill="none"
+            />
+            <circle
+              cx="65"
+              cy="65"
+              r={radius}
+              stroke="#219653"
+              strokeWidth="10"
+              fill="none"
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              style={{
+                transition: 'stroke-dashoffset 0.1s linear',
+                transformOrigin: 'center',
+              }}
+            />
+          </svg>
+        </div>
+      )}
+    </StyledOccupiedSeat>
+  );
+};
 
 const StyledOccupiedSeat = styled(EmptySeat)`
   position: relative;
@@ -41,19 +136,15 @@ const StyledOccupiedSeat = styled(EmptySeat)`
     0% {
       transform: scale(1);
     }
-
     25% {
       transform: scale(1.5);
     }
-
     50% {
       transform: scale(1);
     }
-
     75% {
       transform: scale(1.5);
     }
-
     100% {
       transform: scale(1.1);
     }
@@ -63,112 +154,16 @@ const StyledOccupiedSeat = styled(EmptySeat)`
     width: 7vw;
     height: 7vw;
   }
-
   @media (max-width: 1350px) {
     width: 10vw;
     height: 10vw;
   }
-
   @media (max-width: 1000px) {
     width: 14vw;
     height: 14vw;
   }
-
   @media (max-width: 700px) {
     width: 18vw;
     height: 18vw;
   }
 `;
-
-const FULL_DURATION = 30000; // 30 seconds in ms
-
-export const OccupiedSeat = ({ hasTurn, seatNumber, turnStartTime }: OccupiedSeatProps) => {
-  const [elapsed, setElapsed] = useState(0);
-  const requestRef = useRef<number>();
-
-  useEffect(() => {
-    if (!hasTurn || !turnStartTime) {
-      setElapsed(0);
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-      return;
-    }
-
-    // Remettre à zéro immédiatement quand un nouveau tour commence
-    setElapsed(0);
-
-    const update = () => {
-      const now = Date.now();
-      const newElapsed = now - turnStartTime;
-      if (newElapsed >= FULL_DURATION) {
-        setElapsed(FULL_DURATION);
-        if (requestRef.current) {
-          cancelAnimationFrame(requestRef.current);
-        }
-        return;
-      }
-      setElapsed(newElapsed);
-      requestRef.current = requestAnimationFrame(update);
-    };
-
-    requestRef.current = requestAnimationFrame(update);
-
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [hasTurn, turnStartTime]);
-
-  // Calculate strokeDashoffset for SVG circle animation
-  const radius = 60;
-  const circumference = 2 * Math.PI * radius;
-  // Le cercle commence plein (offset = 0) et se vide progressivement
-  const progress = Math.min(elapsed / FULL_DURATION, 1);
-  const strokeDashoffset = circumference * (1 - progress);
-
-  return (
-    <StyledOccupiedSeat
-      hasTurn={hasTurn}
-      seatNumber={seatNumber}
-      className={hasTurn ? 'hasTurn' : ''}
-    >
-      {hasTurn && (
-        <div className="circle-timer" aria-label="Turn timer">
-          <svg
-            width="130"
-            height="130"
-            viewBox="0 0 130 130"
-            style={{ transform: 'rotate(-90deg)' }}
-          >
-            {/* Cercle de fond (gris) */}
-            <circle
-              cx="65"
-              cy="65"
-              r={radius}
-              stroke="#E0E0E0"
-              strokeWidth="10"
-              fill="none"
-            />
-            {/* Cercle de progression (vert) */}
-            <circle
-              cx="65"
-              cy="65"
-              r={radius}
-              stroke="#219653"
-              strokeWidth="10"
-              fill="none"
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              style={{
-                transition: 'stroke-dashoffset 0.1s linear',
-                transformOrigin: 'center',
-              }}
-            />
-          </svg>
-        </div>
-      )}
-    </StyledOccupiedSeat>
-  );
-};

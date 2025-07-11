@@ -1,3 +1,6 @@
+// Removed references to localStorage seatNumber, seatId, isPlayerSeated (where applicable).
+// We rely solely on the context logic now.
+
 import React, { useContext, useEffect, useRef } from 'react';
 import Button from '../buttons/Button';
 import modalContext from '../../context/modal/modalContext';
@@ -21,16 +24,20 @@ import Markdown from 'react-remarkable';
 import DealerButton from '../icons/DealerButton';
 import { StyledSeat } from './StyledSeat';
 import { PlayedHand } from './PlayedHand';
-import { SeatProps, CardProps } from '../../types/SeatTypesProps'
+import { SeatProps, CardProps } from '../../types/SeatTypesProps';
 import PlayedCard from './PlayedCard';
 import { Tooltip } from 'react-tooltip';
 
-export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSeated, sitDown }) => {
+export const Seat: React.FC<SeatProps> = ({
+  currentTable,
+  seatNumber,
+  isPlayerSeated,
+  sitDown,
+}) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
   const { standUp, rebuy, getHandsPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
-  const storedSeatId = localStorage.getItem("seatId");
   const turnStartTimeRef = useRef<number | undefined>(undefined);
 
   const seat = currentTable?.seats?.[seatNumber];
@@ -47,10 +54,13 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
       return false;
     }
 
-    return seat.hand.every(card => card.rank === 'hidden' && card.suit === 'hidden');
-  }
+    return seat.hand.every(
+      (card) => card.rank === 'hidden' && card.suit === 'hidden',
+    );
+  };
 
   useEffect(() => {
+    // If the user is seated but the seat has 0 stack, prompt rebuy
     if (
       currentTable &&
       isPlayerSeated &&
@@ -67,8 +77,10 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
               onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                 e.preventDefault();
 
-                const amountInput = document.getElementById('amount') as HTMLInputElement | null;
-                const amount = amountInput ? + amountInput.value : 0;
+                const amountInput = document.getElementById(
+                  'amount',
+                ) as HTMLInputElement | null;
+                const amount = amountInput ? +amountInput.value : 0;
 
                 if (
                   amount &&
@@ -110,20 +122,25 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
         );
       }
     }
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentTable]);
 
   // Gérer le turnStartTime pour éviter les re-renders inutiles
   useEffect(() => {
+    console.log("[Seat.tsx] seatNumber:", seatNumber, "seat?.turn:", seat?.turn);
     if (seat?.turn) {
       // Si c'est un nouveau tour (pas encore de turnStartTime ou le serveur a un nouveau turnStartTime)
-      if (!turnStartTimeRef.current || (seat.turnStartTime && seat.turnStartTime !== turnStartTimeRef.current)) {
+      if (
+        !turnStartTimeRef.current ||
+        (seat.turnStartTime && seat.turnStartTime !== turnStartTimeRef.current)
+      ) {
         turnStartTimeRef.current = seat.turnStartTime || Date.now();
       }
     } else {
       // Réinitialiser quand ce n'est plus le tour du joueur
       turnStartTimeRef.current = undefined;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seat?.turn, seat?.turnStartTime]);
 
   return (
@@ -141,8 +158,10 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                       onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
                         e.preventDefault();
 
-                        const amountInput = document.getElementById('amount') as HTMLInputElement | null;
-                        const amount = amountInput ? + amountInput.value : 0;
+                        const amountInput = document.getElementById(
+                          'amount',
+                        ) as HTMLInputElement | null;
+                        const amount = amountInput ? +amountInput.value : 0;
 
                         if (
                           amount &&
@@ -150,6 +169,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                           amount <= chipsAmount &&
                           amount <= maxBuyIn
                         ) {
+                          // Removed references to localStorage
                           sitDown(
                             currentTable?.id || '',
                             seatNumber,
@@ -157,13 +177,16 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                           );
                           closeModal();
                         }
-                      }}>
+                      }}
+                    >
                       <FormGroup>
                         <Input
                           id="amount"
                           type="number"
                           min={minBuyIn}
-                          max={chipsAmount <= maxBuyIn ? chipsAmount : maxBuyIn}
+                          max={
+                            chipsAmount <= maxBuyIn ? chipsAmount : maxBuyIn
+                          }
                           defaultValue={minBuyIn}
                         />
                       </FormGroup>
@@ -181,11 +204,17 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
               >
                 {getLocalizedString('game_sitdown-btn')}
               </Button>
-              <Tooltip id="sitdown-tooltip" content={"Clique ici pour t'asseoir"} place="bottom" />
+              <Tooltip
+                id="sitdown-tooltip"
+                content={"Clique ici pour t'asseoir"}
+                place="bottom"
+              />
             </>
           ) : (
             <EmptySeat>
-              <Markdown>{getLocalizedString('game_table_empty-seat')}</Markdown>
+              <Markdown>
+                {getLocalizedString('game_table_empty-seat')}
+              </Markdown>
             </EmptySeat>
           )}
         </>
@@ -196,40 +225,51 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             textAlign: 'center',
             justifyContent: 'center',
             alignItems: 'center',
-            position: 'relative'
-          }}>
+            position: 'relative',
+          }}
+        >
           <PositionedUISlot
-            top={(seatNumber === "4") ? "4.25rem" : "-9.25rem"}
+            top={seatNumber === '4' ? '4.25rem' : '-9.25rem'}
             left="-100px"
             origin="top center"
           >
             <NameTag>
-              <ColoredText primary style={{ boxShadow: "0 4px 12px rgba(0, 0, 0, 0.5)" }}>
-                <span style={{
-                  fontSize: "22px",
-                  backgroundColor: "#ecf0f1",
-                  display: "flex",
-                  flexDirection: "column"
-                }}>
-                  {seat?.player?.name || ''}
+              <ColoredText
+                primary
+                style={{ boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)' }}
+              >
+                <span
+                  style={{
+                    fontSize: '22px',
+                    backgroundColor: '#ecf0f1',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  }}
+                >
+                  {seat?.player?.name}
                 </span>
 
                 {seat?.stack && (
-                  <div style={{
-                    minWidth: "150px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-around",
-                    backgroundColor: "rgba(0, 0, 0)",
-                    paddingRight: "10px",
-                    borderRadius: "10px"
-                  }}>
+                  <div
+                    style={{
+                      minWidth: '150px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-around',
+                      backgroundColor: 'rgba(0, 0, 0)',
+                      paddingRight: '10px',
+                      borderRadius: '10px',
+                    }}
+                  >
                     <PokerChip width="38" height="38" />
                     <div>
-                      <ColoredText secondary style={{ marginRight: "7px", fontSize: "22px" }}>
+                      <ColoredText
+                        secondary
+                        style={{ marginRight: '7px', fontSize: '22px' }}
+                      >
                         {new Intl.NumberFormat(
                           document.documentElement.lang,
-                        ).format(seat?.stack || 0)}
+                        ).format(seat?.stack)}
                       </ColoredText>
                       <ColoredText secondary>{'XAF'}</ColoredText>
                     </div>
@@ -242,7 +282,7 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
           <PositionedUISlot>
             <OccupiedSeat
               seatNumber={seatNumber}
-              hasTurn={seat?.turn || false}
+              hasTurn={seat?.turn}
               turnStartTime={turnStartTimeRef.current}
             />
           </PositionedUISlot>
@@ -259,28 +299,33 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                 data-tooltip-id="hand-card-tooltip"
                 hiddenCards={isHiddenCards()}
               >
-                {seat?.hand && seat.hand.map((card: CardProps, index: number) => (
-                  <HandCard
-                    key={`${card.suit}-${card.rank}-${index}`}
-                    card={card}
-                    width="5vw"
-                    maxWidth="60px"
-                    minWidth="30px"
-                  />
-                ))}
+                {seat?.hand &&
+                  seat.hand.map((card: CardProps, index: number) => (
+                    <HandCard
+                      key={`${card.suit}-${card.rank}-${index}`}
+                      card={card}
+                      width="5vw"
+                      maxWidth="60px"
+                      minWidth="30px"
+                    />
+                  ))}
               </Hand>
-              <Tooltip id="hand-card-tooltip" content={"Un clic pour soulever une carte ou double clic pour jouer"} place={seatNumber === "1" || "2" ? "right" : "left"} />
+              <Tooltip
+                id="hand-card-tooltip"
+                content={"Un clic pour soulever une carte ou double clic pour jouer"}
+                place={seatNumber === '1' || '2' ? 'right' : 'left'}
+              />
             </>
 
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
               <>
-                <PlayedHand
-                  data-tooltip-id="played-cards-tooltip"
-                >
+                <PlayedHand data-tooltip-id="played-cards-tooltip">
                   {seat?.playedHand &&
                     seat.playedHand.map((card: CardProps, index: number) => (
                       <PlayedCard
@@ -292,7 +337,11 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
                       />
                     ))}
                 </PlayedHand>
-                <Tooltip id="played-cards-tooltip" content={`Carte(s) jouée(s) par ${seat.player.name}`} place={seatNumber === "1" || "2" ? "left" : "right"} />
+                <Tooltip
+                  id="played-cards-tooltip"
+                  content={`Carte(s) jouée(s) par ${seat?.player?.name || ''}`}
+                  place={seatNumber === '1' || '2' ? 'left' : 'right'}
+                />
               </>
             </div>
           </PositionedUISlot>
@@ -301,7 +350,11 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             <PositionedUISlot
               right={seatNumber === '1' || seatNumber === '2' ? '38px' : 'auto'}
               left={seatNumber === '3' || seatNumber === '4' ? '38px' : 'auto'}
-              origin={seatNumber === '1' || seatNumber === '2' ? 'center left' : 'center right'}
+              origin={
+                seatNumber === '1' || seatNumber === '2'
+                  ? 'center left'
+                  : 'center right'
+              }
               style={{ zIndex: '55' }}
             >
               <DealerButton />
@@ -312,9 +365,11 @@ export const Seat: React.FC<SeatProps> = ({ currentTable, seatNumber, isPlayerSe
             style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
-            {currentTable?.handOver && seat?.lastAction && seat.lastAction !== 'PLAY_ONE_CARD' && (
-              <InfoPill>{seat.lastAction}</InfoPill>
-            )}
+            {currentTable?.handOver &&
+              seat?.lastAction &&
+              seat.lastAction !== 'PLAY_ONE_CARD' && (
+                <InfoPill>{seat.lastAction}</InfoPill>
+              )}
           </PositionedUISlot>
         </PositionedUISlot>
       )}

@@ -9,7 +9,6 @@ import { Tooltip } from 'react-tooltip';
 type GameUIProps = {
   currentTable: any; // Replace 'any' with the actual type if available
   seatId: string;
-
   standUp: () => void;
   playOneCard: (cards: CardProps, seatNumber: string) => void;
   showDown: () => void
@@ -26,6 +25,7 @@ export const GameUI: React.FC<GameUIProps> = ({
   const { elevatedCard } = useContext(gameContext);
 
   const handlePlayCard = () => {
+    const seat = currentTable?.seats?.[seatId];
     if (elevatedCard) {
       // Extraire les informations de la carte depuis elevatedCard
       // Format: "seatId-suit-rank"
@@ -34,6 +34,7 @@ export const GameUI: React.FC<GameUIProps> = ({
         const [cardSeatId, suit, rank] = parts;
         const card: CardProps = { suit, rank };
         playOneCard(card, cardSeatId);
+        seat.turn = false;
       }
     }
   };

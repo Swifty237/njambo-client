@@ -100,10 +100,12 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
 
     const isFirstCardOfRound = currentTable.currentRoundCards.length === 0;
     const isFirstRound = currentTable.roundNumber === 1;
+    const seat = currentTable?.seats?.[seatId];
 
     // Premier tour, première carte : aucune restriction
     if (isFirstRound && isFirstCardOfRound) {
       playOneCard({ suit, rank }, seatId);
+      seat.turn = false;
       return;
     }
 
@@ -111,11 +113,13 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
     if (isFirstRound && !isFirstCardOfRound) {
       if (suit === currentTable.demandedSuit) {
         playOneCard({ suit, rank }, seatId);
+        seat.turn = false;
       } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
         return;
       } else {
         // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
         playOneCard({ suit, rank }, seatId);
+        seat.turn = false;
       }
       return;
     }
@@ -125,15 +129,18 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
       // Première carte du tour : aucune restriction
       if (isFirstCardOfRound) {
         playOneCard({ suit, rank }, seatId);
+        seat.turn = false;
       } else {
         // Cartes suivantes : même logique que le premier tour
         if (suit === currentTable.demandedSuit) {
           playOneCard({ suit, rank }, seatId);
+          seat.turn = false;
         } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
           return;
         } else {
           // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
           playOneCard({ suit, rank }, seatId);
+          seat.turn = false;
         }
       }
     }

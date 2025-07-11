@@ -52,17 +52,16 @@ const MainPage: React.FC = () => {
               bet: table.bet || 0,
               isPrivate: table.isPrivate || false
             })),
-            // Valeurs par défaut pour les autres propriétés de Table
-            seats: {},
-            callAmount: 0,
-            pot: 0,
-            winMessages: '',
-            button: '',
-            handOver: false,
-            demandedSuit: '',
-            currentRoundCards: [],
-            roundNumber: 0,
-            chatRoom: { chatMessages: [] }
+            seats: table.seats,
+            callAmount: table.callAmount,
+            pot: table.pot,
+            winMessages: table.winMessages,
+            button: table.button,
+            handOver: table.handOver,
+            demandedSuit: table.demandedSuit,
+            currentRoundCards: table.currentRoundCards,
+            roundNumber: table.roundNumber,
+            chatRoom: table.chatRoom
           };
 
           // Chercher l'index de la table existante

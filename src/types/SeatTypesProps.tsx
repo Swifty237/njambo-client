@@ -1,6 +1,6 @@
 export interface Player {
+    id: string;
     socketId: string;
-    userId: string;
     name: string;
     chipsAmount: string;
 }
