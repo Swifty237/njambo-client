@@ -8,6 +8,9 @@ interface ModalProviderProps {
 
 const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [showModal, setShowModal] = useState(false);
+  const [isChatModalOpen, setIsChatModalOpen] = useState(false);
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const [lastReadTime, setLastReadTime] = useState(Date.now());
   const [modalData, setModalData] = useState<ModalDataProps>(initialModalData);
 
   useEffect(() => {
@@ -49,10 +52,24 @@ const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     setShowModal(true);
   };
 
-  const closeModal = () => setShowModal(false);
+  const closeModal = () => {
+    setShowModal(false);
+    setIsChatModalOpen(false);
+  }
 
   return (
-    <ModalContext.Provider value={{ showModal, modalData, openModal, closeModal }}>
+    <ModalContext.Provider value={{
+      showModal,
+      modalData,
+      isChatModalOpen,
+      unreadMessages,
+      lastReadTime,
+      setLastReadTime,
+      setUnreadMessages,
+      setIsChatModalOpen,
+      openModal,
+      closeModal
+    }}>
       {showModal && (
         <Modal
           headingText={modalData.headingText}

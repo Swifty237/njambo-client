@@ -31,14 +31,26 @@ const Play: React.FC = () => {
   const history = useHistory();
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
-  const { openModal, closeModal } = useContext(modalContext);
+
+  const {
+    isChatModalOpen,
+    unreadMessages,
+    lastReadTime,
+    setIsChatModalOpen,
+    openModal,
+    setUnreadMessages,
+    closeModal,
+    setLastReadTime
+  } = useContext(modalContext);
+
   const { isOnTable, leaveTableRequest } = useContext(tableContext);
+
   const {
     messages,
     currentTable,
     seatId,
     refresh,
-    setRefresh,
+    isPlayerSeated,
     leaveTable,
     sitDown,
     standUp,
@@ -46,20 +58,17 @@ const Play: React.FC = () => {
     playOneCard,
     showDown,
     sendMessage,
-    isPlayerSeated
   } = useContext(gameContext);
 
 
-  const [localRefresh, setLocalRefresh] = useState(refresh);
+  const [localRefresh, setLocalRefresh] = useState(false);
+  const [localUnreadMessages, setLocalUnreadMessages] = useState(0);
   const { getLocalizedString, isLoading: contentIsLoading } = useContext(contentContext);
 
-  const [unreadMessages, setUnreadMessages] = useState(0);
-  const [lastReadTime, setLastReadTime] = useState(Date.now());
   const storedLink = localStorage.getItem("storedLink");
 
   const [isInitialized, setIsInitialized] = useState(false);
   const [isInitializing, setIsInitializing] = useState(false);
-
 
   useEffect(() => {
     if (isInitialized || isInitializing) return;
@@ -134,26 +143,47 @@ const Play: React.FC = () => {
   }, [socket, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
 
   useEffect(() => {
-    setLocalRefresh(refresh)
+    console.log("[UseEffect/Play] - refresh : ", refresh);
+    setLocalRefresh(refresh);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
 
   useEffect(() => {
     if (localRefresh) {
-      closeModal();
-      setTimeout(() => {
-        openChatModal()
-        setRefresh(false);
-      }, 5)
+
+      if (isChatModalOpen) {
+        closeModal();
+        setTimeout(() => {
+          openChatModal();
+          // !isChatModalOpen && closeModal();
+        }, 10)
+      };
+
+      updateChatNotifications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTable?.chatRoom?.chatMessages])
+  }, [localRefresh]);
+
+  const updateChatNotifications = () => {
+    const allMessages = currentTable?.chatRoom?.chatMessages;
+
+    if (isChatModalOpen || !allMessages || allMessages.length === 0) {
+      return;
+    }
+
+    const newUnreadMessages = allMessages.filter(
+      (msg) => new Date(msg.createdAt).getTime() > lastReadTime
+    );
+
+    setUnreadMessages(newUnreadMessages.length);
+  }
+
+  useEffect(() => {
+    setLocalUnreadMessages(unreadMessages);
+  }, [unreadMessages])
 
   const handleSendMessage = (table: Table, seatId: string | null, message: string) => {
     sendMessage(message, seatId);
-    setRefresh(true);
-    // if (seatId && table.seats[seatId]) {
-    //   sitDown(table.id, seatId, table.seats[seatId].stack);
-    // }
   };
 
   const markMessagesAsRead = () => {
@@ -163,6 +193,7 @@ const Play: React.FC = () => {
 
   const openChatModal = () => {
     markMessagesAsRead();
+    setIsChatModalOpen(true);
 
     openModal(
       () => <ChatContent
@@ -264,7 +295,7 @@ const Play: React.FC = () => {
                           </span>
                         </Button>
 
-                        {unreadMessages > 0 && (
+                        {localUnreadMessages > 0 && (
                           <div
                             style={{
                               color: 'white',

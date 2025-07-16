@@ -11,6 +11,12 @@ export interface ModalDataProps {
 interface modalContextType {
     showModal: boolean;
     modalData: ModalDataProps;
+    isChatModalOpen: boolean,
+    unreadMessages: number,
+    lastReadTime: number,
+    setLastReadTime: (value: React.SetStateAction<number>) => void,
+    setUnreadMessages: (value: React.SetStateAction<number>) => void,
+    setIsChatModalOpen: (value: React.SetStateAction<boolean>) => void,
     openModal: (
         children: () => React.ReactNode,
         headingText: string,
@@ -32,6 +38,12 @@ const modalDataObject: ModalDataProps = {
 const modalContext = createContext<modalContextType>({
     showModal: false,
     modalData: modalDataObject,
+    isChatModalOpen: false,
+    unreadMessages: 0,
+    lastReadTime: Date.now(),
+    setLastReadTime: () => { },
+    setUnreadMessages: () => { },
+    setIsChatModalOpen: () => { },
     openModal: () => { },
     closeModal: () => { },
 });

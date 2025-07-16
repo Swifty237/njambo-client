@@ -22,6 +22,7 @@ import {
     SHOW_DOWN,
     SEND_CHAT_MESSAGE,
     CHAT_MESSAGE_RECEIVED,
+    REFRESH_CHAT
 } from '../../pokergame/actions';
 
 import authContext from '../auth/authContext';
@@ -303,6 +304,14 @@ const GameState = ({ children }: GameStateProps) => {
         }
     };
 
+    const handleRefreshChat = ({ table }: TableUpdatedPayload) => {
+        setCurrentTable(table);
+        setRefresh(true);
+        setTimeout(() => {
+            setRefresh(false);
+        }, 5)
+    };
+
     // The missing functions from the original GameContext
     const joinTableByLink = async (_link: string): Promise<boolean> => {
         // No-op for now
@@ -325,6 +334,7 @@ const GameState = ({ children }: GameStateProps) => {
         socket.on(PLAYED_CARD, handlePlayedCard);
         socket.on(SHOW_DOWN, handleShowDownWrapper);
         socket.on(CHAT_MESSAGE_RECEIVED, handleChatMessage);
+        socket.on(REFRESH_CHAT, handleRefreshChat);
 
         return () => {
             //

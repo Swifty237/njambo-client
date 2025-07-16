@@ -1,7 +1,6 @@
-import React, { ChangeEvent, useEffect, useRef, useState, KeyboardEvent, useContext } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState, KeyboardEvent } from "react";
 import { ChatMessage, Table } from "../../types/SeatTypesProps";
 import { Input } from "../forms/Input";
-import gameContext from "../../context/game/gameContext";
 
 interface ChatContentProps {
     currentTable: Table | null;
@@ -31,8 +30,6 @@ const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSe
                 createdAt: msg.createdAt
             }));
 
-            console.log("[useEffect] - chatMessages", adaptedMessages);
-
             setChatMessages(adaptedMessages);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,7 +42,6 @@ const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSe
     const handleLocalSubmit = () => {
         if (input && input.value.trim() && currentTable) {
             // Passer storedSeatId même s'il est null (pour les observateurs)
-            console.log("[handleLocalSubmit] - seatId", seatId);
             onSendMessage(currentTable, seatId ? seatId : '', input.value.trim());
             input.value = '';
         }
