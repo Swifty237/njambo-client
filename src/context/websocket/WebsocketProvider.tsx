@@ -32,12 +32,12 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     const [socket, setSocket] = useState<Socket | null>(null);
     const [socketId, setSocketId] = useState<string | null>(null);
 
-    const filterActiveTables = (tables: Table[]) => {
-        return tables.filter(table => {
-            const seats = table.seats || {};
-            return Object.values(seats).some(seat => seat && seat.player);
-        });
-    };
+    // const filterActiveTables = (tables: Table[]) => {
+    //     return tables.filter(table => {
+    //         const seats = table.seats || {};
+    //         return Object.values(seats).some(seat => seat && seat.player);
+    //     });
+    // };
 
     const checkStoredTableExists = (tables: Table[]) => {
         const storedLink = localStorage.getItem('storedLink');
@@ -111,10 +111,9 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
     function registerCallbacks(socket: Socket) {
         socket.on(RECEIVE_LOBBY_INFO, ({ tables, players, socketId }: LobbyInfo) => {
             checkStoredTableExists(tables);
-            const activeTables = filterActiveTables(tables);
             setSocketId(socketId);
-            setTables(activeTables);
             setPlayers(players);
+            setTables(tables);
         });
 
         socket.on(PLAYERS_UPDATED, (players: Player[]) => {
@@ -123,8 +122,7 @@ const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({ children }
 
         socket.on(TABLES_UPDATED, (tables: Table[]) => {
             checkStoredTableExists(tables);
-            const activeTables = filterActiveTables(tables);
-            setTables(activeTables);
+            setTables(tables);
         });
     }
 

@@ -34,6 +34,8 @@ const MainPage: React.FC = () => {
   }, [isOnTable, history])
 
   useEffect(() => {
+    console.log("[MainPage - tables] : ", tables);
+
     if (tables.length > 0) {
       setTablesList(prevList => {
         const updatedList = [...prevList];
@@ -97,10 +99,23 @@ const MainPage: React.FC = () => {
 
   const handleCreateTable = async (table: Table) => {
     clearTableError();
-    const success = await createTableRequest(table);
-    if (success) {
-      history.push(`/play`);
+
+    // La table est déjà ajoutée au contexte global dans TableModalCreator
+    // Donc elle apparaîtra automatiquement dans la liste via le useEffect qui écoute 'tables'
+
+    // Stocker le lien immédiatement pour permettre l'accès
+    localStorage.setItem('storedLink', table.link);
+
+    // Appel API en arrière-plan pour synchroniser avec le serveur (optionnel)
+    try {
+      await createTableRequest(table);
+    } catch (error) {
+      // Même si l'API échoue, la table reste accessible localement
+      console.warn('Erreur lors de la synchronisation avec le serveur:', error);
     }
+
+    // Rediriger vers la page de jeu
+    history.push(`/play`);
   };
 
   const handleJoinTableByLink = async () => {

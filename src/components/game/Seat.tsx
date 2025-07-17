@@ -200,7 +200,8 @@ export const Seat: React.FC<SeatProps> = ({
                   );
                 }}
               >
-                {getLocalizedString('game_sitdown-btn')}
+                {'S\'asseoir'}
+                {/* {getLocalizedString('game_sitdown-btn')} */}
               </Button>
               <Tooltip
                 id="sitdown-tooltip"
@@ -211,7 +212,8 @@ export const Seat: React.FC<SeatProps> = ({
           ) : (
             <EmptySeat>
               <Markdown>
-                {getLocalizedString('game_table_empty-seat')}
+                {/* {getLocalizedString('game_table_empty-seat')*/}
+                {'Siège vide'}
               </Markdown>
             </EmptySeat>
           )}
@@ -312,6 +314,9 @@ export const Seat: React.FC<SeatProps> = ({
                 id="hand-card-tooltip"
                 content={"Un clic pour soulever une carte ou double clic pour jouer"}
                 place={seatNumber === '1' || '2' ? 'right' : 'left'}
+                style={{
+                  borderRadius: "20px"
+                }}
               />
             </>
 
@@ -337,8 +342,11 @@ export const Seat: React.FC<SeatProps> = ({
                 </PlayedHand>
                 <Tooltip
                   id="played-cards-tooltip"
-                  content={`Carte(s) jouée(s) par ${seat?.player?.name || ''}`}
+                  content={`Carte(s) jouée(s)`}
                   place={seatNumber === '1' || '2' ? 'left' : 'right'}
+                  style={{
+                    borderRadius: "20px"
+                  }}
                 />
               </>
             </div>

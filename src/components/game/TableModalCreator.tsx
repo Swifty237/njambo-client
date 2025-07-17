@@ -1,6 +1,5 @@
 import React, { useState, useContext } from "react";
 
-import gameContext from "../../context/game/gameContext";
 import { Form } from "../forms/Form";
 import { FormGroup } from "../forms/FormGroup";
 import { Label } from "../forms/Label";
@@ -9,14 +8,16 @@ import Button from "../buttons/Button";
 import modalContext from "../../context/modal/modalContext";
 import { v4 as uuidv4 } from 'uuid';
 import { Table } from "../../types/SeatTypesProps";
+// import globalContext from "../../context/global/globalContext";
 
 interface TableModalProps {
     onCreateTable: (table: Table) => void;
 }
 
 
-const TableModalCreator = React.memo(function TableModalContent({ onCreateTable }: TableModalProps) {
+const TableModalCreator = React.memo(function TableModalCreator({ onCreateTable }: TableModalProps) {
     const { closeModal } = useContext(modalContext);
+    // const { setTables } = useContext(globalContext)
     const [bet, setBet] = useState<string>('25');
     const [isPrivate, setIsPrivate] = useState<boolean>(false);
 
@@ -77,6 +78,9 @@ const TableModalCreator = React.memo(function TableModalContent({ onCreateTable 
 
                         // Créer le nouveau lien tatami
                         const newTable = createNewTable(bet, isPrivate);
+
+                        // Ajouter la nouvelle table au tableau des tables existantes
+                        // setTables(prevTables => [...prevTables, newTable]);
 
                         // Toujours mettre à jour le localStorage lors de la création d'un nouveau tatami
                         localStorage.setItem('storedLink', newTable.link);

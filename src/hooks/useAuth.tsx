@@ -2,10 +2,13 @@ import { useEffect, useState, useContext } from 'react';
 import Axios from 'axios';
 import setAuthToken from '../helpers/setAuthToken';
 import globalContext from '../context/global/globalContext';
+import { useHistory } from 'react-router-dom';
+
 const useAuth = () => {
   localStorage.token && setAuthToken(localStorage.token);
 
   const SERVER_URI = process.env.REACT_APP_SERVER_URI;
+  const history = useHistory();
 
   const {
     setId,
@@ -136,6 +139,8 @@ const useAuth = () => {
       localStorage.setItem('userId', _id);
       localStorage.setItem('userName', name);
       localStorage.setItem('chipsAmount', chipsAmount.toString());
+      history.push(`/`);
+
     } catch (error) {
       localStorage.removeItem('token');
       localStorage.removeItem('userId');

@@ -42,25 +42,61 @@ export const GameUI: React.FC<GameUIProps> = ({
   return (
     <UIWrapper>
       <>
-        <Button data-tooltip-id="play-tooltip" $small $secondary onClick={handlePlayCard}>
+        <Button
+          data-tooltip-id="play-tooltip"
+          $small
+          $secondary
+          onClick={handlePlayCard}
+        >
           {'Jouer'}
         </Button>
-        <Tooltip id="play-tooltip" content={"Clique ici pour jouer la carte soulevée"} place="left" />
+        <Tooltip
+          id="play-tooltip"
+          content={"Jouer une carte soulevée"}
+          place="left"
+          style={{
+            borderRadius: "20px"
+          }}
+        />
       </>
 
       <>
-        <Button data-tooltip-id="stand-up-tooltip" $small $secondary onClick={standUp}>
+        <Button
+          data-tooltip-id="stand-up-tooltip"
+          $small
+          $secondary
+          onClick={standUp}
+        >
           {'Se lever'}
         </Button>
-        <Tooltip id="stand-up-tooltip" content={"Clique ici pour te lever de la table"} place="top" />
+        <Tooltip
+          id="stand-up-tooltip"
+          content={"Se lever de la table"}
+          place="top"
+          style={{
+            borderRadius: "20px"
+          }}
+        />
       </>
 
       <>
-        <Button data-tooltip-id="showdown-tooltip" $small $secondary onClick={showDown}>
+        <Button
+          data-tooltip-id="showdown-tooltip"
+          $small
+          $secondary
+          onClick={showDown}
+        >
           {currentTable.seats[seatId].showingCards ? 'Cacher son jeu' : 'Montrer son jeu'}
           {/* {getLocalizedString('game_ui_showdown')} */}
         </Button>
-        <Tooltip id="showdown-tooltip" content={"Clique ici pour montrer ou cacher ton jeu"} place="left" />
+        <Tooltip
+          id="showdown-tooltip"
+          content={"Montrer ou cacher ton jeu"}
+          place="left"
+          style={{
+            borderRadius: "20px"
+          }}
+        />
       </>
     </UIWrapper>
   );

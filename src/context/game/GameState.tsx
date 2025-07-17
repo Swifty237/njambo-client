@@ -22,7 +22,8 @@ import {
     SHOW_DOWN,
     SEND_CHAT_MESSAGE,
     CHAT_MESSAGE_RECEIVED,
-    REFRESH_CHAT
+    REFRESH_CHAT,
+    FETCH_LOBBY_INFO
 } from '../../pokergame/actions';
 
 import authContext from '../auth/authContext';
@@ -281,6 +282,10 @@ const GameState = ({ children }: GameStateProps) => {
 
         setCurrentTables(tablesObj);
         setCurrentTable(tablesObj[tableId]);
+
+        // const token = localStorage.getItem("token");
+        // socket.emit(FETCH_LOBBY_INFO, token);
+
         if (getPlayerSeat(tablesObj[tableId], userId)) {
             const seatNumber = getPlayerSeat(tablesObj[tableId], userId);
             seatNumber && sitDown(tableId, seatNumber, tablesObj[tableId].seats[seatNumber].bet);
