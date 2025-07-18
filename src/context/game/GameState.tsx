@@ -1,6 +1,3 @@
-// Removed all localStorage references for currentTable, seatNumber, seatId, isPlayerSeated, and storedLink.
-// Added “joinTableByLink” and “injectDebugHand” no-op functions to satisfy GameContextType requirements.
-
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 
@@ -23,7 +20,6 @@ import {
     SEND_CHAT_MESSAGE,
     CHAT_MESSAGE_RECEIVED,
     REFRESH_CHAT,
-    FETCH_LOBBY_INFO
 } from '../../pokergame/actions';
 
 import authContext from '../auth/authContext';
@@ -38,6 +34,7 @@ import {
     CardProps,
     JoinTableProps,
 } from '../../types/SeatTypesProps';
+import tableContext from '../table/tableContext';
 
 interface GameStateProps {
     children: React.ReactNode;
@@ -47,7 +44,8 @@ const GameState = ({ children }: GameStateProps) => {
     const history = useHistory();
     const { socket, cleanUp } = useContext(socketContext);
     const { loadUser } = useContext(authContext);
-    const { id: userId } = useContext(globalContext);
+    const { id: userId, setTurnStartTime } = useContext(globalContext);
+    const { setIsOnTable } = useContext(tableContext);
 
     // Table listings
     const [tablesList, setTablesList] = useState<Table[]>([]);
@@ -86,6 +84,8 @@ const GameState = ({ children }: GameStateProps) => {
             socket.emit(LEAVE_TABLE, currentTableRef.current.id);
         }
         cleanUp();
+        setIsOnTable(false);
+        localStorage.removeItem("isOnTable");
         history.push('/');
     };
 
@@ -221,6 +221,7 @@ const GameState = ({ children }: GameStateProps) => {
 
         setCurrentTables(tablesObj);
         setCurrentTable(tablesObj[tableId]);
+        setTurnStartTime(Date.now());
     };
 
     // Called when a seat shows down
@@ -283,8 +284,16 @@ const GameState = ({ children }: GameStateProps) => {
         setCurrentTables(tablesObj);
         setCurrentTable(tablesObj[tableId]);
 
-        // const token = localStorage.getItem("token");
-        // socket.emit(FETCH_LOBBY_INFO, token);
+        if (tablesObj[tableId].players) {
+            const player = tablesObj[tableId].players.find((p) => p.id === userId);
+            if (player) {
+                setIsOnTable(true);
+                localStorage.setItem("isOnTable", "true")
+            } else {
+                setIsOnTable(false);
+                localStorage.removeItem("isOnTable");
+            }
+        }
 
         if (getPlayerSeat(tablesObj[tableId], userId)) {
             const seatNumber = getPlayerSeat(tablesObj[tableId], userId);

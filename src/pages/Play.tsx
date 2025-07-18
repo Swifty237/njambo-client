@@ -24,13 +24,16 @@ import globalContext from '../context/global/globalContext';
 import ChatContent from '../components/game/ChatContent';
 import LoadingScreen from '../components/loading/LoadingScreen';
 import { JoinTableProps, Table } from '../types/SeatTypesProps';
-import { Tooltip } from 'react-tooltip';
+import ShortLivedTooltip from '../components/buttons/ShortLivedTooltip';
 import tableContext from '../context/table/tableContext';
+import authContext from '../context/auth/authContext';
 
 const Play: React.FC = () => {
   const history = useHistory();
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
+  const { loadUser } = useContext(authContext);
+
 
   const {
     isChatModalOpen,
@@ -130,7 +133,10 @@ const Play: React.FC = () => {
           () => (<Text>{getLocalizedString('game_lost-connection-modal_text')}</Text>),
           getLocalizedString('game_lost-connection-modal_header'),
           getLocalizedString('game_lost-connection-modal_btn-txt'),
-          () => history.push('/'),
+          () => {
+            localStorage.removeItem('storedLink');
+            history.push('/')
+          },
         );
         return;
       }
@@ -143,7 +149,6 @@ const Play: React.FC = () => {
   }, [socket, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
 
   useEffect(() => {
-    console.log("[UseEffect/Play] - refresh : ", refresh);
     setLocalRefresh(refresh);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refresh]);
@@ -217,6 +222,7 @@ const Play: React.FC = () => {
     leaveTable();
     leaveTableRequest();
     localStorage.removeItem('storedLink');
+    loadUser(localStorage.getItem("token")!);
   };
 
   const renderGameUI = () => {
@@ -301,7 +307,7 @@ const Play: React.FC = () => {
                       >
                         {getLocalizedString('game_leave-table-btn')}
                       </Button>
-                      <Tooltip
+                      <ShortLivedTooltip
                         id="leave-table-tooltip"
                         content={"Quitter la table"}
                         place="left"
@@ -350,7 +356,7 @@ const Play: React.FC = () => {
                           </div>
                         )}
                       </div>
-                      <Tooltip
+                      <ShortLivedTooltip
                         id="open-chat-tooltip"
                         content={"Tchater"}
                         place="top"

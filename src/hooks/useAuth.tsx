@@ -3,12 +3,15 @@ import Axios from 'axios';
 import setAuthToken from '../helpers/setAuthToken';
 import globalContext from '../context/global/globalContext';
 import { useHistory } from 'react-router-dom';
+// import tableContext from '../context/table/tableContext';
 
 const useAuth = () => {
   localStorage.token && setAuthToken(localStorage.token);
 
   const SERVER_URI = process.env.REACT_APP_SERVER_URI;
   const history = useHistory();
+
+  // const { setIsOnTable } = useContext(tableContext);
 
   const {
     setId,
@@ -22,7 +25,6 @@ const useAuth = () => {
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
-    // const isOnTable = localStorage.getItem('isOnTable') === 'true';
     setIsLoading(true);
 
     const token = localStorage.getItem("token");
@@ -128,7 +130,6 @@ const useAuth = () => {
       const { _id, name, email, chipsAmount } = res.data;
 
       setIsLoggedIn(true);
-      // Mettre à jour le state
       setId(_id);
       setUserName(name);
       setEmail(email);
@@ -146,6 +147,8 @@ const useAuth = () => {
       localStorage.removeItem('userId');
       localStorage.removeItem('userName');
       localStorage.removeItem('chipsAmount');
+      localStorage.removeItem('isOnTable');
+      localStorage.removeItem('storedLink');
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
       setIsLoggedIn(false);
@@ -158,6 +161,8 @@ const useAuth = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('chipsAmount');
+    localStorage.removeItem('isOnTable');
+    localStorage.removeItem('storedLink');
 
     // Réinitialiser l'état
     setIsLoggedIn(false);

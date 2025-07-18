@@ -53,6 +53,7 @@ const TableModalCreator = React.memo(function TableModalCreator({ onCreateTable 
             createdAt: tatamiInfo.createdAt,
             link: tatamiLink,
             seats: {},
+            players: [],
             callAmount: 0,
             pot: 0,
             winMessages: '',

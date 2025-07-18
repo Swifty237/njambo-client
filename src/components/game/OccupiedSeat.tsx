@@ -1,7 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useContext } from 'react';
 import styled from 'styled-components';
 import userImages from './userImages';
 import { EmptySeat } from './EmptySeat';
+import globalContext from '../../context/global/globalContext';
 
 interface OccupiedSeatProps {
   seatNumber: string;
@@ -15,6 +16,7 @@ export const OccupiedSeat = ({ hasTurn, seatNumber, turnStartTime }: OccupiedSea
   const [elapsed, setElapsed] = useState(0);
   const requestRef = useRef<number>();
   const previousStartTimeRef = useRef<number>();
+  const { isLoading } = useContext(globalContext);
 
   useEffect(() => {
     // Toujours réinitialiser quand turnStartTime change
@@ -70,6 +72,7 @@ export const OccupiedSeat = ({ hasTurn, seatNumber, turnStartTime }: OccupiedSea
       {hasTurn && (
         <div className="circle-timer" aria-label="Turn timer">
           <svg
+            id="occupied-seat"
             width="130"
             height="130"
             viewBox="0 0 130 130"

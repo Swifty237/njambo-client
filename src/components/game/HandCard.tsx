@@ -115,6 +115,9 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
         playOneCard({ suit, rank }, seatId);
         seat.turn = false;
       } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
+
+        // Envoyer un message au jouer concerné via une socket du katika
+
         return;
       } else {
         // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
@@ -136,7 +139,8 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
           playOneCard({ suit, rank }, seatId);
           seat.turn = false;
         } else if (hasCardOfDemandedSuit(currentTable.demandedSuit)) {
-          return;
+
+          return
         } else {
           // Le joueur n'a pas la couleur demandée, il peut jouer n'importe quelle carte
           playOneCard({ suit, rank }, seatId);
@@ -149,21 +153,24 @@ const HandCard: React.FC<StyledPokerCardWrapperProps> = ({
   const handleClickEvents = useClickHandler(handleSingleClick, handleDoubleClick);
 
   return (
-    <StyledPokerCardWrapper
-      card={{ suit, rank }}
-      width={width}
-      minWidth={minWidth}
-      maxWidth={maxWidth}
-      isElevated={isElevated}
-      onClick={suit === 'hidden' && rank === 'hidden' ? undefined : handleClickEvents}
-    >
-      <img
-        src={
-          (cards[concat as keyof typeof cards] && ((cards[concat as keyof typeof cards] as any).default || cards[concat as keyof typeof cards])) || ''
-        }
-        alt={concat}
-      />
-    </StyledPokerCardWrapper>
+    <>
+      <StyledPokerCardWrapper
+        card={{ suit, rank }}
+        width={width}
+        minWidth={minWidth}
+        maxWidth={maxWidth}
+        isElevated={isElevated}
+        onClick={suit === 'hidden' && rank === 'hidden' ? undefined : handleClickEvents}
+      >
+        <img
+          src={
+            (cards[concat as keyof typeof cards] && ((cards[concat as keyof typeof cards] as any).default || cards[concat as keyof typeof cards])) || ''
+          }
+          alt={concat}
+        />
+      </StyledPokerCardWrapper>
+    </>
+
   );
 };
 

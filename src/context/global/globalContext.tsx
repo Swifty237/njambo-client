@@ -16,6 +16,8 @@ const globalContext = createContext<{
     setTables: (value: React.SetStateAction<Table[]>) => void;
     players: Player[];
     setPlayers: (value: React.SetStateAction<Player[]>) => void;
+    turnStartTime: number | null,
+    setTurnStartTime: (value: React.SetStateAction<number | null>) => void;
 }>({
     isLoading: true,
     setIsLoading: (value: React.SetStateAction<boolean>) => { },
@@ -31,6 +33,8 @@ const globalContext = createContext<{
     setTables: (value: React.SetStateAction<Table[]>) => { },
     players: [],
     setPlayers: (value: React.SetStateAction<Player[]>) => { },
+    turnStartTime: 0,
+    setTurnStartTime: (value: React.SetStateAction<number | null>) => { },
 });
 
 export default globalContext;

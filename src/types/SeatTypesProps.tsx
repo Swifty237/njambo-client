@@ -48,6 +48,7 @@ export interface Table {
     id: string;
     name: string;
     seats: { [seatId: string]: Seat };
+    players: Player[];
     bet: number;
     callAmount: number;
     pot: number;

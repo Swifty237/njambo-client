@@ -6,6 +6,7 @@ interface TableContextType {
     currentTable: Table | null;
     tableError: string | null;
     isLoading: boolean;
+    setIsOnTable: (value: React.SetStateAction<boolean>) => void,
     createTableRequest: (table: Table) => Promise<boolean>;
     joinTableByLinkRequest: () => Promise<boolean>;
     leaveTableRequest: () => Promise<void>;
@@ -17,6 +18,7 @@ const tableContext = createContext<TableContextType>({
     currentTable: null,
     tableError: null,
     isLoading: false,
+    setIsOnTable: () => { },
     createTableRequest: async () => false,
     joinTableByLinkRequest: async () => false,
     leaveTableRequest: async () => { },

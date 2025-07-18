@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import Axios from 'axios';
 import { Table } from '../types/SeatTypesProps';
 import gameContext from '../context/game/gameContext';
@@ -53,18 +53,18 @@ const useTable = () => {
         localStorage.removeItem('storedLink');
     };
 
-    useEffect(() => {
-        const storedLink = localStorage.getItem('storedLink');
-        if (storedLink) {
-            try {
-                JSON.parse(atob(storedLink));
-                setIsOnTable(true);
-            } catch (error) {
-                localStorage.removeItem('storedLink');
-                setIsOnTable(false);
-            }
-        }
-    }, []);
+    // useEffect(() => {
+    //     const storedLink = localStorage.getItem('storedLink');
+    //     if (storedLink) {
+    //         try {
+    //             JSON.parse(atob(storedLink));
+    //             setIsOnTable(true);
+    //         } catch (error) {
+    //             localStorage.removeItem('storedLink');
+    //             setIsOnTable(false);
+    //         }
+    //     }
+    // }, []);
 
     const createTable = async (table: Table): Promise<boolean> => {
         setIsLoading(true);
@@ -84,7 +84,6 @@ const useTable = () => {
             const tableInfo = res.data;
 
             if (tableInfo) {
-                setIsOnTable(true);
                 localStorage.setItem('storedLink', table.link);
                 setIsLoading(false);
                 return true;
@@ -105,7 +104,6 @@ const useTable = () => {
         setTableError(null);
 
         try {
-            setIsOnTable(true);
             setIsLoading(false);
             return true;
         } catch (error) {
@@ -125,6 +123,7 @@ const useTable = () => {
         currentTable,
         tableError,
         isLoading,
+        setIsOnTable,
         createTable,
         joinTableByLink,
         leaveTable,

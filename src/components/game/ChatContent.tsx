@@ -12,8 +12,7 @@ const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSe
     const [localMessage, setLocalMessage] = useState('');
     const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    // Récupérer la valeur de l'input et envoyer le message
-    const input = document.querySelector('input[type="text"]') as HTMLInputElement;
+    const inputRef = useRef<HTMLInputElement>(null);
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -39,11 +38,20 @@ const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSe
         scrollToBottom();
     }, [chatMessages]);
 
+    // Focus automatique sur l'input quand le composant se monte (modal s'ouvre)
+    useEffect(() => {
+        inputRef.current?.focus();
+    }, []);
+
     const handleLocalSubmit = () => {
-        if (input && input.value.trim() && currentTable) {
+        if (localMessage.trim() && currentTable) {
             // Passer storedSeatId même s'il est null (pour les observateurs)
-            onSendMessage(currentTable, seatId ? seatId : '', input.value.trim());
-            input.value = '';
+            onSendMessage(currentTable, seatId ? seatId : '', localMessage.trim());
+            setLocalMessage('');
+            // Remettre le focus sur l'input après l'envoi
+            setTimeout(() => {
+                inputRef.current?.focus();
+            }, 0);
         }
     };
 
@@ -83,6 +91,7 @@ const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSe
             </div>
 
             <Input
+                ref={inputRef}
                 type="text"
                 autoComplete="off"
                 value={localMessage}
@@ -90,7 +99,6 @@ const ChatContent = React.memo(function ChatContent({ currentTable, seatId, onSe
                 onKeyPress={(e: KeyboardEvent<HTMLInputElement>) => {
                     if (e.key === 'Enter' && currentTable) {
                         handleLocalSubmit();
-                        setLocalMessage('');
                     }
                 }}
                 placeholder="Écrivez votre message..."

@@ -11,6 +11,7 @@ const GlobalState: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
   const [chipsAmount, setChipsAmount] = useState(() => Number(localStorage.getItem('chipsAmount')) || 0);
   const [tables, setTables] = useState<Table[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
+  const [turnStartTime, setTurnStartTime] = useState<number | null>(null);
 
   return (
     <GlobalContext.Provider
@@ -41,6 +42,8 @@ const GlobalState: React.FC<React.PropsWithChildren<{}>> = ({ children }) => {
         setTables,
         players,
         setPlayers,
+        turnStartTime,
+        setTurnStartTime,
       }}
     >
       {children}

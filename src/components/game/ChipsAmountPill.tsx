@@ -40,11 +40,6 @@ const Wrapper = styled.div<WrapperProps>`
   /* Application des positions dynamiques avec fallbacks */
 `;
 
-const CurrencySpan = styled.span<FontSizeProps>`
-  font-size: ${(props: FontSizeProps) => props.fontSize};
-  margin-left: 2px;
-`;
-
 // CORRECTION 3: Interface correcte pour TextWrapper
 const TextWrapper = styled.span<FontSizeProps>`
   font-size: ${(props: FontSizeProps) => props.fontSize};
@@ -71,7 +66,7 @@ const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount, seatPosi
         <PokerChip
           width={width}
           height={height}
-          viewBox="7 7 20 20"
+          viewBox="4 4 21 21"
           injectedTheme={theme.colors.primaryCtaDarker}
         />
       </IconWrapper>
@@ -79,9 +74,9 @@ const ChipsAmountPill: React.FC<ChipsAmountPillProps> = ({ chipsAmount, seatPosi
       <TextWrapper fontSize={fontSize}>
         <ColoredText primary>
           {new Intl.NumberFormat(document.documentElement.lang).format(chipsAmount)}
-          <CurrencySpan fontSize={`calc(${fontSize} * 0.8)`}>
+          {/* <CurrencySpan fontSize={`calc(${fontSize} * 0.8)`}>
             {" XAF"}
-          </CurrencySpan>
+          </CurrencySpan> */}
         </ColoredText>
       </TextWrapper>
     </Wrapper>

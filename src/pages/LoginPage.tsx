@@ -1,6 +1,6 @@
 import React, { useRef, useContext, useEffect } from 'react';
 import Container from '../components/layout/Container';
-import { Link, useHistory, useLocation } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import HeadingWithLogo from '../components/typography/HeadingWithLogo';
 import Button from '../components/buttons/Button';
 import { Input } from '../components/forms/Input';

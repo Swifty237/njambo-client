@@ -26,7 +26,7 @@ import { StyledSeat } from './StyledSeat';
 import { PlayedHand } from './PlayedHand';
 import { SeatProps, CardProps } from '../../types/SeatTypesProps';
 import PlayedCard from './PlayedCard';
-import { Tooltip } from 'react-tooltip';
+import ShortLivedTooltip from '../buttons/ShortLivedTooltip';
 
 export const Seat: React.FC<SeatProps> = ({
   currentTable,
@@ -149,7 +149,6 @@ export const Seat: React.FC<SeatProps> = ({
           {!isPlayerSeated ? (
             <>
               <Button
-                data-tooltip-id="sitdown-tooltip"
                 $small
                 onClick={() => {
                   openModal(() => (
@@ -203,11 +202,6 @@ export const Seat: React.FC<SeatProps> = ({
                 {'S\'asseoir'}
                 {/* {getLocalizedString('game_sitdown-btn')} */}
               </Button>
-              <Tooltip
-                id="sitdown-tooltip"
-                content={"Clique ici pour t'asseoir"}
-                place="bottom"
-              />
             </>
           ) : (
             <EmptySeat>
@@ -271,7 +265,7 @@ export const Seat: React.FC<SeatProps> = ({
                           document.documentElement.lang,
                         ).format(seat?.stack)}
                       </ColoredText>
-                      <ColoredText secondary>{'XAF'}</ColoredText>
+                      {/* <ColoredText secondary>{'XAF'}</ColoredText> */}
                     </div>
                   </div>
                 )}
@@ -290,13 +284,13 @@ export const Seat: React.FC<SeatProps> = ({
           <PositionedUISlot
             style={{
               ...getHandsPosition(seatNumber),
-              zIndex: 999,
+              zIndex: 99,
             }}
             origin="center right"
           >
             <>
               <Hand
-                data-tooltip-id="hand-card-tooltip"
+                data-tooltip-id={`hand-card-tooltip-${seatNumber}`}
                 hiddenCards={isHiddenCards()}
               >
                 {seat?.hand &&
@@ -310,14 +304,16 @@ export const Seat: React.FC<SeatProps> = ({
                     />
                   ))}
               </Hand>
-              <Tooltip
-                id="hand-card-tooltip"
-                content={"Un clic pour soulever une carte ou double clic pour jouer"}
-                place={seatNumber === '1' || '2' ? 'right' : 'left'}
-                style={{
-                  borderRadius: "20px"
-                }}
-              />
+              {!isHiddenCards() &&
+                <ShortLivedTooltip
+                  id={`hand-card-tooltip-${seatNumber}`}
+                  content={"Un clic pour soulever une carte ou double clic pour jouer"}
+                  place="top"
+                  style={{
+                    borderRadius: "20px",
+                    zIndex: 999
+                  }}
+                />}
             </>
 
             <div
@@ -328,7 +324,7 @@ export const Seat: React.FC<SeatProps> = ({
               }}
             >
               <>
-                <PlayedHand data-tooltip-id="played-cards-tooltip">
+                <PlayedHand data-tooltip-id={`played-cards-tooltip-${seatNumber}`}>
                   {seat?.playedHand &&
                     seat.playedHand.map((card: CardProps, index: number) => (
                       <PlayedCard
@@ -340,12 +336,13 @@ export const Seat: React.FC<SeatProps> = ({
                       />
                     ))}
                 </PlayedHand>
-                <Tooltip
-                  id="played-cards-tooltip"
+                <ShortLivedTooltip
+                  id={`played-cards-tooltip-${seatNumber}`}
                   content={`Carte(s) jouée(s)`}
-                  place={seatNumber === '1' || '2' ? 'left' : 'right'}
+                  place="bottom"
                   style={{
-                    borderRadius: "20px"
+                    borderRadius: "20px",
+                    zIndex: 999
                   }}
                 />
               </>

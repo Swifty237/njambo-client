@@ -4,7 +4,7 @@ import Button from '../buttons/Button';
 import { UIWrapper } from './UIWrapper';
 import { CardProps } from '../../types/SeatTypesProps';
 import gameContext from '../../context/game/gameContext';
-import { Tooltip } from 'react-tooltip';
+import ShortLivedTooltip from '../buttons/ShortLivedTooltip';
 
 type GameUIProps = {
   currentTable: any; // Replace 'any' with the actual type if available
@@ -50,7 +50,7 @@ export const GameUI: React.FC<GameUIProps> = ({
         >
           {'Jouer'}
         </Button>
-        <Tooltip
+        <ShortLivedTooltip
           id="play-tooltip"
           content={"Jouer une carte soulevée"}
           place="left"
@@ -69,7 +69,7 @@ export const GameUI: React.FC<GameUIProps> = ({
         >
           {'Se lever'}
         </Button>
-        <Tooltip
+        <ShortLivedTooltip
           id="stand-up-tooltip"
           content={"Se lever de la table"}
           place="top"
@@ -89,7 +89,8 @@ export const GameUI: React.FC<GameUIProps> = ({
           {currentTable.seats[seatId].showingCards ? 'Cacher son jeu' : 'Montrer son jeu'}
           {/* {getLocalizedString('game_ui_showdown')} */}
         </Button>
-        <Tooltip
+
+        <ShortLivedTooltip
           id="showdown-tooltip"
           content={"Montrer ou cacher ton jeu"}
           place="left"

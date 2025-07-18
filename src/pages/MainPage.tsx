@@ -25,8 +25,9 @@ const MainPage: React.FC = () => {
   const history = useHistory();
 
   useEffect(() => {
+    const storedIsOnTable = localStorage.getItem('isOnTable') === 'true'
 
-    if (isOnTable) {
+    if (storedIsOnTable) {
       history.push(`/play`);
     }
 
@@ -34,7 +35,6 @@ const MainPage: React.FC = () => {
   }, [isOnTable, history])
 
   useEffect(() => {
-    console.log("[MainPage - tables] : ", tables);
 
     if (tables.length > 0) {
       setTablesList(prevList => {
@@ -55,6 +55,7 @@ const MainPage: React.FC = () => {
               isPrivate: table.isPrivate || false
             })),
             seats: table.seats,
+            players: table.players,
             callAmount: table.callAmount,
             pot: table.pot,
             winMessages: table.winMessages,
