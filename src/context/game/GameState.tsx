@@ -80,12 +80,22 @@ const GameState = ({ children }: GameStateProps) => {
 
     // Called when the user leaves the table
     const leaveTable = () => {
+
+        // if (seatId && currentTableRef.current?.seats[seatId].player.id === userId && socket) {
+        //     standUp();
+        // }
+
         if (currentTableRef.current?.id && socket) {
             socket.emit(LEAVE_TABLE, currentTableRef.current.id);
         }
+
         cleanUp();
-        setIsOnTable(false);
         localStorage.removeItem("isOnTable");
+        setIsOnTable(false);
+
+        // Marquer qu'un rechargement est nécessaire pour nettoyer les données persistantes
+        sessionStorage.setItem('needsReload', 'true');
+
         history.push('/');
     };
 

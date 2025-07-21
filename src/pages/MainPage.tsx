@@ -5,6 +5,7 @@ import ColoredText from '../components/typography/ColoredText';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import useScrollToTopOnPageLoad from '../hooks/useScrollToTopOnPageLoad';
+import usePageReload from '../hooks/usePageReload';
 import globalContext from '../context/global/globalContext';
 import contentContext from '../context/content/contentContext';
 import Button from '../components/buttons/Button';
@@ -24,9 +25,29 @@ const MainPage: React.FC = () => {
   const { isOnTable, createTableRequest, joinTableByLinkRequest, tableError, clearTableError } = useContext(tableContext);
   const history = useHistory();
 
+  // Hook pour gérer le rechargement contrôlé
+  const { hasJustReloaded } = usePageReload();
+
+  // Gérer le rechargement automatique après avoir quitté une table
+  useEffect(() => {
+    const needsReload = sessionStorage.getItem('needsReload') === 'true';
+
+    if (needsReload && !hasJustReloaded()) {
+      // Nettoyer le flag avant de recharger
+      sessionStorage.removeItem('needsReload');
+      // Recharger la page pour nettoyer toutes les données persistantes
+      window.location.reload();
+      return;
+    }
+
+    // Nettoyer le flag si on vient de recharger
+    if (hasJustReloaded()) {
+      sessionStorage.removeItem('needsReload');
+    }
+  }, [hasJustReloaded]);
+
   useEffect(() => {
     const storedIsOnTable = localStorage.getItem('isOnTable') === 'true'
-
     if (storedIsOnTable) {
       history.push(`/play`);
     }

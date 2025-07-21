@@ -32,7 +32,6 @@ const Play: React.FC = () => {
   const history = useHistory();
   const { socket } = useContext(socketContext);
   const { isLoading } = useContext(globalContext);
-  const { loadUser } = useContext(authContext);
 
 
   const {
@@ -220,9 +219,8 @@ const Play: React.FC = () => {
 
   const handleLeaveTable = () => {
     leaveTable();
-    leaveTableRequest();
+    // leaveTableRequest();
     localStorage.removeItem('storedLink');
-    loadUser(localStorage.getItem("token")!);
   };
 
   const renderGameUI = () => {
@@ -261,36 +259,34 @@ const Play: React.FC = () => {
         <>
           <RotateDevicePrompt />
 
+          {currentTable && isPlayerSeated && (
+            <PositionedUISlot
+              scale="0.55"
+              style={{ pointerEvents: 'none', zIndex: '50' }}
+              origin="bottom right"
+            >
+              <TableInfoWrapper>
+                <Text textAlign="right">
+                  <strong>{currentTable.name}</strong> |{' '}
+
+                  <strong>
+                    Coût :
+                  </strong>
+                  {' '}
+                  {new Intl.NumberFormat(
+                    document.documentElement.lang,
+                  ).format(currentTable.bet)} {' '}
+                  {' '} | {' '}
+
+                  {currentTable.isPrivate ? 'Privé' : 'Ouvert'}
+                </Text>
+              </TableInfoWrapper>
+            </PositionedUISlot>
+          )}
+
           <Container fullHeight>
             {currentTable && (
               <>
-                {isPlayerSeated && (
-                  <PositionedUISlot
-                    top="1.5vh"
-                    left="1.5rem"
-                    scale="0.65"
-                    style={{ pointerEvents: 'none', zIndex: '50' }}
-                    origin="bottom right"
-                  >
-                    <TableInfoWrapper>
-                      <Text textAlign="right">
-                        <strong>{currentTable.name}</strong> |{' '}
-
-                        <strong>
-                          Coût :
-                        </strong>
-                        {' '}
-                        {new Intl.NumberFormat(
-                          document.documentElement.lang,
-                        ).format(currentTable.bet)} {' '}
-                        {' '} | {' '}
-
-                        {currentTable.isPrivate ? 'Privé' : 'Ouvert'}
-                      </Text>
-                    </TableInfoWrapper>
-                  </PositionedUISlot>
-                )}
-
                 <PositionedUISlot
                   bottom="2vh"
                   left="1.5rem"

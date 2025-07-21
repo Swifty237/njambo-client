@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef, useContext } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
 import userImages from './userImages';
 import { EmptySeat } from './EmptySeat';
-import globalContext from '../../context/global/globalContext';
+// import globalContext from '../../context/global/globalContext';
 
 interface OccupiedSeatProps {
   seatNumber: string;
@@ -16,7 +16,7 @@ export const OccupiedSeat = ({ hasTurn, seatNumber, turnStartTime }: OccupiedSea
   const [elapsed, setElapsed] = useState(0);
   const requestRef = useRef<number>();
   const previousStartTimeRef = useRef<number>();
-  const { isLoading } = useContext(globalContext);
+  // const { isLoading } = useContext(globalContext);
 
   useEffect(() => {
     // Toujours réinitialiser quand turnStartTime change
