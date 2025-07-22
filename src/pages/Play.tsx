@@ -26,7 +26,7 @@ import LoadingScreen from '../components/loading/LoadingScreen';
 import { JoinTableProps, Table } from '../types/SeatTypesProps';
 import ShortLivedTooltip from '../components/buttons/ShortLivedTooltip';
 import tableContext from '../context/table/tableContext';
-import authContext from '../context/auth/authContext';
+// import authContext from '../context/auth/authContext';
 
 const Play: React.FC = () => {
   const history = useHistory();
@@ -45,7 +45,7 @@ const Play: React.FC = () => {
     setLastReadTime
   } = useContext(modalContext);
 
-  const { isOnTable, leaveTableRequest } = useContext(tableContext);
+  const { isOnTables, isOnTable } = useContext(tableContext);
 
   const {
     messages,
@@ -141,11 +141,23 @@ const Play: React.FC = () => {
       }
     }, 500)
 
-    if (!isOnTable && !storedLink) {
+    // Vérifier si on est sur une table (en utilisant le tableId du storedLink)
+    let currentTableId = null;
+    if (storedLink) {
+      try {
+        const decodedData = JSON.parse(atob(storedLink));
+        currentTableId = decodedData.id;
+      } catch (error) {
+        // Ignore error
+      }
+    }
+
+    // Si on n'a pas de storedLink ou qu'on n'est pas sur cette table, rediriger
+    if (!storedLink || (currentTableId && !isOnTable(currentTableId))) {
       history.push('/');
       return;
     }
-  }, [socket, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
+  }, [socket, isOnTables, isOnTable, isInitialized, history, openModal, getLocalizedString, storedLink, currentTable]);
 
   useEffect(() => {
     setLocalRefresh(refresh);
@@ -405,7 +417,7 @@ const Play: React.FC = () => {
                         sitDown={sitDown}
                       />
 
-                      {currentTable.seats && currentTable.seats['1'] && (
+                      {/* {currentTable.seats && currentTable.seats['1'] && (
                         <PositionedUISlot
                           top="7vh"
                           left="1vw"
@@ -415,7 +427,7 @@ const Play: React.FC = () => {
                             seatPosition='1'
                           />
                         </PositionedUISlot>
-                      )}
+                      )} */}
                     </PositionedUISeat>
 
                     <PositionedUISeat left="50%">
@@ -425,7 +437,7 @@ const Play: React.FC = () => {
                         isPlayerSeated={isPlayerSeated}
                         sitDown={sitDown}
                       />
-                      <PositionedUISlot
+                      {/* <PositionedUISlot
                         top="7vh"
                         right="14vw"
                       >
@@ -435,7 +447,7 @@ const Play: React.FC = () => {
                             seatPosition='2'
                           />
                         )}
-                      </PositionedUISlot>
+                      </PositionedUISlot> */}
                     </PositionedUISeat>
 
                     <PositionedUISeat top="50%" left="100%">
@@ -446,7 +458,7 @@ const Play: React.FC = () => {
                         sitDown={sitDown}
                       />
 
-                      <PositionedUISlot
+                      {/* <PositionedUISlot
                         bottom="33vh"
                         right="16vw"
                       >
@@ -456,7 +468,7 @@ const Play: React.FC = () => {
                             seatPosition='3'
                           />
                         )}
-                      </PositionedUISlot>
+                      </PositionedUISlot> */}
                     </PositionedUISeat>
 
                     <PositionedUISeat left="50%" top="100%">
@@ -467,7 +479,7 @@ const Play: React.FC = () => {
                         sitDown={sitDown}
                       />
 
-                      <PositionedUISlot
+                      {/* <PositionedUISlot
                         bottom="35vh"
                         left="5vw"
                       >
@@ -477,7 +489,7 @@ const Play: React.FC = () => {
                             seatPosition='4'
                           />
                         )}
-                      </PositionedUISlot>
+                      </PositionedUISlot> */}
                     </PositionedUISeat>
                   </ResponsiveTable>
                 )}

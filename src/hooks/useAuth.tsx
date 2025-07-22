@@ -147,7 +147,7 @@ const useAuth = () => {
       localStorage.removeItem('userId');
       localStorage.removeItem('userName');
       localStorage.removeItem('chipsAmount');
-      localStorage.removeItem('isOnTable');
+      localStorage.removeItem('isOnTables');
       localStorage.removeItem('storedLink');
       const errorMessage = getErrorMessage(error);
       setAuthError(errorMessage);
@@ -161,7 +161,7 @@ const useAuth = () => {
     localStorage.removeItem('userId');
     localStorage.removeItem('userName');
     localStorage.removeItem('chipsAmount');
-    localStorage.removeItem('isOnTable');
+    localStorage.removeItem('isOnTables');
     localStorage.removeItem('storedLink');
 
     // Réinitialiser l'état

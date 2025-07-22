@@ -4,28 +4,30 @@ import useTable from '../../hooks/useTable';
 
 const TableProvider: React.FC<PropsWithChildren<{}>> = ({ children }) => {
     const {
-        isOnTable,
+        isOnTables,
         currentTable,
         tableError,
         isLoading,
-        setIsOnTable,
+        setIsOnTables,
         createTable,
         joinTableByLink,
         leaveTable,
-        clearTableError
+        clearTableError,
+        isOnTable
     } = useTable();
 
     return (
         <TableContext.Provider value={{
-            isOnTable,
+            isOnTables,
             currentTable,
             tableError,
             isLoading,
-            setIsOnTable,
+            setIsOnTables,
             createTableRequest: createTable,
             joinTableByLinkRequest: joinTableByLink,
             leaveTableRequest: leaveTable,
-            clearTableError
+            clearTableError,
+            isOnTable
         }}>
             {children}
         </TableContext.Provider>

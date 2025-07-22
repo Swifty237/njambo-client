@@ -45,7 +45,7 @@ const GameState = ({ children }: GameStateProps) => {
     const { socket, cleanUp } = useContext(socketContext);
     const { loadUser } = useContext(authContext);
     const { id: userId, setTurnStartTime } = useContext(globalContext);
-    const { setIsOnTable } = useContext(tableContext);
+    const { setIsOnTables } = useContext(tableContext);
 
     // Table listings
     const [tablesList, setTablesList] = useState<Table[]>([]);
@@ -81,17 +81,32 @@ const GameState = ({ children }: GameStateProps) => {
     // Called when the user leaves the table
     const leaveTable = () => {
 
-        // if (seatId && currentTableRef.current?.seats[seatId].player.id === userId && socket) {
-        //     standUp();
-        // }
-
         if (currentTableRef.current?.id && socket) {
             socket.emit(LEAVE_TABLE, currentTableRef.current.id);
         }
 
         cleanUp();
-        localStorage.removeItem("isOnTable");
-        setIsOnTable(false);
+
+        // Retirer la table spécifique du tableau isOnTables
+        if (currentTableRef.current?.id) {
+            setIsOnTables(prev => prev.filter(table => table.tableId !== currentTableRef.current!.id));
+
+            // Mettre à jour le localStorage
+            const storedTables = localStorage.getItem('isOnTables');
+            if (storedTables) {
+                try {
+                    const parsedTables = JSON.parse(storedTables);
+                    const updatedTables = parsedTables.filter((table: any) => table.tableId !== currentTableRef.current!.id);
+                    if (updatedTables.length > 0) {
+                        localStorage.setItem('isOnTables', JSON.stringify(updatedTables));
+                    } else {
+                        localStorage.removeItem('isOnTables');
+                    }
+                } catch (error) {
+                    localStorage.removeItem('isOnTables');
+                }
+            }
+        }
 
         // Marquer qu'un rechargement est nécessaire pour nettoyer les données persistantes
         sessionStorage.setItem('needsReload', 'true');
@@ -297,11 +312,43 @@ const GameState = ({ children }: GameStateProps) => {
         if (tablesObj[tableId].players) {
             const player = tablesObj[tableId].players.find((p) => p.id === userId);
             if (player) {
-                setIsOnTable(true);
-                localStorage.setItem("isOnTable", "true")
+                // Ajouter ou mettre à jour la table dans isOnTables
+                setIsOnTables(prev => {
+                    const updated = prev.filter(table => table.tableId !== tableId);
+                    return [...updated, { tableId, isOnTable: true }];
+                });
+
+                // Mettre à jour le localStorage
+                const storedTables = localStorage.getItem('isOnTables');
+                let parsedTables = [];
+                if (storedTables) {
+                    try {
+                        parsedTables = JSON.parse(storedTables);
+                    } catch (error) {
+                        parsedTables = [];
+                    }
+                }
+                const updatedTables = parsedTables.filter((table: any) => table.tableId !== tableId);
+                updatedTables.push({ tableId, isOnTable: true });
+                localStorage.setItem('isOnTables', JSON.stringify(updatedTables));
             } else {
-                setIsOnTable(false);
-                localStorage.removeItem("isOnTable");
+                // Retirer la table de isOnTables
+                setIsOnTables(prev => prev.filter(table => table.tableId !== tableId));
+
+                const storedTables = localStorage.getItem('isOnTables');
+                if (storedTables) {
+                    try {
+                        const parsedTables = JSON.parse(storedTables);
+                        const updatedTables = parsedTables.filter((table: any) => table.tableId !== tableId);
+                        if (updatedTables.length > 0) {
+                            localStorage.setItem('isOnTables', JSON.stringify(updatedTables));
+                        } else {
+                            localStorage.removeItem('isOnTables');
+                        }
+                    } catch (error) {
+                        localStorage.removeItem('isOnTables');
+                    }
+                }
             }
         }
 
@@ -388,27 +435,154 @@ const GameState = ({ children }: GameStateProps) => {
                 call,
                 raise,
                 rebuy,
-                // The user can optionally debug
-                getHandsPosition: (seatId: string) => {
-                    // just returning original positions from original code
+                getNameTagPosition: (seatId: string) => {
+                    const seat = currentTable?.seats[seatId];
+                    if (seatId === "4") {
+                        switch (seat?.hand.length) {
+                            case 0: {
+                                if (currentTable?.handOver &&
+                                    seat?.lastAction &&
+                                    seat.lastAction !== 'PLAY_ONE_CARD') {
+                                    return { bottom: '-3vh', right: '5.5vw' };
+                                }
+                                return { bottom: '-5.5vh', right: '3.5vw' };
+                            }
+                            case 1:
+                                return { bottom: '-5.5vh', right: '3.5vw' };
+                            case 2:
+                                return { bottom: '-5.5vh', right: '3.5vw' };
+                            case 3:
+                                return { bottom: '-5.5vh', right: '3.5vw' };
+                            case 4:
+                                return { bottom: '-5.5vh', right: '3.5vw' };
+                            case 5:
+                                return { bottom: '-5.5vh', right: '3.5vw' };
+                            default:
+                                return {};
+                        }
+                    } else {
+                        switch (seat?.hand.length) {
+                            case 0: {
+                                if (currentTable?.handOver &&
+                                    seat?.lastAction &&
+                                    seat.lastAction !== 'PLAY_ONE_CARD') {
+                                    return { top: '-8.5vh', right: '5.5vw' };
+                                }
+                                return { top: '-10.5vh', right: '3.5vw' };
+                            }
+                            case 1:
+                                return { top: '-6.5vh', right: '6.5vw' };
+                            case 2:
+                                return { top: '-6.5vh', right: '6.5vw' };
+                            case 3:
+                                return { top: '-6vh', right: '6.5vw' };
+                            case 4:
+                                return { top: '-6vh', right: '8vw' };
+                            case 5:
+                                return { top: '-6.5vh', right: '8.5vw' };
+                            default:
+                                return {};
+                        }
+                    }
+                },
+                getPlayedCardsPosition: (seatId: string) => {
+                    const seat = currentTable?.seats[seatId];
+                    const numberOfCards = seat?.hand.length;
+
                     switch (seatId) {
                         case '1':
-                            return { bottom: '-5vh', left: '2vw' };
+                            switch (numberOfCards) {
+                                case 0:
+                                    return { bottom: '-5vh', left: '7vw' };
+                                case 1:
+                                    return { bottom: '-5vh', left: '6vw' };
+                                case 2:
+                                    return { bottom: '-5vh', left: '5vw' };
+                                case 3:
+                                    return { bottom: '-5vh', left: '4vw' };
+                                case 4:
+                                    return { bottom: '-5vh', left: '3vw' };
+                                case 5:
+                                    return { bottom: '-5vh', left: '2vw' };
+                                default:
+                                    return {};
+                            }
                         case '2':
-                            return { left: '2vw' };
+                            switch (numberOfCards) {
+                                case 0:
+                                    return { top: '7.5vh', left: '9vw' };
+                                case 1:
+                                    return { top: '7.5vh', left: '8vw' };
+                                case 2:
+                                    return { top: '7.5vh', left: '7vw' };
+                                case 3:
+                                    return { top: '7.5vh', left: '6vw' };
+                                case 4:
+                                    return { top: '7.5vh', left: '5vw' };
+                                case 5:
+                                    return { top: '7.5vh', left: '4vw' };
+                                default:
+                                    return {};
+                            }
                         case '3':
-                            return {
-                                display: 'flex',
-                                flexDirection: 'column-reverse',
-                                top: '-5vh',
-                                right: '2vw',
-                            };
+                            switch (numberOfCards) {
+                                case 0:
+                                    return { bottom: '-5vh', right: '10vw' };
+                                case 1:
+                                    return { bottom: '-5vh', right: '11vw' };
+                                case 2:
+                                    return { bottom: '-5vh', right: '12vw' };
+                                case 3:
+                                    return { bottom: '-5vh', right: '13vw' };
+                                case 4:
+                                    return { bottom: '-5vh', right: '14vw' };
+                                case 5:
+                                    return { bottom: '-5vh', right: '15vw' };
+                                default:
+                                    return {};
+                            }
+
                         case '4':
-                            return {
-                                display: 'flex',
-                                flexDirection: 'column-reverse',
-                                right: '2vw',
-                            };
+                            switch (numberOfCards) {
+                                case 0:
+                                    return { bottom: '15vh', left: '5vw' };
+                                case 1:
+                                    return { bottom: '15vh', left: '4vw' };
+                                case 2:
+                                    return { bottom: '15vh', left: '3vw' };
+                                case 3:
+                                    return { bottom: '15vh', left: '2vw' };
+                                case 4:
+                                    return { bottom: '15vh', left: '1vw' };
+                                case 5:
+                                    return { bottom: '15vh' };
+                                default:
+                                    return {};
+                            }
+
+                        default:
+                            return {};
+                    }
+                },
+                getChipsPillPosition: (seatId: string) => {
+                    const seat = currentTable?.seats[seatId];
+                    switch (seatId) {
+                        case '1':
+                            return { bottom: '-15vh', left: '2vw' };
+                        case '2':
+                            if (currentTable?.handOver &&
+                                seat?.lastAction &&
+                                seat.lastAction !== 'PLAY_ONE_CARD') {
+                                return { top: '10vh' };
+                            }
+                            return { top: '7vh' };
+                        case '3':
+                            if (seat?.hand.length && seat?.hand.length > 0) {
+                                return { bottom: '-15vh', right: '12vw' };
+                            }
+                            return { bottom: '-15vh', right: '2vw' };
+                        case '4':
+                            return { bottom: '7vh' };
                         default:
                             return {};
                     }

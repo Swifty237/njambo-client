@@ -27,6 +27,7 @@ import { PlayedHand } from './PlayedHand';
 import { SeatProps, CardProps } from '../../types/SeatTypesProps';
 import PlayedCard from './PlayedCard';
 import ShortLivedTooltip from '../buttons/ShortLivedTooltip';
+import ChipsAmountPill from './ChipsAmountPill';
 
 export const Seat: React.FC<SeatProps> = ({
   currentTable,
@@ -36,7 +37,7 @@ export const Seat: React.FC<SeatProps> = ({
 }) => {
   const { openModal, closeModal } = useContext(modalContext);
   const { chipsAmount } = useContext(globalContext);
-  const { standUp, rebuy, getHandsPosition } = useContext(gameContext);
+  const { standUp, rebuy, getPlayedCardsPosition, getChipsPillPosition, getNameTagPosition } = useContext(gameContext);
   const { getLocalizedString } = useContext(contentContext);
   const turnStartTimeRef = useRef<number | undefined>(undefined);
 
@@ -223,8 +224,9 @@ export const Seat: React.FC<SeatProps> = ({
           }}
         >
           <PositionedUISlot
-            top={seatNumber === '4' ? '4.25rem' : '-9.25rem'}
-            left="-100px"
+            style={{
+              ...getNameTagPosition(seatNumber),
+            }}
             origin="top center"
           >
             <NameTag>
@@ -281,74 +283,6 @@ export const Seat: React.FC<SeatProps> = ({
             />
           </PositionedUISlot>
 
-          <PositionedUISlot
-            style={{
-              ...getHandsPosition(seatNumber),
-              zIndex: 99,
-            }}
-            origin="center right"
-          >
-            <>
-              <Hand
-                data-tooltip-id={`hand-card-tooltip-${seatNumber}`}
-                hiddenCards={isHiddenCards()}
-              >
-                {seat?.hand &&
-                  seat.hand.map((card: CardProps, index: number) => (
-                    <HandCard
-                      key={`${card.suit}-${card.rank}-${index}`}
-                      card={card}
-                      width="5vw"
-                      maxWidth="60px"
-                      minWidth="30px"
-                    />
-                  ))}
-              </Hand>
-              {!isHiddenCards() &&
-                <ShortLivedTooltip
-                  id={`hand-card-tooltip-${seatNumber}`}
-                  content={"Un clic pour soulever une carte ou double clic pour jouer"}
-                  place="top"
-                  style={{
-                    borderRadius: "20px",
-                    zIndex: 999
-                  }}
-                />}
-            </>
-
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-              }}
-            >
-              <>
-                <PlayedHand data-tooltip-id={`played-cards-tooltip-${seatNumber}`}>
-                  {seat?.playedHand &&
-                    seat.playedHand.map((card: CardProps, index: number) => (
-                      <PlayedCard
-                        key={index}
-                        card={card}
-                        width="5vw"
-                        maxWidth="60px"
-                        minWidth="30px"
-                      />
-                    ))}
-                </PlayedHand>
-                <ShortLivedTooltip
-                  id={`played-cards-tooltip-${seatNumber}`}
-                  content={`Carte(s) jouée(s)`}
-                  place="bottom"
-                  style={{
-                    borderRadius: "20px",
-                    zIndex: 999
-                  }}
-                />
-              </>
-            </div>
-          </PositionedUISlot>
-
           {currentTable?.button === seatNumber && (
             <PositionedUISlot
               right={seatNumber === '1' || seatNumber === '2' ? '38px' : 'auto'}
@@ -364,10 +298,89 @@ export const Seat: React.FC<SeatProps> = ({
             </PositionedUISlot>
           )}
 
+          <>
+            <Hand
+              data-tooltip-id={`hand-card-tooltip-${seatNumber}`}
+              hiddenCards={isHiddenCards()}
+            >
+              {seat?.hand &&
+                seat.hand.map((card: CardProps, index: number) => (
+                  <HandCard
+                    key={`${card.suit}-${card.rank}-${index}`}
+                    card={card}
+                    width="5vw"
+                    maxWidth="60px"
+                    minWidth="30px"
+                  />
+                ))}
+            </Hand>
+            {!isHiddenCards() &&
+              <ShortLivedTooltip
+                id={`hand-card-tooltip-${seatNumber}`}
+                content={"Un clic pour soulever une carte ou double clic pour jouer"}
+                place="top"
+                style={{
+                  borderRadius: "20px",
+                  zIndex: 999
+                }}
+              />}
+          </>
+
           <PositionedUISlot
             style={{ zIndex: '55', position: 'relative' }}
             origin="bottom center"
           >
+            <PositionedUISlot
+              style={{
+                ...getPlayedCardsPosition(seatNumber),
+              }}
+              origin="center right"
+            >
+              <div
+                style={{
+                  padding: "5px",
+                  background: "#2c3e5069"
+                }}
+              >
+                <>
+                  <PlayedHand data-tooltip-id={`played-cards-tooltip-${seatNumber}`}>
+                    {seat?.playedHand &&
+                      seat.playedHand.map((card: CardProps, index: number) => (
+                        <PlayedCard
+                          key={index}
+                          card={card}
+                          width="5vw"
+                          maxWidth="60px"
+                          minWidth="30px"
+                        />
+                      ))}
+                  </PlayedHand>
+                  <ShortLivedTooltip
+                    id={`played-cards-tooltip-${seatNumber}`}
+                    content={`Carte(s) jouée(s)`}
+                    place="bottom"
+                    style={{
+                      borderRadius: "20px",
+                      zIndex: 998
+                    }}
+                  />
+                </>
+
+                <PositionedUISlot
+                  style={{
+                    // ...getChipsPillPosition(seatNumber),
+                  }}
+                >
+                  {currentTable.seats && currentTable.seats[seatNumber] && (
+                    <ChipsAmountPill
+                      chipsAmount={currentTable.seats[seatNumber].bet}
+                      seatPosition={seatNumber as '1' | '2' | '3' | '4'}
+                    />
+                  )}
+                </PositionedUISlot>
+              </div>
+            </PositionedUISlot>
+
             {currentTable?.handOver &&
               seat?.lastAction &&
               seat.lastAction !== 'PLAY_ONE_CARD' && (

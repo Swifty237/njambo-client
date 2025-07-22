@@ -1,28 +1,30 @@
 import { createContext } from 'react';
-import { Table } from '../../types/SeatTypesProps';
+import { Table, isOnTablesProps } from '../../types/SeatTypesProps';
 
 interface TableContextType {
-    isOnTable: boolean;
+    isOnTables: isOnTablesProps[];
     currentTable: Table | null;
     tableError: string | null;
     isLoading: boolean;
-    setIsOnTable: (value: React.SetStateAction<boolean>) => void,
+    setIsOnTables: (value: React.SetStateAction<isOnTablesProps[]>) => void,
     createTableRequest: (table: Table) => Promise<boolean>;
     joinTableByLinkRequest: () => Promise<boolean>;
-    leaveTableRequest: () => Promise<void>;
+    leaveTableRequest: (tableId?: string) => Promise<void>;
     clearTableError: () => void;
+    isOnTable: (tableId: string) => boolean;
 }
 
 const tableContext = createContext<TableContextType>({
-    isOnTable: false,
+    isOnTables: [],
     currentTable: null,
     tableError: null,
     isLoading: false,
-    setIsOnTable: () => { },
+    setIsOnTables: () => { },
     createTableRequest: async () => false,
     joinTableByLinkRequest: async () => false,
     leaveTableRequest: async () => { },
     clearTableError: () => { },
+    isOnTable: () => false,
 });
 
 export default tableContext;

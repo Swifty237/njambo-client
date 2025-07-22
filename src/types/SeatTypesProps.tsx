@@ -1,3 +1,8 @@
+export interface isOnTablesProps {
+    tableId: string;
+    isOnTable: boolean;
+}
+
 export interface Player {
     id: string;
     socketId: string;

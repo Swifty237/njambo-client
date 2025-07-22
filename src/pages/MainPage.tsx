@@ -22,7 +22,7 @@ const MainPage: React.FC = () => {
   const { getLocalizedString } = useContext(contentContext);
   const { openModal, closeModal } = useContext(modalContext);
   const { tablesList, setTablesList } = useContext(gameContext);
-  const { isOnTable, createTableRequest, joinTableByLinkRequest, tableError, clearTableError } = useContext(tableContext);
+  const { isOnTables, isOnTable, createTableRequest, joinTableByLinkRequest, tableError, clearTableError } = useContext(tableContext);
   const history = useHistory();
 
   // Hook pour gérer le rechargement contrôlé
@@ -47,13 +47,22 @@ const MainPage: React.FC = () => {
   }, [hasJustReloaded]);
 
   useEffect(() => {
-    const storedIsOnTable = localStorage.getItem('isOnTable') === 'true'
-    if (storedIsOnTable) {
-      history.push(`/play`);
+    // Vérifier s'il y a une table active dans le localStorage
+    const storedTables = localStorage.getItem('isOnTables');
+    if (storedTables) {
+      try {
+        const parsedTables = JSON.parse(storedTables);
+        const activeTable = parsedTables.find((table: any) => table.isOnTable === true);
+        if (activeTable) {
+          history.push(`/play`);
+        }
+      } catch (error) {
+        localStorage.removeItem('isOnTables');
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOnTable, history])
+  }, [isOnTables, history])
 
   useEffect(() => {
 
@@ -240,8 +249,14 @@ const MainPage: React.FC = () => {
                       // Vérifier si la table existe toujours dans la liste
                       const tableExists = tables.some(t => t.id === table.id);
                       if (tableExists) {
-                        localStorage.setItem('storedLink', table.link);
-                        handleJoinTableByLink();
+                        // Vérifier si on est déjà sur cette table
+                        if (isOnTable(table.id)) {
+                          localStorage.setItem('storedLink', table.link);
+                          handleJoinTableByLink();
+                        } else {
+                          localStorage.setItem('storedLink', table.link);
+                          handleJoinTableByLink();
+                        }
                       } else {
                         // La table n'existe plus, la retirer de la liste locale
                         setTablesList(prev => prev.filter(t => t.id !== table.id));
